@@ -312,3 +312,6 @@ cypress/screenshots
 
 
 /static/*
+# Verbatim design-prototype reference; never reformatted (see design/README.md)
+/design/*
+!/design/README.md

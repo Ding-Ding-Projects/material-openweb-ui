@@ -1,0 +1,1415 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto+Flex:opsz,wght@8..144,400;8..144,500;8..144,600;8..144,700&amp;family=Roboto+Mono:wght@400;500&amp;family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,300..600,0..1,0&amp;display=swap">
+<style>
+:root{--p:#6750A4;--onp:#FFFFFF;--pc:#EADDFF;--onpc:#21005D;--sec:#625B71;--onsec:#FFFFFF;--secc:#E8DEF8;--onsecc:#1D192B;--ter:#7D5260;--terc:#FFD8E4;--onterc:#31111D;--err:#B3261E;--onerr:#FFFFFF;--errc:#F9DEDC;--onerrc:#410E0B;--sur:#FEF7FF;--surdim:#DED8E1;--sclowest:#FFFFFF;--sclow:#F7F2FA;--sc:#F3EDF7;--schigh:#ECE6F0;--schighest:#E6E0E9;--ons:#1D1B20;--onsv:#49454F;--out:#79747E;--outv:#CAC4D0;--invs:#322F35;--invons:#F5EFF7;--invp:#D0BCFF;--scrim:rgba(0,0,0,0.4);--elev1:0 1px 2px rgba(0,0,0,.3),0 1px 3px 1px rgba(0,0,0,.15);--elev2:0 1px 2px rgba(0,0,0,.3),0 2px 6px 2px rgba(0,0,0,.15);--elev3:0 4px 8px 3px rgba(0,0,0,.15),0 1px 3px rgba(0,0,0,.3)}
+body[data-theme="dark"]{--p:#D0BCFF;--onp:#381E72;--pc:#4F378B;--onpc:#EADDFF;--sec:#CCC2DC;--onsec:#332D41;--secc:#4A4458;--onsecc:#E8DEF8;--ter:#EFB8C8;--terc:#633B48;--onterc:#FFD8E4;--err:#F2B8B5;--onerr:#601410;--errc:#8C1D18;--onerrc:#F9DEDC;--sur:#141218;--surdim:#141218;--sclowest:#0F0D13;--sclow:#1D1B20;--sc:#211F26;--schigh:#2B2930;--schighest:#36343B;--ons:#E6E0E9;--onsv:#CAC4D0;--out:#938F99;--outv:#49454F;--invs:#E6E0E9;--invons:#322F35;--invp:#6750A4;--scrim:rgba(0,0,0,0.6)}
+html,body{margin:0;padding:0;height:100%;background:var(--sur)}
+*{box-sizing:border-box}
+a{color:var(--p);text-decoration:none}a:hover{color:var(--p);text-decoration:underline}
+button{font-family:inherit}input,select,textarea{font-family:inherit;color:var(--ons)}
+.ms{font-family:'Material Symbols Rounded';font-weight:normal;font-style:normal;line-height:1;letter-spacing:normal;text-transform:none;display:inline-block;white-space:nowrap;direction:ltr;-webkit-font-smoothing:antialiased;font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24;user-select:none;flex:none}
+.msf{font-variation-settings:'FILL' 1,'wght' 400,'GRAD' 0,'opsz' 24}
+::-webkit-scrollbar{width:10px;height:10px}::-webkit-scrollbar-thumb{background:var(--outv);border-radius:8px;border:2px solid transparent;background-clip:content-box}::-webkit-scrollbar-track{background:transparent}
+@keyframes owspin{to{transform:rotate(360deg)}}
+@keyframes owfade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+@keyframes owpulse{0%,100%{opacity:.4}50%{opacity:1}}
+::selection{background:var(--pc);color:var(--onpc)}
+</style>
+</helmet>
+<div style="height:100vh;display:flex;flex-direction:column;overflow:hidden;background:var(--sur);color:var(--ons);font-family:'Roboto Flex',system-ui,sans-serif;font-size:14px" onClickCapture="{{ guardLocks }}" onContextMenu="{{ onCtx }}">
+  <sc-if value="{{ showAuth }}" hint-placeholder-val="{{ false }}">
+    <div data-screen-label="Auth" style="position:fixed;inset:0;z-index:200;background:var(--sur);display:flex;align-items:center;justify-content:center">
+      <div style="width:400px;max-width:92vw;background:var(--sclow);border-radius:28px;padding:32px;display:flex;flex-direction:column;gap:16px;animation:owfade .3s ease">
+        <div style="display:flex;align-items:center;gap:12px">
+          <div style="width:44px;height:44px;border-radius:14px;background:{{ logoBg }};display:flex;align-items:center;justify-content:center;overflow:hidden"><sc-if value="{{ logoImg }}" hint-placeholder-val="{{ false }}"><div role="img" aria-label="Custom logo" style="width:100%;height:100%;background-image:{{ logoBgImg }};background-size:{{ logoFit }};background-position:center;background-repeat:no-repeat"></div></sc-if><sc-if value="{{ logoNoImg }}" hint-placeholder-val="{{ true }}"><span class="ms msf" style="color:var(--onp);font-size:26px">{{ logoGlyph }}</span></sc-if></div>
+          <div><div style="font-size:20px;font-weight:600">Open WebUI</div><div style="font-size:12px;color:var(--onsv)">Material 3 desktop edition</div></div>
+        </div>
+        <div style="font-size:16px;font-weight:600">{{ authTitle }}</div>
+        <sc-if value="{{ authIsSignup }}" hint-placeholder-val="{{ true }}">
+          <div style="font-size:13px;color:var(--onsv);line-height:1.5">First run: the first account becomes the admin. Everything is stored locally on this machine.</div>
+          <input id="auth-name" value="{{ authName }}" onChange="{{ onAuthName }}" placeholder="Name" style="height:48px;border-radius:12px;border:1px solid var(--out);background:transparent;padding:0 16px;font-size:14px;outline-color:var(--p)">
+        </sc-if>
+        <input id="auth-email" value="{{ authEmail }}" onChange="{{ onAuthEmail }}" placeholder="Email" style="height:48px;border-radius:12px;border:1px solid var(--out);background:transparent;padding:0 16px;font-size:14px;outline-color:var(--p)">
+        <input id="auth-pass" type="password" value="{{ authPass }}" onChange="{{ onAuthPass }}" onKeyDown="{{ onAuthKey }}" placeholder="Password" style="height:48px;border-radius:12px;border:1px solid var(--out);background:transparent;padding:0 16px;font-size:14px;outline-color:var(--p)">
+        <sc-if value="{{ authError }}" hint-placeholder-val="{{ false }}"><div style="color:var(--err);font-size:13px">{{ authError }}</div></sc-if>
+        <button onClick="{{ doAuth }}" style="height:48px;border-radius:24px;border:none;background:var(--p);color:var(--onp);font-size:15px;font-weight:600;cursor:pointer">{{ authCta }}</button>
+      </div>
+    </div>
+  </sc-if>
+  <div style="height:44px;flex:none;display:flex;align-items:center;background:var(--sclow);border-bottom:1px solid var(--outv);padding-left:12px;gap:10px" data-lock="Title bar">
+    <div style="width:26px;height:26px;border-radius:8px;background:{{ logoBg }};display:flex;align-items:center;justify-content:center;overflow:hidden"><sc-if value="{{ logoImg }}" hint-placeholder-val="{{ false }}"><div role="img" aria-label="Custom logo" style="width:100%;height:100%;background-image:{{ logoBgImg }};background-size:{{ logoFit }};background-position:center;background-repeat:no-repeat"></div></sc-if><sc-if value="{{ logoNoImg }}" hint-placeholder-val="{{ true }}"><span class="ms msf" style="color:var(--onp);font-size:16px">{{ logoGlyph }}</span></sc-if></div>
+    <div style="font-size:13px;font-weight:600;letter-spacing:.2px">Open WebUI</div>
+    <div style="font-size:11px;color:var(--onsv);background:var(--sc);border-radius:8px;padding:3px 8px">local · simulated Ollama</div>
+    <div style="flex:1"></div>
+    <button title="Command palette (Ctrl+Shift+F)" onClick="{{ openPalette }}" style="height:32px;border:none;background:var(--sc);color:var(--onsv);border-radius:16px;padding:0 12px;display:flex;align-items:center;gap:6px;cursor:pointer;font-size:12px"><span class="ms" style="font-size:16px">search</span>Ctrl+Shift+F</button>
+    <button title="Toggle theme" onClick="{{ toggleTheme }}" style="width:36px;height:32px;border:none;background:transparent;color:var(--onsv);cursor:pointer;border-radius:8px"><span class="ms" style="font-size:18px">{{ themeIcon }}</span></button>
+    <div style="display:flex;height:44px;margin-left:4px">
+      <button title="Minimize" onClick="{{ winMin }}" style="width:44px;border:none;background:transparent;color:var(--onsv);cursor:pointer"><span class="ms" style="font-size:16px">remove</span></button>
+      <button title="Maximize" onClick="{{ winMax }}" style="width:44px;border:none;background:transparent;color:var(--onsv);cursor:pointer"><span class="ms" style="font-size:16px">crop_square</span></button>
+      <button title="Close" onClick="{{ winClose }}" style="width:44px;border:none;background:transparent;color:var(--onsv);cursor:pointer" style-hover="background:var(--err);color:var(--onerr)"><span class="ms" style="font-size:16px">close</span></button>
+    </div>
+  </div>
+  <div style="height:40px;flex:none;display:flex;align-items:flex-end;background:var(--sclow);padding:0 8px;gap:2px;overflow-x:auto;overflow-y:hidden">
+    <sc-for list="{{ tabVMs }}" as="tab" hint-placeholder-count="1">
+      <div data-tabid="{{ tab.id }}" onClick="{{ tab.activate }}" style="height:34px;display:flex;align-items:center;gap:6px;padding:0 10px 0 12px;border-radius:12px 12px 0 0;background:{{ tab.bg }};color:{{ tab.fg }};cursor:pointer;max-width:200px;flex:none;font-size:12.5px;border:1px solid {{ tab.bd }};border-bottom:none">
+        <span class="ms" style="font-size:15px;color:{{ tab.iconColor }}">{{ tab.icon }}</span>
+        <span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ tab.title }}</span>
+        <sc-if value="{{ tab.locked }}" hint-placeholder-val="{{ false }}"><span class="ms msf" style="font-size:13px;color:var(--ter)">lock</span></sc-if>
+        <button onClick="{{ tab.close }}" title="Close tab" style="width:18px;height:18px;border:none;border-radius:9px;background:transparent;color:inherit;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0" style-hover="background:var(--schighest)"><span class="ms" style="font-size:13px">close</span></button>
+      </div>
+    </sc-for>
+    <button onClick="{{ newTabMenu }}" title="New tab" style="width:30px;height:30px;margin-bottom:2px;border:none;border-radius:15px;background:transparent;color:var(--onsv);cursor:pointer;flex:none" style-hover="background:var(--sc)"><span class="ms" style="font-size:18px">add</span></button>
+  </div>
+  <div style="flex:1;display:flex;min-height:0;background:var(--sur)">
+    <sc-if value="{{ pg.chat }}" hint-placeholder-val="{{ true }}">
+      <div data-screen-label="Chat" style="flex:1;display:flex;min-height:0">
+        <div data-lock="Sidebar" style="width:280px;flex:none;background:var(--sclow);display:flex;flex-direction:column;border-right:1px solid var(--outv)">
+          <div style="padding:12px 12px 4px;display:flex;flex-direction:column;gap:8px">
+            <button id="new-chat" onClick="{{ newChat }}" data-lock="New chat button" style="height:44px;border:none;border-radius:22px;background:var(--pc);color:var(--onpc);font-size:14px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:8px;padding:0 16px"><span class="ms" style="font-size:19px">edit_square</span>New chat</button>
+            <div style="display:flex;gap:4px;align-items:center">
+              <div style="flex:1;height:40px;background:var(--sc);border-radius:20px;display:flex;align-items:center;padding:0 6px 0 14px;gap:8px">
+                <span class="ms" style="font-size:17px;color:var(--onsv)">search</span>
+                <input id="search-chats" value="{{ chatQ }}" onChange="{{ onChatQ }}" placeholder="Search chats" style="flex:1;border:none;background:transparent;outline:none;font-size:13px;min-width:0">
+                <button onClick="{{ rxChat }}" title="Regex builder" style="width:28px;height:28px;border:none;border-radius:14px;background:{{ rxChatBg }};color:{{ rxChatFg }};cursor:pointer;font-family:'Roboto Mono';font-size:11px">.*</button>
+              </div>
+            </div>
+          </div>
+          <div style="padding:6px 12px;display:flex;flex-direction:column;gap:2px">
+            <sc-for list="{{ navVMs }}" as="nv" hint-placeholder-count="5">
+              <button onClick="{{ nv.go }}" style="height:38px;border:none;border-radius:19px;background:transparent;color:var(--onsv);display:flex;align-items:center;gap:12px;padding:0 14px;cursor:pointer;font-size:13.5px;text-align:left" style-hover="background:var(--sc)"><span class="ms" style="font-size:19px">{{ nv.icon }}</span>{{ nv.label }}</button>
+            </sc-for>
+          </div>
+          <div style="flex:1;overflow-y:auto;padding:4px 12px 8px">
+            <div style="font-size:11px;font-weight:600;color:var(--onsv);letter-spacing:.6px;padding:10px 14px 6px">CHATS</div>
+            <sc-if value="{{ noChats }}" hint-placeholder-val="{{ true }}"><div style="padding:8px 14px;font-size:12.5px;color:var(--onsv);line-height:1.5">No chats yet. Start one with New chat.</div></sc-if>
+            <sc-for list="{{ chatVMs }}" as="c" hint-placeholder-count="0">
+              <div onClick="{{ c.open }}" style="height:38px;display:flex;align-items:center;gap:8px;padding:0 8px 0 14px;border-radius:19px;background:{{ c.bg }};cursor:pointer;font-size:13px" style-hover="background:var(--sc)">
+                <span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:{{ c.fg }}">{{ c.title }}</span>
+                <button onClick="{{ c.del }}" title="Delete chat" style="width:26px;height:26px;border:none;border-radius:13px;background:transparent;color:var(--onsv);cursor:pointer;flex:none" style-hover="background:var(--schighest)"><span class="ms" style="font-size:15px">delete</span></button>
+              </div>
+            </sc-for>
+          </div>
+          <div style="padding:10px;border-top:1px solid var(--outv)">
+            <button id="user-menu-btn" onClick="{{ toggleUserMenu }}" style="width:100%;height:48px;border:none;border-radius:24px;background:transparent;display:flex;align-items:center;gap:10px;padding:0 10px;cursor:pointer;color:var(--ons)" style-hover="background:var(--sc)">
+              <div style="width:32px;height:32px;border-radius:16px;background:var(--terc);color:var(--onterc);display:flex;align-items:center;justify-content:center;font-weight:600;font-size:14px">{{ userInitial }}</div>
+              <div style="flex:1;text-align:left"><div style="font-size:13.5px;font-weight:600">{{ userName }}</div><div style="font-size:11px;color:var(--onsv)">Admin</div></div>
+              <span class="ms" style="font-size:18px;color:var(--onsv)">more_vert</span>
+            </button>
+          </div>
+        </div>
+        <div style="flex:1;display:flex;flex-direction:column;min-width:0">
+          <div style="height:56px;flex:none;display:flex;align-items:center;padding:0 16px;gap:10px">
+            <select value="{{ curModel }}" onChange="{{ onModelSel }}" data-lock="Model selector" style="height:40px;border-radius:12px;border:1px solid var(--outv);background:var(--sclow);padding:0 10px;font-size:13.5px;font-weight:600;outline-color:var(--p);cursor:pointer;max-width:280px">
+              <sc-for list="{{ modelOpts }}" as="m" hint-placeholder-count="2"><option value="{{ m.v }}">{{ m.label }}</option></sc-for>
+            </select>
+            <div style="font-size:11.5px;color:var(--onsv);background:var(--sc);border-radius:8px;padding:4px 8px">simulated runtime</div>
+            <div style="flex:1"></div>
+          </div>
+          <div style="flex:1;overflow-y:auto;padding:0 16px">
+            <div style="max-width:780px;margin:0 auto;display:flex;flex-direction:column;gap:18px;padding-bottom:24px">
+              <sc-if value="{{ chatEmpty }}" hint-placeholder-val="{{ true }}">
+                <div style="padding-top:14vh;display:flex;flex-direction:column;align-items:center;gap:12px;text-align:center">
+                  <div style="font-size:34px;font-weight:600;background:linear-gradient(90deg,var(--p),var(--ter));-webkit-background-clip:text;background-clip:text;color:transparent">{{ greeting }}</div>
+                  <div style="font-size:14.5px;color:var(--onsv);max-width:440px;line-height:1.6">This is a fresh local install. Pick a model above and send a message — or press Ctrl+Shift+F to teleport to any feature.</div>
+                </div>
+              </sc-if>
+              <sc-for list="{{ msgVMs }}" as="m" hint-placeholder-count="0">
+                <div style="display:flex;gap:12px;animation:owfade .25s ease">
+                  <div style="width:32px;height:32px;flex:none;border-radius:16px;background:{{ m.avBg }};color:{{ m.avFg }};display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:600"><sc-if value="{{ m.isAi }}" hint-placeholder-val="{{ false }}"><span class="ms" style="font-size:18px">smart_toy</span></sc-if><sc-if value="{{ m.isUser }}" hint-placeholder-val="{{ true }}">{{ m.initial }}</sc-if></div>
+                  <div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:6px">
+                    <div style="font-size:12px;font-weight:600;color:var(--onsv)">{{ m.who }}</div>
+                    <sc-for list="{{ m.parts }}" as="p" hint-placeholder-count="1">
+                      <sc-if value="{{ p.isCode }}" hint-placeholder-val="{{ false }}"><pre style="margin:0;background:var(--sc);border-radius:12px;padding:12px 14px;font-family:'Roboto Mono';font-size:12.5px;overflow-x:auto;line-height:1.55">{{ p.text }}</pre></sc-if>
+                      <sc-if value="{{ p.isText }}" hint-placeholder-val="{{ true }}"><div style="font-size:14.5px;line-height:1.65;white-space:pre-wrap;overflow-wrap:break-word">{{ p.text }}</div></sc-if>
+                    </sc-for>
+                    <sc-if value="{{ m.streaming }}" hint-placeholder-val="{{ false }}"><div style="width:34px;height:8px;border-radius:4px;background:var(--pc);animation:owpulse 1s infinite"></div></sc-if>
+                    <div style="display:flex;gap:4px">
+                      <button onClick="{{ m.copy }}" title="Copy" style="width:28px;height:28px;border:none;border-radius:14px;background:transparent;color:var(--onsv);cursor:pointer" style-hover="background:var(--sc)"><span class="ms" style="font-size:15px">content_copy</span></button>
+                      <button onClick="{{ m.del }}" title="Delete message" style="width:28px;height:28px;border:none;border-radius:14px;background:transparent;color:var(--onsv);cursor:pointer" style-hover="background:var(--sc)"><span class="ms" style="font-size:15px">delete</span></button>
+                    </div>
+                  </div>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+          <div style="flex:none;padding:8px 16px 14px">
+            <div style="max-width:780px;margin:0 auto;background:var(--sc);border-radius:28px;padding:8px 8px 8px 6px;display:flex;align-items:flex-end;gap:4px;border:1px solid var(--outv)" data-lock="Message input">
+              <button onClick="{{ pickAttach }}" title="Attach file (opens in File Converter)" style="width:40px;height:40px;border:none;border-radius:20px;background:transparent;color:var(--onsv);cursor:pointer;flex:none" style-hover="background:var(--schigh)"><span class="ms" style="font-size:20px">add_circle</span></button>
+              <textarea id="chat-input" value="{{ draft }}" onChange="{{ onDraft }}" onKeyDown="{{ onDraftKey }}" placeholder="Send a message" rows="1" style="flex:1;border:none;background:transparent;outline:none;resize:none;font-size:14.5px;line-height:1.5;padding:10px 4px;max-height:160px;min-width:0"></textarea>
+              <sc-if value="{{ notStreaming }}" hint-placeholder-val="{{ true }}"><button onClick="{{ sendMsg }}" title="Send" style="width:40px;height:40px;border:none;border-radius:20px;background:var(--p);color:var(--onp);cursor:pointer;flex:none;display:flex;align-items:center;justify-content:center"><span class="ms" style="font-size:19px">arrow_upward</span></button></sc-if>
+              <sc-if value="{{ isStreaming }}" hint-placeholder-val="{{ false }}"><button onClick="{{ stopStream }}" title="Stop" style="width:40px;height:40px;border:none;border-radius:20px;background:var(--errc);color:var(--onerrc);cursor:pointer;flex:none;display:flex;align-items:center;justify-content:center"><span class="ms msf" style="font-size:17px">stop</span></button></sc-if>
+            </div>
+            <div style="max-width:780px;margin:6px auto 0;text-align:center;font-size:11px;color:var(--onsv)">Simulated model output — connect a real Ollama daemon in the packaged app for live generation.</div>
+          </div>
+        </div>
+      </div>
+    </sc-if>
+    <sc-if value="{{ pg.settings }}" hint-placeholder-val="{{ false }}">
+      <div data-screen-label="Settings" style="flex:1;display:flex;min-height:0">
+        <div style="width:260px;flex:none;background:var(--sclow);border-right:1px solid var(--outv);padding:14px 10px;display:flex;flex-direction:column;gap:2px;overflow-y:auto">
+          <div style="font-size:19px;font-weight:600;padding:4px 12px 12px">Settings</div>
+          <div style="height:40px;background:var(--sc);border-radius:20px;display:flex;align-items:center;padding:0 6px 0 12px;gap:8px;margin:0 4px 10px">
+            <span class="ms" style="font-size:16px;color:var(--onsv)">search</span>
+            <input id="search-settings" value="{{ setQ }}" onChange="{{ onSetQ }}" placeholder="Search settings" style="flex:1;border:none;background:transparent;outline:none;font-size:12.5px;min-width:0">
+            <button onClick="{{ rxSet }}" title="Regex builder" style="width:26px;height:26px;border:none;border-radius:13px;background:{{ rxSetBg }};color:{{ rxSetFg }};cursor:pointer;font-family:'Roboto Mono';font-size:10.5px">.*</button>
+          </div>
+          <sc-for list="{{ setNavVMs }}" as="s" hint-placeholder-count="7">
+            <button onClick="{{ s.go }}" style="height:40px;border:none;border-radius:20px;background:{{ s.bg }};color:{{ s.fg }};display:flex;align-items:center;gap:12px;padding:0 14px;cursor:pointer;font-size:13.5px;text-align:left" style-hover="background:var(--sc)"><span class="ms" style="font-size:19px">{{ s.icon }}</span>{{ s.label }}</button>
+          </sc-for>
+        </div>
+        <div style="flex:1;overflow-y:auto;padding:24px 32px">
+          <div style="max-width:640px;display:flex;flex-direction:column;gap:22px">
+            <sc-if value="{{ setSec.general }}" hint-placeholder-val="{{ true }}">
+              <div style="font-size:22px;font-weight:600">General</div>
+              <div style="background:var(--sclow);border-radius:20px;padding:18px;display:flex;flex-direction:column;gap:16px">
+                <div style="display:flex;align-items:center;gap:12px"><div style="flex:1"><div style="font-size:14px;font-weight:600">Theme</div><div style="font-size:12px;color:var(--onsv)">Applies live; also schedulable</div></div>
+                  <div style="display:flex;border:1px solid var(--outv);border-radius:20px;overflow:hidden">
+                    <button onClick="{{ setThemeLight }}" style="height:38px;border:none;background:{{ thLightBg }};color:{{ thLightFg }};padding:0 16px;cursor:pointer;font-size:13px;font-weight:600">Light</button>
+                    <button onClick="{{ setThemeDark }}" style="height:38px;border:none;background:{{ thDarkBg }};color:{{ thDarkFg }};padding:0 16px;cursor:pointer;font-size:13px;font-weight:600">Dark</button>
+                  </div>
+                </div>
+                <sc-if value="{{ notSchool }}" hint-placeholder-val="{{ true }}">
+                  <div style="display:flex;align-items:center;gap:12px"><div style="flex:1"><div style="font-size:14px;font-weight:600">Language mode</div><div style="font-size:12px;color:var(--onsv)">Cantonese and bilingual copy is pending; controls are wired</div></div>
+                    <select id="set-language" value="{{ langMode }}" onChange="{{ onLangMode }}" style="height:38px;border-radius:10px;border:1px solid var(--outv);background:var(--sc);padding:0 8px;font-size:13px"><option value="English">English</option><option value="Cantonese">Cantonese 廣東話</option><option value="Bilingual">Bilingual 雙語</option></select>
+                  </div>
+                  <div style="display:flex;align-items:center;gap:12px"><div style="flex:1"><div style="font-size:14px;font-weight:600">Funny level — English</div><div style="font-size:12px;color:var(--onsv)">1 fully serious · 5 maximum playfulness (currently {{ funnyEn }})</div></div>
+                    <input id="set-funny-en" type="range" min="1" max="5" step="1" value="{{ funnyEn }}" onChange="{{ onFunnyEn }}" style="accent-color:var(--p);width:160px"></div>
+                  <div style="display:flex;align-items:center;gap:12px"><div style="flex:1"><div style="font-size:14px;font-weight:600">Funny level — Cantonese</div><div style="font-size:12px;color:var(--onsv)">Independent of English (currently {{ funnyZh }})</div></div>
+                    <input type="range" min="1" max="5" step="1" value="{{ funnyZh }}" onChange="{{ onFunnyZh }}" style="accent-color:var(--p);width:160px"></div>
+                </sc-if>
+                <div style="display:flex;align-items:center;gap:12px"><div style="flex:1"><div style="font-size:14px;font-weight:600">Show emojis in dialogs and message boxes</div><div style="font-size:12px;color:var(--onsv)">Never in buttons or labels</div></div>
+                  <button id="set-emoji" onClick="{{ toggleEmoji }}" role="switch" aria-checked="{{ emojiOnStr }}" style="width:52px;height:32px;border:none;border-radius:16px;background:{{ swEmojiBg }};cursor:pointer;position:relative"><span style="position:absolute;top:4px;left:{{ swEmojiX }}px;width:24px;height:24px;border-radius:12px;background:{{ swEmojiKnob }};transition:left .15s"></span></button>
+                </div>
+              </div>
+            </sc-if>
+            <sc-if value="{{ setSec.personal }}" hint-placeholder-val="{{ false }}">
+              <div style="font-size:22px;font-weight:600">Personalization</div>
+              <div style="background:var(--sclow);border-radius:20px;padding:18px;display:flex;flex-direction:column;gap:14px" data-lock="Vocabulary upload">
+                <div style="display:flex;align-items:center;gap:8px"><span class="ms" style="font-size:20px;color:var(--p)">upload_file</span><div style="font-size:15px;font-weight:600;flex:1">Personal vocabulary</div><div style="font-size:11.5px;color:var(--onsv)">local JSON, never synced</div></div>
+                <div style="font-size:12.5px;color:var(--onsv);line-height:1.55">{{ vocabStatus }}</div>
+                <div style="display:flex;gap:8px;flex-wrap:wrap">
+                  <label id="vocab-upload" tabindex="0" style="height:40px;border-radius:20px;background:var(--pc);color:var(--onpc);display:inline-flex;align-items:center;gap:8px;padding:0 16px;cursor:pointer;font-size:13px;font-weight:600"><span class="ms" style="font-size:17px">attach_file</span>{{ vocabCta }}<input type="file" accept=".json,application/json" onChange="{{ onVocabFile }}" style="display:none"></label>
+                  <sc-if value="{{ vocabLoaded }}" hint-placeholder-val="{{ false }}"><button onClick="{{ vocabClear }}" style="height:40px;border:1px solid var(--outv);border-radius:20px;background:transparent;color:var(--ons);padding:0 16px;cursor:pointer;font-size:13px;font-weight:600">Clear / reset</button></sc-if>
+                </div>
+              </div>
+              <div style="background:var(--sclow);border-radius:20px;padding:18px;display:flex;flex-direction:column;gap:14px" data-lock="Logo customization">
+                <div style="display:flex;align-items:center;gap:8px"><span class="ms" style="font-size:20px;color:var(--p)">brush</span><div style="font-size:15px;font-weight:600;flex:1">App logo</div><div style="font-size:11.5px;color:var(--onsv)">presentation only — never changes app identity</div></div>
+                <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+                  <sc-for list="{{ logoPresetVMs }}" as="lp" hint-placeholder-count="4">
+                    <button onClick="{{ lp.pick }}" title="{{ lp.name }}" style="width:52px;height:52px;border:2px solid {{ lp.bd }};border-radius:16px;background:var(--p);color:var(--onp);cursor:pointer;display:flex;align-items:center;justify-content:center"><span class="ms msf" style="font-size:26px">{{ lp.glyph }}</span></button>
+                  </sc-for>
+                  <label tabindex="0" style="width:52px;height:52px;border:2px dashed var(--outv);border-radius:16px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--onsv)" title="Upload custom logo"><span class="ms" style="font-size:22px">upload</span><input type="file" accept="image/*" onChange="{{ onLogoFile }}" style="display:none"></label>
+                </div>
+                <div style="display:flex;gap:14px;align-items:center;flex-wrap:wrap;font-size:12.5px">
+                  <label style="display:flex;gap:6px;align-items:center">Fit
+                    <select value="{{ logoFitSel }}" onChange="{{ onLogoFitSel }}" style="height:34px;border-radius:8px;border:1px solid var(--outv);background:var(--sc);padding:0 6px;font-size:12.5px"><option value="cover">Cover</option><option value="contain">Contain</option></select></label>
+                  <label style="display:flex;gap:6px;align-items:center">Background
+                    <select value="{{ logoBgSel }}" onChange="{{ onLogoBgSel }}" style="height:34px;border-radius:8px;border:1px solid var(--outv);background:var(--sc);padding:0 6px;font-size:12.5px"><option value="var(--p)">Primary</option><option value="var(--ter)">Tertiary</option><option value="var(--invs)">Ink</option><option value="transparent">None</option></select></label>
+                  <button onClick="{{ logoReset }}" style="height:34px;border:1px solid var(--outv);border-radius:17px;background:transparent;color:var(--ons);padding:0 12px;cursor:pointer;font-size:12.5px;font-weight:600">Reset to shipped mark</button>
+                  <div style="color:var(--onsv)">{{ logoState }}</div>
+                </div>
+              </div>
+            </sc-if>
+            <sc-if value="{{ setSec.narrator }}" hint-placeholder-val="{{ false }}">
+              <div style="font-size:22px;font-weight:600">TTS narrator</div>
+              <div style="background:var(--sclow);border-radius:20px;padding:18px;display:flex;flex-direction:column;gap:16px">
+                <div style="display:flex;align-items:center;gap:12px"><div style="flex:1"><div style="font-size:14px;font-weight:600">Narrate app events</div><div style="font-size:12px;color:var(--onsv)">Off by default; uses your system voices</div></div>
+                  <button id="set-narrator" onClick="{{ toggleNarrator }}" role="switch" aria-checked="{{ narrOnStr }}" style="width:52px;height:32px;border:none;border-radius:16px;background:{{ swNarrBg }};cursor:pointer;position:relative"><span style="position:absolute;top:4px;left:{{ swNarrX }}px;width:24px;height:24px;border-radius:12px;background:{{ swNarrKnob }};transition:left .15s"></span></button>
+                </div>
+                <div style="display:flex;align-items:center;gap:12px"><div style="flex:1"><div style="font-size:14px;font-weight:600">Voice</div><div style="font-size:12px;color:var(--onsv)">{{ voiceCount }} installed voices found</div></div>
+                  <select value="{{ narrVoice }}" onChange="{{ onNarrVoice }}" style="height:38px;border-radius:10px;border:1px solid var(--outv);background:var(--sc);padding:0 8px;font-size:12.5px;max-width:260px">
+                    <sc-for list="{{ voiceVMs }}" as="v" hint-placeholder-count="3"><option value="{{ v.uri }}">{{ v.label }}</option></sc-for>
+                  </select>
+                </div>
+                <button onClick="{{ testNarrator }}" style="align-self:flex-start;height:38px;border:none;border-radius:19px;background:var(--pc);color:var(--onpc);padding:0 16px;cursor:pointer;font-size:13px;font-weight:600">Speak a test line</button>
+              </div>
+            </sc-if>
+            <sc-if value="{{ setSec.schedule }}" hint-placeholder-val="{{ false }}">
+              <div style="font-size:22px;font-weight:600">Scheduled settings</div>
+              <div style="background:var(--sclow);border-radius:20px;padding:18px;display:flex;flex-direction:column;gap:12px">
+                <div style="font-size:12.5px;color:var(--onsv)">Apply a setting automatically at a time of day, every day.</div>
+                <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+                  <input type="time" value="{{ schedTime }}" onChange="{{ onSchedTime }}" style="height:40px;border-radius:10px;border:1px solid var(--outv);background:var(--sc);padding:0 10px;font-size:13px">
+                  <select value="{{ schedKey }}" onChange="{{ onSchedKey }}" style="height:40px;border-radius:10px;border:1px solid var(--outv);background:var(--sc);padding:0 8px;font-size:13px"><option value="theme">Theme</option><option value="language">Language mode</option><option value="narrator">Narrator</option></select>
+                  <select value="{{ schedValue }}" onChange="{{ onSchedValue }}" style="height:40px;border-radius:10px;border:1px solid var(--outv);background:var(--sc);padding:0 8px;font-size:13px">
+                    <sc-for list="{{ schedValOpts }}" as="o" hint-placeholder-count="2"><option value="{{ o.v }}">{{ o.label }}</option></sc-for>
+                  </select>
+                  <button id="sched-add" onClick="{{ schedAdd }}" style="height:40px;border:none;border-radius:20px;background:var(--p);color:var(--onp);padding:0 16px;cursor:pointer;font-size:13px;font-weight:600">Add schedule</button>
+                </div>
+                <sc-for list="{{ schedVMs }}" as="s" hint-placeholder-count="0">
+                  <div style="display:flex;align-items:center;gap:10px;background:var(--sc);border-radius:12px;padding:10px 14px;font-size:13px">
+                    <span class="ms" style="font-size:17px;color:var(--p)">schedule</span><span style="font-family:'Roboto Mono'">{{ s.time }}</span><span style="flex:1">{{ s.desc }}</span><span style="font-size:11px;color:var(--onsv)">{{ s.fired }}</span>
+                    <button onClick="{{ s.del }}" style="width:28px;height:28px;border:none;border-radius:14px;background:transparent;color:var(--onsv);cursor:pointer"><span class="ms" style="font-size:16px">delete</span></button>
+                  </div>
+                </sc-for>
+                <sc-if value="{{ noScheds }}" hint-placeholder-val="{{ true }}"><div style="font-size:12.5px;color:var(--onsv)">No schedules yet.</div></sc-if>
+              </div>
+            </sc-if>
+            <sc-if value="{{ setSec.school }}" hint-placeholder-val="{{ false }}">
+              <div style="font-size:22px;font-weight:600">{{ schoolName }}</div>
+              <div style="background:var(--sclow);border-radius:20px;padding:18px;display:flex;flex-direction:column;gap:14px">
+                <div style="font-size:12.5px;color:var(--onsv);line-height:1.6">While on, playful language, funny levels, personal vocabulary, and dim-sum surfaces behave as if not installed. Turning it off needs the PIN. This is a user-experience lock, not a security boundary — deleting this app's local data resets it.</div>
+                <div style="display:flex;align-items:center;gap:12px"><div style="flex:1;font-size:14px;font-weight:600">Rename this mode</div>
+                  <input value="{{ schoolNameDraft }}" onChange="{{ onSchoolName }}" onBlur="{{ saveSchoolName }}" style="height:38px;border-radius:10px;border:1px solid var(--outv);background:var(--sc);padding:0 10px;font-size:13px;width:200px"></div>
+                <div style="display:flex;align-items:center;gap:12px"><div style="flex:1"><div style="font-size:14px;font-weight:600">{{ schoolToggleLabel }}</div><div style="font-size:12px;color:var(--onsv)">{{ schoolHint }}</div></div>
+                  <button id="set-school" onClick="{{ toggleSchool }}" role="switch" aria-checked="{{ schoolOnStr }}" style="width:52px;height:32px;border:none;border-radius:16px;background:{{ swSchoolBg }};cursor:pointer;position:relative"><span style="position:absolute;top:4px;left:{{ swSchoolX }}px;width:24px;height:24px;border-radius:12px;background:{{ swSchoolKnob }};transition:left .15s"></span></button>
+                </div>
+              </div>
+            </sc-if>
+            <sc-if value="{{ setSec.data }}" hint-placeholder-val="{{ false }}">
+              <div style="font-size:22px;font-weight:600">Data controls</div>
+              <div style="background:var(--sclow);border-radius:20px;padding:18px;display:flex;flex-direction:column;gap:12px">
+                <div style="font-size:12.5px;color:var(--onsv)">Everything lives in this browser's local storage under the <span style="font-family:'Roboto Mono'">owmd3.</span> prefix.</div>
+                <div style="display:flex;gap:10px;flex-wrap:wrap">
+                  <button onClick="{{ exportData }}" style="height:40px;border:none;border-radius:20px;background:var(--pc);color:var(--onpc);padding:0 16px;cursor:pointer;font-size:13px;font-weight:600;display:flex;align-items:center;gap:8px"><span class="ms" style="font-size:17px">download</span>Export all data (JSON)</button>
+                  <button id="wipe-data" onClick="{{ wipeData }}" style="height:40px;border:1px solid var(--err);border-radius:20px;background:transparent;color:var(--err);padding:0 16px;cursor:pointer;font-size:13px;font-weight:600;display:flex;align-items:center;gap:8px"><span class="ms" style="font-size:17px">delete_forever</span>Wipe everything</button>
+                </div>
+              </div>
+            </sc-if>
+            <sc-if value="{{ setSec.about }}" hint-placeholder-val="{{ false }}">
+              <div style="font-size:22px;font-weight:600">About</div>
+              <div style="background:var(--sclow);border-radius:20px;padding:18px;display:flex;flex-direction:column;gap:10px;font-size:13.5px;line-height:1.6">
+                <div><b>Open WebUI — Material 3 desktop edition</b> · v1.0.0</div>
+                <div style="color:var(--onsv)">A ground-up Material Design 3 Expressive rewrite of the Open WebUI surface, packaged as a local-first desktop app, with the full universal feature contract wired in. This build is a design prototype: the Ollama runtime is simulated and all state is local.</div>
+                <div><a href="#changelog" onClick="{{ goChangelog }}">Open the changelog (every released version)</a></div>
+              </div>
+            </sc-if>
+          </div>
+        </div>
+      </div>
+    </sc-if>
+    <sc-if value="{{ pg.ollama }}" hint-placeholder-val="{{ false }}">
+      <div data-screen-label="Ollama manager" style="flex:1;display:flex;flex-direction:column;min-width:0;overflow-y:auto">
+        <div style="max-width:920px;width:100%;margin:0 auto;padding:24px 28px;display:flex;flex-direction:column;gap:18px">
+          <div style="display:flex;align-items:center;gap:12px">
+            <div style="font-size:22px;font-weight:600;flex:1">Ollama suite manager</div>
+            <div style="display:flex;background:var(--sc);border-radius:22px;padding:4px;gap:2px">
+              <sc-for list="{{ olTabVMs }}" as="t" hint-placeholder-count="2"><button onClick="{{ t.go }}" style="height:36px;border:none;border-radius:18px;background:{{ t.bg }};color:{{ t.fg }};padding:0 16px;cursor:pointer;font-size:13px;font-weight:600">{{ t.label }}</button></sc-for>
+            </div>
+          </div>
+          <sc-if value="{{ olOverview }}" hint-placeholder-val="{{ true }}">
+            <div style="display:flex;gap:14px;flex-wrap:wrap">
+              <div style="flex:1;min-width:240px;background:var(--sclow);border-radius:20px;padding:18px;display:flex;flex-direction:column;gap:8px">
+                <div style="display:flex;align-items:center;gap:8px"><span style="width:10px;height:10px;border-radius:5px;background:#4a9d5f"></span><div style="font-size:14px;font-weight:600">Daemon running (simulated)</div></div>
+                <div style="font-size:12.5px;color:var(--onsv);line-height:1.6;font-family:'Roboto Mono'">{{ olUrl }}<br>version 0.9.3 · api v1</div>
+                <div style="font-size:11.5px;color:var(--onsv)">This prototype simulates the documented local HTTP API. The packaged app talks to your real daemon at this address.</div>
+              </div>
+              <div style="flex:1;min-width:240px;background:var(--sclow);border-radius:20px;padding:18px;display:flex;flex-direction:column;gap:8px">
+                <div style="font-size:14px;font-weight:600">This machine (simulated probe)</div>
+                <div style="font-size:12.5px;color:var(--onsv);line-height:1.6">16 GB RAM · no dedicated GPU detected<br>Fit verdicts in the Model Store use these numbers.</div>
+              </div>
+            </div>
+            <div style="font-size:15px;font-weight:600;margin-top:4px">Installed models ({{ olCount }})</div>
+            <sc-for list="{{ olInstVMs }}" as="m" hint-placeholder-count="2">
+              <div style="display:flex;align-items:center;gap:12px;background:var(--sclow);border-radius:16px;padding:14px 18px">
+                <span class="ms" style="font-size:22px;color:var(--p)">deployed_code</span>
+                <div style="flex:1"><div style="font-size:14px;font-weight:600;font-family:'Roboto Mono'">{{ m.full }}</div><div style="font-size:12px;color:var(--onsv)">{{ m.meta }}</div></div>
+                <button onClick="{{ m.chat }}" style="height:36px;border:none;border-radius:18px;background:var(--pc);color:var(--onpc);padding:0 14px;cursor:pointer;font-size:12.5px;font-weight:600">Chat</button>
+                <button onClick="{{ m.del }}" title="Delete model" style="width:34px;height:34px;border:none;border-radius:17px;background:transparent;color:var(--onsv);cursor:pointer" style-hover="background:var(--sc)"><span class="ms" style="font-size:18px">delete</span></button>
+              </div>
+            </sc-for>
+            <sc-if value="{{ olPullsVisible }}" hint-placeholder-val="{{ false }}">
+              <div style="font-size:15px;font-weight:600;margin-top:4px">Pulls in progress</div>
+              <sc-for list="{{ olPullVMs }}" as="p" hint-placeholder-count="1">
+                <div style="background:var(--sclow);border-radius:16px;padding:14px 18px;display:flex;flex-direction:column;gap:8px">
+                  <div style="display:flex;align-items:center;gap:10px"><span class="ms" style="font-size:18px;color:var(--p);animation:owspin 1.2s linear infinite">progress_activity</span><div style="flex:1;font-size:13.5px;font-weight:600;font-family:'Roboto Mono'">{{ p.full }}</div><div style="font-size:12px;color:var(--onsv)">{{ p.pct }}%</div>
+                    <button onClick="{{ p.cancel }}" style="height:30px;border:none;border-radius:15px;background:transparent;color:var(--err);padding:0 10px;cursor:pointer;font-size:12px;font-weight:600">Cancel</button></div>
+                  <div style="height:6px;border-radius:3px;background:var(--schighest);overflow:hidden"><div style="height:100%;width:{{ p.pct }}%;background:var(--p);border-radius:3px;transition:width .3s"></div></div>
+                </div>
+              </sc-for>
+            </sc-if>
+          </sc-if>
+          <sc-if value="{{ olStore }}" hint-placeholder-val="{{ false }}">
+            <div style="display:flex;gap:8px;align-items:center">
+              <div style="flex:1;height:44px;background:var(--sc);border-radius:22px;display:flex;align-items:center;padding:0 8px 0 16px;gap:8px">
+                <span class="ms" style="font-size:18px;color:var(--onsv)">search</span>
+                <input id="search-store" value="{{ storeQ }}" onChange="{{ onStoreQ }}" placeholder="Search the Model Store" style="flex:1;border:none;background:transparent;outline:none;font-size:13.5px;min-width:0">
+                <button onClick="{{ rxStore }}" title="Regex builder" style="width:30px;height:30px;border:none;border-radius:15px;background:{{ rxStoreBg }};color:{{ rxStoreFg }};cursor:pointer;font-family:'Roboto Mono';font-size:11px">.*</button>
+              </div>
+              <div style="font-size:11px;color:var(--onsv);text-align:right;line-height:1.5">Store revision 2026-08-19<br>(simulated snapshot)</div>
+            </div>
+            <sc-for list="{{ storeVMs }}" as="m" hint-placeholder-count="4">
+              <div style="background:var(--sclow);border-radius:20px;padding:16px 18px;display:flex;flex-direction:column;gap:10px">
+                <div style="display:flex;align-items:baseline;gap:10px"><div style="font-size:15px;font-weight:600;font-family:'Roboto Mono'">{{ m.name }}</div><div style="font-size:11.5px;color:var(--onsv)">{{ m.meta }}</div><div style="flex:1"></div>
+                  <sc-for list="{{ m.caps }}" as="c" hint-placeholder-count="0"><span style="font-size:10.5px;font-weight:600;color:var(--onterc);background:var(--terc);border-radius:6px;padding:2px 7px">{{ c.label }}</span></sc-for>
+                </div>
+                <div style="font-size:12.5px;color:var(--onsv);line-height:1.5">{{ m.desc }}</div>
+                <div style="display:flex;gap:8px;flex-wrap:wrap">
+                  <sc-for list="{{ m.tags }}" as="t" hint-placeholder-count="2">
+                    <button onClick="{{ t.act }}" title="{{ t.why }}" disabled="{{ t.disabled }}" style="height:34px;border:1px solid var(--outv);border-radius:17px;background:{{ t.bg }};color:{{ t.fg }};padding:0 12px;cursor:pointer;font-size:12px;display:flex;align-items:center;gap:7px">
+                      <span style="font-family:'Roboto Mono';font-weight:600;white-space:nowrap;flex:none">{{ t.tag }}</span><span style="color:var(--onsv);white-space:nowrap;flex:none">{{ t.size }}</span>
+                      <span style="font-size:10px;font-weight:700;color:{{ t.fitFg }};background:{{ t.fitBg }};border-radius:5px;padding:1px 5px;white-space:nowrap;flex:none">{{ t.fit }}</span>
+                      <span class="ms" style="font-size:14px">{{ t.icon }}</span>
+                    </button>
+                  </sc-for>
+                </div>
+              </div>
+            </sc-for>
+            <sc-if value="{{ storeEmpty }}" hint-placeholder-val="{{ false }}"><div style="padding:20px;text-align:center;color:var(--onsv);font-size:13px">No models match.</div></sc-if>
+          </sc-if>
+          <sc-if value="{{ olChat }}" hint-placeholder-val="{{ false }}">
+            <div style="background:var(--sclow);border-radius:20px;padding:16px;display:flex;flex-direction:column;gap:12px;min-height:380px">
+              <div style="display:flex;align-items:center;gap:10px"><div style="font-size:14px;font-weight:600">Quick chat against an installed model</div><div style="flex:1"></div>
+                <select value="{{ olcModel }}" onChange="{{ onOlcModel }}" style="height:36px;border-radius:10px;border:1px solid var(--outv);background:var(--sc);padding:0 8px;font-size:12.5px;font-family:'Roboto Mono'"><sc-for list="{{ olcModelOpts }}" as="o" hint-placeholder-count="2"><option value="{{ o.v }}">{{ o.v }}</option></sc-for></select>
+              </div>
+              <div style="flex:1;display:flex;flex-direction:column;gap:10px">
+                <sc-if value="{{ olcEmpty }}" hint-placeholder-val="{{ true }}"><div style="font-size:12.5px;color:var(--onsv)">Streams token-by-token from the simulated runtime.</div></sc-if>
+                <sc-for list="{{ olcMsgVMs }}" as="m" hint-placeholder-count="0">
+                  <div style="font-size:13px;line-height:1.6;white-space:pre-wrap;background:{{ m.bg }};border-radius:12px;padding:10px 14px;align-self:{{ m.align }};max-width:85%">{{ m.text }}</div>
+                </sc-for>
+              </div>
+              <div style="display:flex;gap:8px">
+                <input value="{{ olcDraft }}" onChange="{{ onOlcDraft }}" onKeyDown="{{ onOlcKey }}" placeholder="Message the model" style="flex:1;height:44px;border-radius:22px;border:1px solid var(--outv);background:var(--sc);padding:0 16px;font-size:13.5px;outline-color:var(--p)">
+                <button onClick="{{ olcSend }}" style="width:44px;height:44px;border:none;border-radius:22px;background:var(--p);color:var(--onp);cursor:pointer"><span class="ms" style="font-size:19px">arrow_upward</span></button>
+              </div>
+            </div>
+          </sc-if>
+        </div>
+      </div>
+    </sc-if>
+    <sc-if value="{{ pg.converter }}" hint-placeholder-val="{{ false }}">
+      <div data-screen-label="File converter" style="flex:1;overflow-y:auto">
+        <div style="max-width:920px;margin:0 auto;padding:24px 28px;display:flex;flex-direction:column;gap:18px">
+          <div style="font-size:22px;font-weight:600">File converter</div>
+          <label tabindex="0" style="border:2px dashed var(--outv);border-radius:20px;padding:26px;display:flex;flex-direction:column;align-items:center;gap:8px;cursor:pointer;background:var(--sclow)" style-hover="border-color:var(--p)">
+            <span class="ms" style="font-size:32px;color:var(--p)">upload_file</span>
+            <div style="font-size:14px;font-weight:600">{{ convCta }}</div>
+            <div style="font-size:12px;color:var(--onsv)">Type is detected from the file's bytes, not its extension.</div>
+            <input type="file" onChange="{{ onConvFile }}" style="display:none">
+          </label>
+          <sc-if value="{{ convHasFile }}" hint-placeholder-val="{{ false }}">
+            <div style="background:var(--sclow);border-radius:20px;padding:18px;display:flex;gap:16px;align-items:flex-start">
+              <sc-if value="{{ convImgPrev }}" hint-placeholder-val="{{ false }}"><div role="img" aria-label="File preview" style="width:96px;height:96px;border-radius:14px;background-color:var(--sc);flex:none;background-image:{{ convBgImg }};background-size:cover;background-position:center"></div></sc-if>
+              <div style="flex:1;min-width:0">
+                <div style="font-size:14.5px;font-weight:600;font-family:'Roboto Mono';overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ convName }}</div>
+                <div style="font-size:12.5px;color:var(--onsv);margin-top:4px">Detected: <b>{{ convType }}</b> · {{ convSize }} · category {{ convCat }}</div>
+                <sc-if value="{{ convTextPrev }}" hint-placeholder-val="{{ false }}"><pre style="margin:8px 0 0;background:var(--sc);border-radius:10px;padding:10px;font-family:'Roboto Mono';font-size:11px;max-height:120px;overflow:auto;white-space:pre-wrap">{{ convTextPrev }}</pre></sc-if>
+              </div>
+            </div>
+          </sc-if>
+          <div style="display:flex;gap:8px;align-items:center">
+            <div style="flex:1;height:44px;background:var(--sc);border-radius:22px;display:flex;align-items:center;padding:0 8px 0 16px;gap:8px">
+              <span class="ms" style="font-size:18px;color:var(--onsv)">search</span>
+              <input id="search-adapters" value="{{ convQ }}" onChange="{{ onConvQ }}" placeholder="Search the adapter catalog" style="flex:1;border:none;background:transparent;outline:none;font-size:13.5px;min-width:0">
+              <button onClick="{{ rxConv }}" title="Regex builder" style="width:30px;height:30px;border:none;border-radius:15px;background:{{ rxConvBg }};color:{{ rxConvFg }};cursor:pointer;font-family:'Roboto Mono';font-size:11px">.*</button>
+            </div>
+          </div>
+          <div style="display:flex;gap:6px;flex-wrap:wrap">
+            <sc-for list="{{ convCatVMs }}" as="c" hint-placeholder-count="4"><button onClick="{{ c.go }}" style="height:32px;border:1px solid var(--outv);border-radius:16px;background:{{ c.bg }};color:{{ c.fg }};padding:0 12px;cursor:pointer;font-size:12px;font-weight:600">{{ c.label }}</button></sc-for>
+          </div>
+          <sc-for list="{{ adapterVMs }}" as="a" hint-placeholder-count="4">
+            <div style="display:flex;align-items:center;gap:12px;background:var(--sclow);border-radius:16px;padding:12px 16px;opacity:{{ a.opacity }}">
+              <span class="ms" style="font-size:20px;color:{{ a.iconColor }}">{{ a.icon }}</span>
+              <div style="flex:1;min-width:0"><div style="font-size:13.5px;font-weight:600">→ {{ a.to }}</div><div style="font-size:11.5px;color:var(--onsv)">{{ a.sub }}</div></div>
+              <div style="font-size:10.5px;font-weight:600;color:var(--onsv)">{{ a.cat }}</div>
+              <sc-if value="{{ a.canRun }}" hint-placeholder-val="{{ false }}"><button onClick="{{ a.run }}" style="height:34px;border:none;border-radius:17px;background:var(--p);color:var(--onp);padding:0 14px;cursor:pointer;font-size:12.5px;font-weight:600">Convert</button></sc-if>
+            </div>
+          </sc-for>
+          <sc-if value="{{ convResultsVisible }}" hint-placeholder-val="{{ false }}">
+            <div style="font-size:15px;font-weight:600">Result history</div>
+            <sc-for list="{{ convResultVMs }}" as="r" hint-placeholder-count="1">
+              <div style="display:flex;align-items:center;gap:12px;background:var(--sclow);border-radius:14px;padding:10px 16px;font-size:12.5px">
+                <span class="ms" style="font-size:18px;color:#4a9d5f">check_circle</span>
+                <div style="flex:1;font-family:'Roboto Mono';overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ r.name }}</div>
+                <div style="color:var(--onsv)">{{ r.meta }}</div>
+                <sc-if value="{{ r.url }}" hint-placeholder-val="{{ false }}"><a href="{{ r.url }}" download="{{ r.name }}" style="font-weight:600">Download</a></sc-if>
+              </div>
+            </sc-for>
+          </sc-if>
+        </div>
+      </div>
+    </sc-if>
+    <sc-if value="{{ pg.authenticator }}" hint-placeholder-val="{{ false }}">
+      <div data-screen-label="Authenticator" style="flex:1;overflow-y:auto">
+        <div style="max-width:720px;margin:0 auto;padding:24px 28px;display:flex;flex-direction:column;gap:18px">
+          <div style="font-size:22px;font-weight:600">Authenticator</div>
+          <div style="font-size:12.5px;color:var(--onsv);line-height:1.55">Keep TOTP secrets for any of your accounts; codes are computed locally with HMAC-SHA1 and never leave this machine. Try the RFC test secret <span style="font-family:'Roboto Mono'">JBSWY3DPEHPK3PXP</span>.</div>
+          <div style="background:var(--sclow);border-radius:20px;padding:16px;display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+            <input id="totp-label" value="{{ totpLabel }}" onChange="{{ onTotpLabel }}" placeholder="Label, e.g. GitHub — personal" style="flex:2;min-width:180px;height:42px;border-radius:10px;border:1px solid var(--outv);background:var(--sc);padding:0 12px;font-size:13px;outline-color:var(--p)">
+            <input value="{{ totpSecret }}" onChange="{{ onTotpSecret }}" onKeyDown="{{ onTotpKey }}" placeholder="Base32 secret" style="flex:2;min-width:180px;height:42px;border-radius:10px;border:1px solid var(--outv);background:var(--sc);padding:0 12px;font-family:'Roboto Mono';font-size:12.5px;outline-color:var(--p)">
+            <button onClick="{{ totpAdd }}" style="height:42px;border:none;border-radius:21px;background:var(--p);color:var(--onp);padding:0 18px;cursor:pointer;font-size:13px;font-weight:600">Add entry</button>
+            <sc-if value="{{ totpErr }}" hint-placeholder-val="{{ false }}"><div style="width:100%;font-size:12px;color:var(--err)">{{ totpErr }}</div></sc-if>
+          </div>
+          <div style="display:flex;gap:8px;align-items:center">
+            <div style="flex:1;height:42px;background:var(--sc);border-radius:21px;display:flex;align-items:center;padding:0 8px 0 14px;gap:8px">
+              <span class="ms" style="font-size:17px;color:var(--onsv)">search</span>
+              <input value="{{ totpQ }}" onChange="{{ onTotpQ }}" placeholder="Search entries" style="flex:1;border:none;background:transparent;outline:none;font-size:13px;min-width:0">
+              <button onClick="{{ rxTotp }}" title="Regex builder" style="width:28px;height:28px;border:none;border-radius:14px;background:{{ rxTotpBg }};color:{{ rxTotpFg }};cursor:pointer;font-family:'Roboto Mono';font-size:11px">.*</button>
+            </div>
+            <div style="font-size:11.5px;color:var(--onsv);font-family:'Roboto Mono'">{{ totpCountdown }}s</div>
+          </div>
+          <sc-if value="{{ totpEmpty }}" hint-placeholder-val="{{ true }}"><div style="padding:16px;font-size:13px;color:var(--onsv)">No entries yet.</div></sc-if>
+          <sc-for list="{{ totpVMs }}" as="t" hint-placeholder-count="0">
+            <div style="display:flex;align-items:center;gap:14px;background:var(--sclow);border-radius:16px;padding:14px 18px">
+              <div style="flex:1;min-width:0"><div style="font-size:14px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ t.label }}</div><div style="font-size:11px;color:var(--onsv);font-family:'Roboto Mono'">{{ t.masked }}</div></div>
+              <div style="font-size:24px;font-weight:700;font-family:'Roboto Mono';letter-spacing:2px;color:var(--p)">{{ t.code }}</div>
+              <button onClick="{{ t.copy }}" title="Copy code" style="width:34px;height:34px;border:none;border-radius:17px;background:transparent;color:var(--onsv);cursor:pointer" style-hover="background:var(--sc)"><span class="ms" style="font-size:17px">content_copy</span></button>
+              <button onClick="{{ t.del }}" title="Remove entry" style="width:34px;height:34px;border:none;border-radius:17px;background:transparent;color:var(--onsv);cursor:pointer" style-hover="background:var(--sc)"><span class="ms" style="font-size:17px">delete</span></button>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+    </sc-if>
+    <sc-if value="{{ pg.workspace }}" hint-placeholder-val="{{ false }}">
+      <div data-screen-label="Workspace" style="flex:1;overflow-y:auto">
+        <div style="max-width:920px;margin:0 auto;padding:24px 28px;display:flex;flex-direction:column;gap:18px">
+          <div style="display:flex;align-items:center;gap:12px">
+            <div style="font-size:22px;font-weight:600;flex:1">Workspace</div>
+            <div style="display:flex;background:var(--sc);border-radius:22px;padding:4px;gap:2px">
+              <sc-for list="{{ wsTabVMs }}" as="t" hint-placeholder-count="4"><button onClick="{{ t.go }}" style="height:36px;border:none;border-radius:18px;background:{{ t.bg }};color:{{ t.fg }};padding:0 16px;cursor:pointer;font-size:13px;font-weight:600">{{ t.label }}</button></sc-for>
+            </div>
+          </div>
+          <div style="display:flex;gap:8px;align-items:center">
+            <div style="flex:1;height:44px;background:var(--sc);border-radius:22px;display:flex;align-items:center;padding:0 8px 0 16px;gap:8px">
+              <span class="ms" style="font-size:18px;color:var(--onsv)">search</span>
+              <input id="search-ws" value="{{ wsQ }}" onChange="{{ onWsQ }}" placeholder="{{ wsSearchPh }}" style="flex:1;border:none;background:transparent;outline:none;font-size:13.5px;min-width:0">
+              <button onClick="{{ rxWs }}" title="Regex builder" style="width:30px;height:30px;border:none;border-radius:15px;background:{{ rxWsBg }};color:{{ rxWsFg }};cursor:pointer;font-family:'Roboto Mono';font-size:11px">.*</button>
+            </div>
+            <button onClick="{{ wsCreate }}" style="height:44px;border:none;border-radius:22px;background:var(--p);color:var(--onp);padding:0 18px;cursor:pointer;font-size:13px;font-weight:600;display:flex;align-items:center;gap:8px"><span class="ms" style="font-size:18px">add</span>{{ wsCreateLabel }}</button>
+          </div>
+          <sc-if value="{{ wsEmpty }}" hint-placeholder-val="{{ true }}"><div style="padding:26px;text-align:center;font-size:13px;color:var(--onsv);background:var(--sclow);border-radius:20px;line-height:1.6">{{ wsEmptyMsg }}</div></sc-if>
+          <sc-for list="{{ wsItemVMs }}" as="w" hint-placeholder-count="0">
+            <div style="display:flex;align-items:center;gap:14px;background:var(--sclow);border-radius:16px;padding:14px 18px">
+              <span class="ms" style="font-size:22px;color:var(--p)">{{ w.icon }}</span>
+              <div style="flex:1;min-width:0"><div style="font-size:14px;font-weight:600">{{ w.name }}</div><div style="font-size:12px;color:var(--onsv);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ w.sub }}</div></div>
+              <button onClick="{{ w.del }}" title="Delete" style="width:34px;height:34px;border:none;border-radius:17px;background:transparent;color:var(--onsv);cursor:pointer" style-hover="background:var(--sc)"><span class="ms" style="font-size:18px">delete</span></button>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+      <sc-if value="{{ wsFormOpen }}" hint-placeholder-val="{{ false }}">
+        <div onClick="{{ wsFormCancel }}" style="position:fixed;inset:0;z-index:90;background:var(--scrim)"></div>
+        <div style="position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);z-index:91;width:460px;max-width:92vw;background:var(--schigh);border-radius:24px;padding:22px;display:flex;flex-direction:column;gap:12px;box-shadow:var(--elev3)">
+          <div style="font-size:16px;font-weight:600">{{ wsFormTitle }}</div>
+          <input value="{{ wsFormName }}" onChange="{{ onWsFormName }}" placeholder="{{ wsFormNamePh }}" style="height:44px;border-radius:10px;border:1px solid var(--out);background:var(--sc);padding:0 12px;font-size:13.5px;outline-color:var(--p)">
+          <textarea value="{{ wsFormBody }}" onChange="{{ onWsFormBody }}" placeholder="{{ wsFormBodyPh }}" rows="5" style="border-radius:10px;border:1px solid var(--out);background:var(--sc);padding:10px 12px;font-size:13px;outline-color:var(--p);resize:vertical;font-family:'Roboto Mono'"></textarea>
+          <sc-if value="{{ wsFormModelSel }}" hint-placeholder-val="{{ false }}">
+            <select value="{{ wsFormBase }}" onChange="{{ onWsFormBase }}" style="height:42px;border-radius:10px;border:1px solid var(--outv);background:var(--sc);padding:0 8px;font-size:13px;font-family:'Roboto Mono'"><sc-for list="{{ olcModelOpts }}" as="o" hint-placeholder-count="2"><option value="{{ o.v }}">{{ o.v }}</option></sc-for></select>
+          </sc-if>
+          <div style="display:flex;gap:8px;justify-content:flex-end">
+            <button onClick="{{ wsFormCancel }}" style="height:40px;border:none;border-radius:20px;background:transparent;color:var(--p);padding:0 16px;cursor:pointer;font-size:13px;font-weight:600">Cancel</button>
+            <button onClick="{{ wsFormSave }}" style="height:40px;border:none;border-radius:20px;background:var(--p);color:var(--onp);padding:0 20px;cursor:pointer;font-size:13px;font-weight:600">Save</button>
+          </div>
+        </div>
+      </sc-if>
+    </sc-if>
+    <sc-if value="{{ pg.admin }}" hint-placeholder-val="{{ false }}">
+      <div data-screen-label="Admin panel" style="flex:1;overflow-y:auto">
+        <div style="max-width:920px;margin:0 auto;padding:24px 28px;display:flex;flex-direction:column;gap:18px">
+          <div style="display:flex;align-items:center;gap:12px">
+            <div style="font-size:22px;font-weight:600;flex:1">Admin panel</div>
+            <div style="display:flex;background:var(--sc);border-radius:22px;padding:4px;gap:2px">
+              <sc-for list="{{ adTabVMs }}" as="t" hint-placeholder-count="2"><button onClick="{{ t.go }}" style="height:36px;border:none;border-radius:18px;background:{{ t.bg }};color:{{ t.fg }};padding:0 16px;cursor:pointer;font-size:13px;font-weight:600">{{ t.label }}</button></sc-for>
+            </div>
+          </div>
+          <sc-if value="{{ adUsers }}" hint-placeholder-val="{{ true }}">
+            <div style="background:var(--sclow);border-radius:20px;overflow:hidden">
+              <div style="display:grid;grid-template-columns:2fr 2fr 1fr 1fr;padding:12px 18px;font-size:11px;font-weight:600;color:var(--onsv);letter-spacing:.5px;border-bottom:1px solid var(--outv)"><span>NAME</span><span>EMAIL</span><span>ROLE</span><span>CREATED</span></div>
+              <sc-for list="{{ adUserVMs }}" as="u" hint-placeholder-count="1">
+                <div style="display:grid;grid-template-columns:2fr 2fr 1fr 1fr;padding:14px 18px;font-size:13px;align-items:center"><span style="font-weight:600">{{ u.name }}</span><span style="color:var(--onsv)">{{ u.email }}</span><span><span style="background:var(--pc);color:var(--onpc);border-radius:6px;padding:2px 8px;font-size:11px;font-weight:600">{{ u.role }}</span></span><span style="color:var(--onsv)">{{ u.created }}</span></div>
+              </sc-for>
+            </div>
+            <div style="font-size:12px;color:var(--onsv)">Single-user local install. New accounts appear here when signup is enabled below and used.</div>
+          </sc-if>
+          <sc-if value="{{ adSettings }}" hint-placeholder-val="{{ false }}">
+            <div style="background:var(--sclow);border-radius:20px;padding:18px;display:flex;flex-direction:column;gap:16px">
+              <div style="display:flex;align-items:center;gap:12px"><div style="flex:1"><div style="font-size:14px;font-weight:600">Enable new sign-ups</div><div style="font-size:12px;color:var(--onsv)">Off keeps this a single-user install</div></div>
+                <button id="adm-signup" onClick="{{ toggleSignup }}" role="switch" aria-checked="{{ signupOnStr }}" style="width:52px;height:32px;border:none;border-radius:16px;background:{{ swSignBg }};cursor:pointer;position:relative"><span style="position:absolute;top:4px;left:{{ swSignX }}px;width:24px;height:24px;border-radius:12px;background:{{ swSignKnob }};transition:left .15s"></span></button></div>
+              <div style="display:flex;align-items:center;gap:12px"><div style="flex:1"><div style="font-size:14px;font-weight:600">Default role for new users</div></div>
+                <select value="{{ defRole }}" onChange="{{ onDefRole }}" style="height:38px;border-radius:10px;border:1px solid var(--outv);background:var(--sc);padding:0 8px;font-size:13px"><option value="pending">pending</option><option value="user">user</option><option value="admin">admin</option></select></div>
+              <div style="display:flex;align-items:center;gap:12px"><div style="flex:1"><div style="font-size:14px;font-weight:600">Ollama API URL</div><div style="font-size:12px;color:var(--onsv)">Used by the suite manager and chat</div></div>
+                <input value="{{ olUrlDraft }}" onChange="{{ onOlUrl }}" onBlur="{{ saveOlUrl }}" style="height:38px;border-radius:10px;border:1px solid var(--outv);background:var(--sc);padding:0 10px;font-size:12.5px;font-family:'Roboto Mono';width:240px"></div>
+              <div style="display:flex;align-items:center;gap:12px"><div style="flex:1"><div style="font-size:14px;font-weight:600">Banner message</div><div style="font-size:12px;color:var(--onsv)">Shown above chat when set</div></div>
+                <input value="{{ bannerDraft }}" onChange="{{ onBanner }}" onBlur="{{ saveBanner }}" placeholder="empty = no banner" style="height:38px;border-radius:10px;border:1px solid var(--outv);background:var(--sc);padding:0 10px;font-size:12.5px;width:240px"></div>
+            </div>
+          </sc-if>
+        </div>
+      </div>
+    </sc-if>
+    <sc-if value="{{ pg.status }}" hint-placeholder-val="{{ false }}">
+      <div data-screen-label="Status Hub" style="flex:1;overflow-y:auto">
+        <div style="max-width:720px;margin:0 auto;padding:24px 28px;display:flex;flex-direction:column;gap:18px">
+          <div style="font-size:22px;font-weight:600">Status Hub</div>
+          <div style="background:var(--sclow);border-radius:20px;padding:20px;display:flex;flex-direction:column;gap:12px">
+            <div style="display:flex;align-items:center;gap:10px">
+              <span style="width:10px;height:10px;border-radius:5px;background:#4a9d5f;animation:owpulse 2s infinite"></span>
+              <div style="font-size:15px;font-weight:600;flex:1">Session: Open WebUI MD3 — this window</div>
+              <div style="font-size:11px;color:var(--onsv);font-family:'Roboto Mono'">{{ statusNow }}</div>
+            </div>
+            <div style="font-size:12.5px;color:var(--onsv);line-height:1.6">One live card per session, updated in place from real app events below. In the packaged build this card also publishes to your shared Status Hub inbox.</div>
+            <div style="display:flex;gap:14px;flex-wrap:wrap;font-size:12px">
+              <div style="background:var(--sc);border-radius:12px;padding:10px 14px"><b>{{ statChats }}</b> chats</div>
+              <div style="background:var(--sc);border-radius:12px;padding:10px 14px"><b>{{ statModels }}</b> installed models</div>
+              <div style="background:var(--sc);border-radius:12px;padding:10px 14px"><b>{{ statTotp }}</b> authenticator entries</div>
+              <div style="background:var(--sc);border-radius:12px;padding:10px 14px"><b>{{ statLocks }}</b> active locks</div>
+            </div>
+          </div>
+          <div style="font-size:15px;font-weight:600">Event log (live)</div>
+          <sc-for list="{{ statusVMsList }}" as="e" hint-placeholder-count="3">
+            <div style="display:flex;gap:12px;align-items:center;background:var(--sclow);border-radius:12px;padding:10px 16px;font-size:12.5px">
+              <span style="font-family:'Roboto Mono';color:var(--onsv);flex:none">{{ e.time }}</span><span>{{ e.ev }}</span>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+    </sc-if>
+    <sc-if value="{{ pg.changelog }}" hint-placeholder-val="{{ false }}">
+      <div data-screen-label="Changelog" style="flex:1;overflow-y:auto">
+        <div style="max-width:720px;margin:0 auto;padding:24px 28px;display:flex;flex-direction:column;gap:18px">
+          <div style="font-size:22px;font-weight:600">Changelog</div>
+          <div style="font-size:12.5px;color:var(--onsv)">Every released version, in-app.</div>
+          <sc-for list="{{ clVMs }}" as="v" hint-placeholder-count="1">
+            <div style="background:var(--sclow);border-radius:20px;padding:20px;display:flex;flex-direction:column;gap:12px">
+              <div style="display:flex;align-items:baseline;gap:10px"><div style="font-size:17px;font-weight:700">v{{ v.version }}</div><div style="font-size:12px;color:var(--onsv)">{{ v.date }}</div></div>
+              <sc-for list="{{ v.sections }}" as="s" hint-placeholder-count="1">
+                <div style="font-size:12px;font-weight:700;letter-spacing:.5px;color:var(--p)">{{ s.title }}</div>
+                <sc-for list="{{ s.items }}" as="i" hint-placeholder-count="3"><div style="font-size:13px;line-height:1.55;padding-left:14px;position:relative"><span style="position:absolute;left:0;color:var(--onsv)">·</span>{{ i.text }}</div></sc-for>
+              </sc-for>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+    </sc-if>
+    <!--PAGES-->
+  </div>
+  <sc-if value="{{ userMenuOpen }}" hint-placeholder-val="{{ false }}">
+    <div onClick="{{ closeUserMenu }}" style="position:fixed;inset:0;z-index:60"></div>
+    <div style="position:fixed;left:14px;bottom:72px;z-index:61;width:230px;background:var(--schigh);border-radius:16px;padding:6px;box-shadow:var(--elev2);animation:owfade .15s ease">
+      <sc-for list="{{ userMenuVMs }}" as="mi" hint-placeholder-count="5">
+        <button onClick="{{ mi.act }}" style="width:100%;height:40px;border:none;border-radius:10px;background:transparent;color:var(--ons);display:flex;align-items:center;gap:12px;padding:0 12px;cursor:pointer;font-size:13.5px;text-align:left" style-hover="background:var(--schighest)"><span class="ms" style="font-size:18px;color:var(--onsv)">{{ mi.icon }}</span>{{ mi.label }}</button>
+      </sc-for>
+    </div>
+  </sc-if>
+  <sc-if value="{{ paletteOpen }}" hint-placeholder-val="{{ false }}">
+    <div onClick="{{ closePalette }}" style="position:fixed;inset:0;z-index:100;background:var(--scrim)"></div>
+    <div style="position:fixed;left:50%;top:12vh;transform:translateX(-50%);z-index:101;width:600px;max-width:92vw;background:var(--schigh);border-radius:24px;box-shadow:var(--elev3);overflow:hidden;animation:owfade .15s ease">
+      <div style="display:flex;align-items:center;gap:10px;padding:14px 18px;border-bottom:1px solid var(--outv)">
+        <span class="ms" style="font-size:20px;color:var(--onsv)">search</span>
+        <input id="palette-input" value="{{ paletteQ }}" onChange="{{ onPaletteQ }}" onKeyDown="{{ onPaletteKey }}" placeholder="Search every page, setting, and action…" style="flex:1;border:none;background:transparent;outline:none;font-size:15px">
+        <button onClick="{{ rxPalette }}" title="Regex builder" style="width:30px;height:30px;border:none;border-radius:15px;background:{{ rxPaletteBg }};color:{{ rxPaletteFg }};cursor:pointer;font-family:'Roboto Mono';font-size:11px">.*</button>
+        <span style="font-size:11px;color:var(--onsv);background:var(--sc);border-radius:6px;padding:3px 6px">esc</span>
+      </div>
+      <div style="max-height:46vh;overflow-y:auto;padding:8px">
+        <sc-for list="{{ paletteVMs }}" as="r" hint-placeholder-count="6">
+          <button onClick="{{ r.act }}" style="width:100%;border:none;border-radius:12px;background:{{ r.bg }};color:var(--ons);display:flex;align-items:center;gap:12px;padding:10px 12px;cursor:pointer;text-align:left" style-hover="background:var(--schighest)">
+            <span class="ms" style="font-size:19px;color:var(--p)">{{ r.icon }}</span>
+            <span style="flex:1;font-size:13.5px">{{ r.label }}</span>
+            <span style="font-size:11px;color:var(--onsv)">{{ r.hint }}</span>
+          </button>
+        </sc-for>
+        <sc-if value="{{ paletteEmpty }}" hint-placeholder-val="{{ false }}"><div style="padding:18px;text-align:center;font-size:13px;color:var(--onsv)">No matches.</div></sc-if>
+      </div>
+    </div>
+  </sc-if>
+  <sc-if value="{{ rxOpen }}" hint-placeholder-val="{{ false }}">
+    <div onClick="{{ rxClose }}" style="position:fixed;inset:0;z-index:110"></div>
+    <div style="position:fixed;left:{{ rxX }}px;top:{{ rxY }}px;z-index:111;width:340px;background:var(--schigh);border-radius:20px;padding:16px;box-shadow:var(--elev3);display:flex;flex-direction:column;gap:10px;animation:owfade .15s ease">
+      <div style="display:flex;align-items:center;gap:8px"><span class="ms" style="font-size:18px;color:var(--p)">regular_expression</span><div style="font-size:14px;font-weight:600;flex:1">Regex builder</div><div style="font-size:11px;color:var(--onsv)">{{ rxTarget }}</div></div>
+      <input id="rx-pattern" value="{{ rxPattern }}" onChange="{{ onRxPattern }}" placeholder="pattern, e.g. ^ollama.*chat$" style="height:42px;border-radius:10px;border:1px solid {{ rxBorder }};background:var(--sc);padding:0 12px;font-family:'Roboto Mono';font-size:13px;outline-color:var(--p)">
+      <div style="display:flex;gap:6px;flex-wrap:wrap">
+        <sc-for list="{{ rxTokens }}" as="t" hint-placeholder-count="6"><button onClick="{{ t.ins }}" style="height:28px;border:1px solid var(--outv);border-radius:8px;background:transparent;color:var(--ons);padding:0 8px;cursor:pointer;font-family:'Roboto Mono';font-size:11.5px">{{ t.label }}</button></sc-for>
+      </div>
+      <div style="display:flex;gap:14px;align-items:center;font-size:12.5px">
+        <label style="display:flex;gap:6px;align-items:center;cursor:pointer"><input type="checkbox" checked="{{ rxFlagI }}" onChange="{{ toggleRxI }}" style="accent-color:var(--p)">i — ignore case</label>
+        <label style="display:flex;gap:6px;align-items:center;cursor:pointer"><input type="checkbox" checked="{{ rxFlagM }}" onChange="{{ toggleRxM }}" style="accent-color:var(--p)">m — multiline</label>
+      </div>
+      <div style="font-size:12px;color:{{ rxStatusColor }};font-family:'Roboto Mono';min-height:16px">{{ rxStatus }}</div>
+      <div style="display:flex;gap:8px;justify-content:flex-end">
+        <button onClick="{{ rxDisable }}" style="height:38px;border:none;border-radius:19px;background:transparent;color:var(--p);padding:0 14px;cursor:pointer;font-size:13px;font-weight:600">Plain text</button>
+        <button onClick="{{ rxApply }}" style="height:38px;border:none;border-radius:19px;background:var(--p);color:var(--onp);padding:0 18px;cursor:pointer;font-size:13px;font-weight:600">Apply regex</button>
+      </div>
+    </div>
+  </sc-if>
+  <sc-if value="{{ ctxOpen }}" hint-placeholder-val="{{ false }}">
+    <div onClick="{{ ctxClose }}" onContextMenu="{{ ctxClose }}" style="position:fixed;inset:0;z-index:120"></div>
+    <div style="position:fixed;left:{{ ctxX }}px;top:{{ ctxY }}px;z-index:121;min-width:220px;background:var(--schigh);border-radius:14px;padding:6px;box-shadow:var(--elev3);animation:owfade .12s ease">
+      <sc-for list="{{ ctxVMs }}" as="ci" hint-placeholder-count="2">
+        <button onClick="{{ ci.act }}" style="width:100%;height:38px;border:none;border-radius:9px;background:transparent;color:var(--ons);display:flex;align-items:center;gap:11px;padding:0 12px;cursor:pointer;font-size:13px;text-align:left" style-hover="background:var(--schighest)"><span class="ms" style="font-size:17px;color:var(--onsv)">{{ ci.icon }}</span>{{ ci.label }}</button>
+      </sc-for>
+    </div>
+  </sc-if>
+  <sc-if value="{{ scOpen }}" hint-placeholder-val="{{ false }}">
+    <div style="position:fixed;inset:0;z-index:130;background:var(--scrim)"></div>
+    <div style="position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);z-index:131;width:420px;max-width:92vw;background:var(--schigh);border-radius:28px;padding:24px;display:flex;flex-direction:column;gap:14px;box-shadow:var(--elev3);animation:owfade .15s ease">
+      <div style="display:flex;align-items:center;gap:10px"><span class="ms msf" style="font-size:24px;color:var(--err)">warning</span><div style="font-size:17px;font-weight:600">Destructive action{{ scEmoji }}</div></div>
+      <div style="font-size:13.5px;line-height:1.55;color:var(--onsv)">{{ scLabel }}. This cannot be undone. Both gates below are required.</div>
+      <div style="display:flex;flex-direction:column;gap:6px">
+        <div style="font-size:12px;font-weight:600;color:var(--onsv)">1 · Type DELETE</div>
+        <input value="{{ scTyped }}" onChange="{{ onScTyped }}" placeholder="DELETE" style="height:44px;border-radius:10px;border:1px solid var(--out);background:var(--sc);padding:0 12px;font-family:'Roboto Mono';font-size:13px;outline-color:var(--err)">
+      </div>
+      <div style="display:flex;flex-direction:column;gap:6px">
+        <div style="font-size:12px;font-weight:600;color:var(--onsv)">2 · Slide to the end ({{ scSlider }}%)</div>
+        <input type="range" min="0" max="100" value="{{ scSlider }}" onChange="{{ onScSlider }}" style="accent-color:var(--err);height:32px">
+      </div>
+      <div style="display:flex;gap:8px;justify-content:flex-end">
+        <button onClick="{{ scCancel }}" style="height:40px;border:none;border-radius:20px;background:transparent;color:var(--p);padding:0 16px;cursor:pointer;font-size:13.5px;font-weight:600">Cancel</button>
+        <button onClick="{{ scGo }}" disabled="{{ scDisabled }}" style="height:40px;border:none;border-radius:20px;background:{{ scBtnBg }};color:{{ scBtnFg }};padding:0 20px;cursor:pointer;font-size:13.5px;font-weight:600">Delete</button>
+      </div>
+    </div>
+  </sc-if>
+  <sc-if value="{{ dsOpen }}" hint-placeholder-val="{{ false }}">
+    <div onClick="{{ dsClose }}" style="position:fixed;inset:0;z-index:130;background:var(--scrim)"></div>
+    <div style="position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);z-index:131;width:360px;max-width:92vw;background:var(--schigh);border-radius:28px;padding:20px;display:flex;flex-direction:column;gap:12px;align-items:center;box-shadow:var(--elev3);animation:owfade .2s ease;text-align:center">
+      <div style="font-size:12px;font-weight:600;letter-spacing:.8px;color:var(--onsv)">TODAY'S DIM SUM SURPRISE{{ dsEmoji }}</div>
+      <sc-if value="{{ dsImg }}" hint-placeholder-val="{{ false }}"><div role="img" aria-label="{{ dsName }}" style="width:220px;height:220px;border-radius:20px;background-color:var(--sc);background-image:{{ dsBgImg }};background-size:cover;background-position:center"></div></sc-if>
+      <sc-if value="{{ dsNoImg }}" hint-placeholder-val="{{ true }}"><div style="width:220px;height:140px;border-radius:20px;background:repeating-linear-gradient(45deg,var(--sc),var(--sc) 8px,var(--schighest) 8px,var(--schighest) 16px);display:flex;align-items:center;justify-content:center;font-family:'Roboto Mono';font-size:11px;color:var(--onsv)">photo pending in catalog</div></sc-if>
+      <div style="font-size:19px;font-weight:600">{{ dsName }}</div>
+      <div style="font-size:15px;color:var(--onsv)">{{ dsCanto }}</div>
+      <button onClick="{{ dsClose }}" style="height:40px;border:none;border-radius:20px;background:var(--pc);color:var(--onpc);padding:0 22px;cursor:pointer;font-size:13.5px;font-weight:600">Nice</button>
+    </div>
+  </sc-if>
+  <sc-if value="{{ lwOpen }}" hint-placeholder-val="{{ false }}">
+    <div onClick="{{ lwCancel }}" style="position:fixed;inset:0;z-index:132"></div>
+    <div style="position:fixed;left:{{ lwX }}px;top:{{ lwY }}px;z-index:133;width:340px;background:var(--schigh);border-radius:20px;padding:18px;display:flex;flex-direction:column;gap:12px;box-shadow:var(--elev3);animation:owfade .15s ease">
+      <div style="display:flex;align-items:center;gap:8px"><span class="ms msf" style="font-size:20px;color:var(--ter)">lock</span><div style="font-size:14.5px;font-weight:600;flex:1">Lock this element</div></div>
+      <div style="font-size:12.5px;color:var(--onsv)">Target: <b>{{ lwName }}</b></div>
+      <div style="display:flex;gap:6px">
+        <button onClick="{{ lwTypePw }}" style="flex:1;height:36px;border:1px solid var(--outv);border-radius:18px;background:{{ lwPwBg }};color:{{ lwPwFg }};cursor:pointer;font-size:12.5px;font-weight:600">Password</button>
+        <button onClick="{{ lwTypeTotp }}" style="flex:1;height:36px;border:1px solid var(--outv);border-radius:18px;background:{{ lwTotpBg }};color:{{ lwTotpFg }};cursor:pointer;font-size:12.5px;font-weight:600">TOTP</button>
+      </div>
+      <input type="{{ lwInputType }}" value="{{ lwSecret }}" onChange="{{ onLwSecret }}" placeholder="{{ lwSecretPh }}" style="height:42px;border-radius:10px;border:1px solid var(--out);background:var(--sc);padding:0 12px;font-size:13px;outline-color:var(--p)">
+      <select value="{{ lwDuration }}" onChange="{{ onLwDuration }}" style="height:42px;border-radius:10px;border:1px solid var(--outv);background:var(--sc);padding:0 8px;font-size:13px">
+        <option value="900">Lock for 15 minutes</option><option value="3600">Lock for 1 hour</option><option value="28800">Lock for 8 hours</option><option value="0">Lock until unlocked</option>
+      </select>
+      <label style="display:flex;gap:8px;align-items:flex-start;font-size:11.5px;color:var(--onsv);line-height:1.5;cursor:pointer"><input type="checkbox" checked="{{ lwDisclosed }}" onChange="{{ onLwDisclosed }}" style="accent-color:var(--p);margin-top:2px">I understand this is a toy lock, not a security boundary. Recovery: clear this app's local data to remove all locks.</label>
+      <sc-if value="{{ lwErr }}" hint-placeholder-val="{{ false }}"><div style="font-size:12px;color:var(--err)">{{ lwErr }}</div></sc-if>
+      <div style="display:flex;gap:8px;justify-content:flex-end">
+        <button onClick="{{ lwCancel }}" style="height:38px;border:none;border-radius:19px;background:transparent;color:var(--p);padding:0 14px;cursor:pointer;font-size:13px;font-weight:600">Cancel</button>
+        <button onClick="{{ lwCreate }}" style="height:38px;border:none;border-radius:19px;background:var(--p);color:var(--onp);padding:0 18px;cursor:pointer;font-size:13px;font-weight:600">Create lock</button>
+      </div>
+    </div>
+  </sc-if>
+  <sc-if value="{{ upOpen }}" hint-placeholder-val="{{ false }}">
+    <div onClick="{{ upCancel }}" style="position:fixed;inset:0;z-index:134;background:var(--scrim)"></div>
+    <div style="position:fixed;left:50%;top:30%;transform:translateX(-50%);z-index:135;width:340px;background:var(--schigh);border-radius:20px;padding:18px;display:flex;flex-direction:column;gap:12px;box-shadow:var(--elev3);animation:owfade .15s ease">
+      <div style="display:flex;align-items:center;gap:8px"><span class="ms msf" style="font-size:20px;color:var(--ter)">lock_open</span><div style="font-size:14.5px;font-weight:600">Unlock: {{ upName }}</div></div>
+      <input id="unlock-input" type="{{ upInputType }}" value="{{ upVal }}" onChange="{{ onUpVal }}" onKeyDown="{{ onUpKey }}" placeholder="{{ upPh }}" style="height:44px;border-radius:10px;border:1px solid var(--out);background:var(--sc);padding:0 12px;font-size:14px;outline-color:var(--p)">
+      <sc-if value="{{ upErr }}" hint-placeholder-val="{{ false }}"><div style="font-size:12px;color:var(--err)">{{ upErr }}</div></sc-if>
+      <div style="display:flex;gap:8px;justify-content:flex-end">
+        <button onClick="{{ upCancel }}" style="height:38px;border:none;border-radius:19px;background:transparent;color:var(--p);padding:0 14px;cursor:pointer;font-size:13px;font-weight:600">Cancel</button>
+        <button onClick="{{ upGo }}" style="height:38px;border:none;border-radius:19px;background:var(--p);color:var(--onp);padding:0 18px;cursor:pointer;font-size:13px;font-weight:600">Unlock</button>
+      </div>
+    </div>
+  </sc-if>
+  <sc-if value="{{ ppOpen }}" hint-placeholder-val="{{ false }}">
+    <div onClick="{{ ppCancel }}" style="position:fixed;inset:0;z-index:134;background:var(--scrim)"></div>
+    <div style="position:fixed;left:50%;top:30%;transform:translateX(-50%);z-index:135;width:340px;background:var(--schigh);border-radius:20px;padding:18px;display:flex;flex-direction:column;gap:12px;box-shadow:var(--elev3);animation:owfade .15s ease">
+      <div style="font-size:14.5px;font-weight:600">{{ ppTitle }}</div>
+      <div style="font-size:12px;color:var(--onsv);line-height:1.5">{{ ppNote }}</div>
+      <input type="password" value="{{ ppVal }}" onChange="{{ onPpVal }}" onKeyDown="{{ onPpKey }}" placeholder="PIN" style="height:44px;border-radius:10px;border:1px solid var(--out);background:var(--sc);padding:0 12px;font-size:14px;outline-color:var(--p);letter-spacing:4px">
+      <sc-if value="{{ ppErr }}" hint-placeholder-val="{{ false }}"><div style="font-size:12px;color:var(--err)">{{ ppErr }}</div></sc-if>
+      <div style="display:flex;gap:8px;justify-content:flex-end">
+        <button onClick="{{ ppCancel }}" style="height:38px;border:none;border-radius:19px;background:transparent;color:var(--p);padding:0 14px;cursor:pointer;font-size:13px;font-weight:600">Cancel</button>
+        <button onClick="{{ ppGo }}" style="height:38px;border:none;border-radius:19px;background:var(--p);color:var(--onp);padding:0 18px;cursor:pointer;font-size:13px;font-weight:600">Confirm</button>
+      </div>
+    </div>
+  </sc-if>
+  <!--DIALOGS-->
+  <sc-if value="{{ snackOpen }}" hint-placeholder-val="{{ false }}">
+    <div style="position:fixed;left:50%;bottom:24px;transform:translateX(-50%);z-index:150;background:var(--invs);color:var(--invons);border-radius:8px;padding:12px 18px;font-size:13.5px;box-shadow:var(--elev3);max-width:520px;animation:owfade .2s ease">{{ snackMsg }}</div>
+  </sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;startPage&quot;: {&quot;editor&quot;: &quot;enum&quot;, &quot;default&quot;: &quot;chat&quot;, &quot;tsType&quot;: &quot;string&quot;, &quot;options&quot;: [&quot;chat&quot;, &quot;ollama&quot;, &quot;settings&quot;, &quot;workspace&quot;], &quot;section&quot;: &quot;Behavior&quot;}, &quot;dimsumChance&quot;: {&quot;editor&quot;: &quot;range&quot;, &quot;default&quot;: 10, &quot;min&quot;: 0, &quot;max&quot;: 100, &quot;step&quot;: 5, &quot;unit&quot;: &quot;%&quot;, &quot;tsType&quot;: &quot;number&quot;, &quot;section&quot;: &quot;Behavior&quot;}, &quot;streamSpeed&quot;: {&quot;editor&quot;: &quot;range&quot;, &quot;default&quot;: 3, &quot;min&quot;: 1, &quot;max&quot;: 12, &quot;step&quot;: 1, &quot;tsType&quot;: &quot;number&quot;, &quot;section&quot;: &quot;Behavior&quot;}}">
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    const L = k => { try { return JSON.parse(localStorage.getItem('owmd3.' + k)); } catch (e) { return null; } };
+    this.L = L;
+    const settings = Object.assign({
+      theme: 'dark', language: 'English', funnyEn: 1, funnyZh: 1, emojiDialogs: false,
+      narrator: { on: false, voice: '', lang: 'English' },
+      school: { on: false, name: 'School mode', pin: '' },
+      logo: { preset: 'chat', custom: null, fit: 'cover', bg: 'var(--p)' },
+      schedules: [], vocab: null, ollamaUrl: 'http://127.0.0.1:11434',
+      signupEnabled: false, defaultRole: 'pending', banner: ''
+    }, L('settings') || {});
+    this.state = {
+      core: null, user: L('user'), authed: !!L('user') && !!L('session'),
+      authName: '', authEmail: '', authPass: '', authError: '',
+      settings, settingsSection: 'general',
+      tabs: L('tabs') || [{ id: 't1', page: (props && props.startPage) || 'chat' }], activeTab: L('activeTab') || 't1',
+      chats: L('chats') || [], activeChat: null, draft: '', streaming: false,
+      installed: L('installed') || [{ name: 'llama3.2', tag: '3b', gb: 2.0, modified: Date.now() - 864e5 }, { name: 'nomic-embed-text', tag: 'latest', gb: 0.27, modified: Date.now() - 3 * 864e5 }],
+      pulls: [], ollamaTab: 'overview', ollamaChat: { msgs: [], draft: '', model: '' },
+      wsTab: 'models', wsModels: L('wsModels') || [], prompts: L('prompts') || [], knowledge: L('knowledge') || [], tools: L('tools') || [],
+      wsForm: null, adminTab: 'users',
+      conv: { file: null, sniff: null, preview: null, results: L('convResults') || [], busy: false, cat: 'All' },
+      totp: L('totp') || [], totpCodes: {}, totpForm: { label: '', secret: '', err: '' },
+      locks: L('locks') || {}, lockWizard: null, unlockPrompt: null, pinPrompt: null,
+      search: { chats: { q: '', rx: false, pattern: '', flags: 'i' }, palette: { q: '', rx: false, pattern: '', flags: 'i' }, store: { q: '', rx: false, pattern: '', flags: 'i' }, conv: { q: '', rx: false, pattern: '', flags: 'i' }, auth: { q: '', rx: false, pattern: '', flags: 'i' }, settings: { q: '', rx: false, pattern: '', flags: 'i' }, ws: { q: '', rx: false, pattern: '', flags: 'i' }, users: { q: '', rx: false, pattern: '', flags: 'i' } },
+      rx: null, ctx: null, palette: null, userMenu: false,
+      superConfirm: null, dimsum: null, snack: null,
+      statusLog: L('statusLog') || [], voices: [],
+      schedForm: { time: '', key: 'theme', value: 'dark' }, dsPhotoOk: {}
+    };
+    this._sub = {};
+  }
+  save(k, v) { try { localStorage.setItem('owmd3.' + k, JSON.stringify(v)); } catch (e) {} }
+  setSave(k, v, cb) { this.setState({ [k]: v }, () => { this.save(k, v); cb && cb(); }); }
+  setSettings(patch) { const s = Object.assign({}, this.state.settings, patch); this.setState({ settings: s }); this.save('settings', s); }
+  log(ev) { const sl = [{ t: Date.now(), ev }].concat(this.state.statusLog).slice(0, 40); this.setState({ statusLog: sl }); this.save('statusLog', sl); this.narrate(ev); }
+  narrate(text) { const n = this.state.settings.narrator; if (!n.on || !window.speechSynthesis) return; const u = new SpeechSynthesisUtterance(text); const v = this.state.voices.find(v => v.voiceURI === n.voice); if (v) u.voice = v; speechSynthesis.speak(u); }
+  snack(msg) { clearTimeout(this._snackT); this.setState({ snack: msg }); this._snackT = setTimeout(() => this.setState({ snack: null }), 4000); }
+  async componentDidMount() {
+    document.body.dataset.theme = this.state.settings.theme;
+    this.core = await import('./app-core.js');
+    this.setState({ core: true });
+    this._key = e => {
+      if (e.ctrlKey && e.shiftKey && (e.key === 'F' || e.key === 'f')) { e.preventDefault(); this.openPalette(); }
+      else if (e.key === 'Escape') this.setState({ palette: null, rx: null, ctx: null, superConfirm: null, dimsum: null, lockWizard: null, unlockPrompt: null, pinPrompt: null, userMenu: false, wsForm: null });
+    };
+    window.addEventListener('keydown', this._key);
+    if (window.speechSynthesis) { const lv = () => this.setState({ voices: speechSynthesis.getVoices() }); lv(); speechSynthesis.onvoiceschanged = lv; }
+    this._tick = setInterval(() => this.tickTotp(), 1000);
+    this._sched = setInterval(() => this.checkSchedules(), 20000);
+    this.checkSchedules();
+    const dsChance = (this.props.dimsumChance ?? 10) / 100;
+    if (this.state.authed && !this.state.settings.school.on && Math.random() < dsChance) this.showDimsum();
+    this.log('App started');
+  }
+  componentWillUnmount() { window.removeEventListener('keydown', this._key); clearInterval(this._tick); clearInterval(this._sched); clearInterval(this._stream); }
+  showDimsum() { const d = this.core.DIM_SUM[Math.floor(Math.random() * this.core.DIM_SUM.length)]; this.setState({ dimsum: d }); }
+  checkSchedules() {
+    const now = new Date(); const hm = String(now.getHours()).padStart(2, '0') + ':' + String(now.getMinutes()).padStart(2, '0');
+    const today = now.toDateString(); let changed = false;
+    const sch = this.state.settings.schedules.map(s => {
+      if (s.time === hm && s.lastFired !== today) { changed = true; this.applySchedule(s); return Object.assign({}, s, { lastFired: today }); }
+      return s;
+    });
+    if (changed) this.setSettings({ schedules: sch });
+  }
+  applySchedule(s) {
+    if (s.key === 'theme') { this.setSettings({ theme: s.value }); document.body.dataset.theme = s.value; }
+    else if (s.key === 'language') this.setSettings({ language: s.value });
+    else if (s.key === 'narrator') this.setSettings({ narrator: Object.assign({}, this.state.settings.narrator, { on: s.value === 'on' }) });
+    this.snack('Scheduled setting applied: ' + s.key + ' → ' + s.value); this.log('Schedule fired: ' + s.key + '=' + s.value);
+  }
+  async tickTotp() {
+    if (!this.core || !this.state.totp.length) return;
+    const codes = {};
+    for (const e of this.state.totp) { try { codes[e.id] = await this.core.totp(e.secret); } catch (err) { codes[e.id] = 'invalid'; } }
+    this.setState({ totpCodes: codes, totpSec: 30 - Math.floor(Date.now() / 1000) % 30 });
+  }
+  // ---- tabs ----
+  pageMeta(p) {
+    return { chat: ['Chat', 'chat_bubble'], workspace: ['Workspace', 'category'], admin: ['Admin panel', 'admin_panel_settings'], ollama: ['Ollama manager', 'host'], converter: ['File converter', 'sync_alt'], authenticator: ['Authenticator', 'phonelink_lock'], settings: ['Settings', 'settings'], status: ['Status Hub', 'monitor_heart'], changelog: ['Changelog', 'history_edu'] }[p] || [p, 'tab'];
+  }
+  openPage(p) {
+    const ex = this.state.tabs.find(t => t.page === p);
+    if (ex) return this.activateTab(ex.id);
+    const t = { id: 'tb' + Math.random().toString(36).slice(2, 8), page: p };
+    const tabs = this.state.tabs.concat([t]);
+    this.setState({ tabs, activeTab: t.id }); this.save('tabs', tabs); this.save('activeTab', t.id);
+    this.log('Opened ' + this.pageMeta(p)[0]);
+  }
+  activateTab(id) {
+    const t = this.state.tabs.find(t => t.id === id); if (!t) return;
+    const lk = this.state.locks['tab:' + id];
+    if (lk && !this.lockExpired(lk)) return this.setState({ unlockPrompt: { lockId: 'tab:' + id, name: 'Tab: ' + this.pageMeta(t.page)[0], then: () => { this.setState({ activeTab: id }); this.save('activeTab', id); } } });
+    this.setState({ activeTab: id }); this.save('activeTab', id);
+  }
+  closeTab(id) {
+    let tabs = this.state.tabs.filter(t => t.id !== id);
+    if (!tabs.length) tabs = [{ id: 't1', page: 'chat' }];
+    const activeTab = this.state.activeTab === id ? tabs[tabs.length - 1].id : this.state.activeTab;
+    this.setState({ tabs, activeTab }); this.save('tabs', tabs); this.save('activeTab', activeTab);
+  }
+  lockExpired(lk) { return lk.until !== 0 && Date.now() > lk.until; }
+  // ---- locks ----
+  guardLocks = e => {
+    const el = e.target.closest && e.target.closest('[data-lock]');
+    if (!el) return;
+    const name = el.getAttribute('data-lock'); const id = 'el:' + name;
+    const lk = this.state.locks[id];
+    if (lk && !this.lockExpired(lk)) { e.stopPropagation(); e.preventDefault(); this.setState({ unlockPrompt: { lockId: id, name, then: null } }); }
+  };
+  onCtx = e => {
+    const tabEl = e.target.closest && e.target.closest('[data-tabid]');
+    const lockEl = e.target.closest && e.target.closest('[data-lock]');
+    if (!tabEl && !lockEl) return;
+    e.preventDefault();
+    const items = [];
+    if (tabEl) {
+      const id = tabEl.getAttribute('data-tabid'); const t = this.state.tabs.find(t => t.id === id);
+      const lid = 'tab:' + id; const locked = this.state.locks[lid] && !this.lockExpired(this.state.locks[lid]);
+      items.push({ label: locked ? 'Unlock this tab…' : 'Lock this tab…', icon: 'lock', act: () => locked ? this.setState({ unlockPrompt: { lockId: lid, name: 'Tab: ' + this.pageMeta(t.page)[0], then: null }, ctx: null }) : this.startLockWizard(lid, 'Tab: ' + this.pageMeta(t.page)[0], e) });
+      items.push({ label: 'Duplicate tab', icon: 'content_copy', act: () => { const nt = { id: 'tb' + Math.random().toString(36).slice(2, 8), page: t.page }; const tabs = this.state.tabs.concat([nt]); this.setState({ tabs, ctx: null }); this.save('tabs', tabs); } });
+      items.push({ label: 'Close tab', icon: 'close', act: () => { this.closeTab(id); this.setState({ ctx: null }); } });
+    } else if (lockEl) {
+      const name = lockEl.getAttribute('data-lock'); const lid = 'el:' + name;
+      const locked = this.state.locks[lid] && !this.lockExpired(this.state.locks[lid]);
+      items.push({ label: locked ? 'Unlock: ' + name : 'Lock this element… (' + name + ')', icon: 'lock', act: () => locked ? this.setState({ unlockPrompt: { lockId: lid, name, then: null }, ctx: null }) : this.startLockWizard(lid, name, e) });
+    }
+    this.setState({ ctx: { x: Math.min(e.clientX, innerWidth - 240), y: Math.min(e.clientY, innerHeight - 140), items } });
+  };
+  startLockWizard(lockId, name, e) { this.setState({ ctx: null, lockWizard: { lockId, name, type: 'password', secret: '', duration: '3600', disclosed: false, err: '', x: Math.min(e ? e.clientX : 300, innerWidth - 380), y: Math.min(e ? e.clientY : 200, innerHeight - 420) } }); }
+  // ---- auth ----
+  hash(s) { return crypto.subtle.digest('SHA-256', new TextEncoder().encode(s)).then(b => Array.from(new Uint8Array(b)).map(x => x.toString(16).padStart(2, '0')).join('')); }
+  doAuth = async () => {
+    const { user, authName, authEmail, authPass } = this.state;
+    if (!authEmail || !authPass) return this.setState({ authError: 'Email and password are required.' });
+    const h = await this.hash(authPass);
+    if (!user) {
+      if (!authName) return this.setState({ authError: 'Name is required.' });
+      const u = { name: authName, email: authEmail, pass: h, role: 'admin', created: Date.now() };
+      this.setSave('user', u); this.save('session', { at: Date.now() });
+      this.setState({ authed: true, authError: '' }); this.log('Admin account created');
+      if (!this.state.settings.school.on && Math.random() < 0.10) this.showDimsum();
+    } else {
+      if (user.email === authEmail && user.pass === h) { this.save('session', { at: Date.now() }); this.setState({ authed: true, authError: '', authPass: '' }); this.log('Signed in'); }
+      else this.setState({ authError: 'Wrong email or password.' });
+    }
+  };
+  // ---- chat ----
+  allModels() {
+    const inst = this.state.installed.map(m => ({ v: m.name + ':' + m.tag, label: m.name + ':' + m.tag }));
+    const ws = this.state.wsModels.map(m => ({ v: 'ws:' + m.id, label: m.name + ' (workspace)' }));
+    return inst.concat(ws);
+  }
+  curChat() { return this.state.chats.find(c => c.id === this.state.activeChat); }
+  updateChat(id, fn) { const chats = this.state.chats.map(c => c.id === id ? fn(Object.assign({}, c)) : c); this.setState({ chats }); this.save('chats', chats); }
+  sendMsg = () => {
+    const text = this.state.draft.trim(); if (!text || this.state.streaming) return;
+    let id = this.state.activeChat; let chats = this.state.chats;
+    if (!id || !this.curChat()) { id = 'c' + Math.random().toString(36).slice(2, 9); chats = [{ id, title: text.slice(0, 42), model: (this.allModels()[0] || {}).v, msgs: [], t: Date.now() }].concat(chats); }
+    chats = chats.map(c => c.id === id ? Object.assign({}, c, { msgs: c.msgs.concat([{ role: 'user', content: text }]) }) : c);
+    this.setState({ chats, activeChat: id, draft: '', streaming: true }); this.save('chats', chats);
+    const reply = this.core ? this.core.simulatedReply(this.curReplyIdx = (this.curReplyIdx || 0) + 1) : 'Local simulated reply.';
+    let pos = 0;
+    const chatsWithAi = chats.map(c => c.id === id ? Object.assign({}, c, { msgs: c.msgs.concat([{ role: 'assistant', content: '' }]) }) : c);
+    this.setState({ chats: chatsWithAi });
+    this._stream = setInterval(() => {
+      pos += (this.props.streamSpeed ?? 3) + Math.floor(Math.random() * 4);
+      const done = pos >= reply.length;
+      const chats2 = this.state.chats.map(c => { if (c.id !== id) return c; const msgs = c.msgs.slice(); msgs[msgs.length - 1] = { role: 'assistant', content: reply.slice(0, pos) }; return Object.assign({}, c, { msgs }); });
+      this.setState({ chats: chats2, streaming: !done });
+      if (done) { clearInterval(this._stream); this.save('chats', chats2); this.log('Assistant replied'); }
+    }, 30);
+  };
+  stopStream = () => { clearInterval(this._stream); this.setState({ streaming: false }); this.save('chats', this.state.chats); };
+  // ---- super confirm ----
+  superConfirm(label, onYes) { this.setState({ superConfirm: { label, typed: '', slider: 0, onYes } }); }
+  // ---- regex builder ----
+  openRx(target, e) {
+    const s = this.state.search[target];
+    const r = e && e.currentTarget ? e.currentTarget.getBoundingClientRect() : { left: 200, bottom: 100 };
+    this.setState({ rx: { target, pattern: s.pattern || s.q, flags: s.flags || 'i', x: Math.min(r.left - 150, innerWidth - 360), y: Math.min(r.bottom + 8, innerHeight - 340) } });
+  }
+  rxSet(patch) { this.setState({ rx: Object.assign({}, this.state.rx, patch) }); }
+  applyRx(enable) {
+    const { target, pattern, flags } = this.state.rx;
+    const search = Object.assign({}, this.state.search);
+    search[target] = Object.assign({}, search[target], { rx: enable, pattern, flags, q: enable ? pattern : search[target].q });
+    this.setState({ search, rx: null });
+  }
+  setQ(target, q) { const search = Object.assign({}, this.state.search); search[target] = Object.assign({}, search[target], { q, pattern: search[target].rx ? q : search[target].pattern }); this.setState({ search }); }
+  match(target, s) {
+    const f = this.state.search[target]; if (!f.q) return true;
+    if (f.rx) { try { return new RegExp(f.q, f.flags).test(s); } catch (e) { return true; } }
+    return s.toLowerCase().includes(f.q.toLowerCase());
+  }
+  // ---- palette ----
+  openPalette = () => { this.setState({ palette: { sel: 0 }, userMenu: false }); setTimeout(() => { const el = document.getElementById('palette-input'); el && el.focus(); }, 50); };
+  paletteIndex() {
+    const A = [];
+    const pageAct = p => () => { this.openPage(p); this.setState({ palette: null }); };
+    A.push({ label: 'Chat', hint: 'page', icon: 'chat_bubble', act: pageAct('chat') });
+    A.push({ label: 'Workspace — models, knowledge, prompts, tools', hint: 'page', icon: 'category', act: pageAct('workspace') });
+    A.push({ label: 'Admin panel — users and instance settings', hint: 'page', icon: 'admin_panel_settings', act: pageAct('admin') });
+    A.push({ label: 'Ollama suite manager', hint: 'page', icon: 'host', act: pageAct('ollama') });
+    A.push({ label: 'File converter', hint: 'page', icon: 'sync_alt', act: pageAct('converter') });
+    A.push({ label: 'Authenticator — TOTP codes', hint: 'page', icon: 'phonelink_lock', act: pageAct('authenticator') });
+    A.push({ label: 'Status Hub — live session card', hint: 'page', icon: 'monitor_heart', act: pageAct('status') });
+    A.push({ label: 'Changelog — every released version', hint: 'page', icon: 'history_edu', act: pageAct('changelog') });
+    const sset = (sec, label, icon) => ({ label, hint: 'settings', icon, act: () => { this.openPage('settings'); this.setState({ settingsSection: sec, palette: null }); } });
+    A.push(sset('general', 'Settings — General (theme, language, funny level)', 'tune'));
+    A.push(sset('personal', 'Settings — Personalization (vocabulary upload, logo)', 'palette'));
+    A.push(sset('narrator', 'Settings — TTS narrator and voice', 'record_voice_over'));
+    A.push(sset('schedule', 'Settings — Scheduled settings', 'schedule'));
+    A.push(sset('school', 'Settings — ' + (this.state.settings.school.name || 'School mode') + ' and PIN', 'lock_person'));
+    A.push(sset('data', 'Settings — Data controls (export, wipe)', 'database'));
+    A.push(sset('about', 'Settings — About', 'info'));
+    A.push({ label: 'Toggle dark / light theme', hint: 'action', icon: 'dark_mode', act: () => { this.toggleTheme(); this.setState({ palette: null }); } });
+    A.push({ label: 'New chat', hint: 'action', icon: 'edit_square', act: () => { this.newChat(); this.setState({ palette: null }); } });
+    A.push({ label: 'Show a random dim sum dish', hint: 'action', icon: 'restaurant', act: () => { this.setState({ palette: null }); if (this.state.settings.school.on) this.snack('Not available right now.'); else this.showDimsum(); } });
+    return A;
+  }
+  onPaletteKey = e => {
+    const p = this.state.palette; if (!p) return;
+    const list = this.paletteResults();
+    if (e.key === 'ArrowDown') { e.preventDefault(); this.setState({ palette: Object.assign({}, p, { sel: Math.min(p.sel + 1, list.length - 1) }) }); }
+    else if (e.key === 'ArrowUp') { e.preventDefault(); this.setState({ palette: Object.assign({}, p, { sel: Math.max(p.sel - 1, 0) }) }); }
+    else if (e.key === 'Enter' && list[p.sel]) list[p.sel].act();
+  };
+  paletteResults() {
+    const q = this.state.search.palette.q;
+    return this.paletteIndex().filter(r => this.match('palette', r.label + ' ' + r.hint)).slice(0, 12);
+  }
+  // ---- misc ui ----
+  toggleTheme = () => { const t = this.state.settings.theme === 'dark' ? 'light' : 'dark'; this.setSettings({ theme: t }); document.body.dataset.theme = t; this.log('Theme: ' + t); };
+  newChat = () => { this.setState({ activeChat: null, draft: '' }); const t = this.state.tabs.find(t => t.page === 'chat'); if (t) this.activateTab(t.id); else this.openPage('chat'); };
+  logoVals() {
+    const lg = this.state.settings.logo;
+    const glyphs = { chat: 'forum', bolt: 'bolt', hub: 'hub', leaf: 'eco' };
+    return { logoImg: lg.custom, logoBgImg: lg.custom ? 'url("' + lg.custom + '")' : 'none', logoNoImg: !lg.custom, logoGlyph: glyphs[lg.preset] || 'forum', logoBg: lg.bg || 'var(--p)', logoFit: lg.fit || 'cover' };
+  }
+  pageVals() { return Object.assign({}, this.settingsVals(), this.ollamaVals(), this.convVals(), this.authVals(), this.wsVals(), this.adminVals(), this.statusVals()); }
+  ollamaVals() {
+    const st = this.state; if (!this.core) return {};
+    const tabs = [['overview', 'Overview'], ['store', 'Model Store'], ['chat', 'Chat']];
+    const fmtGb = g => g < 1 ? Math.round(g * 1000) + ' MB' : g + ' GB';
+    const startPull = (name, tag, gb) => {
+      if (st.installed.some(m => m.name === name && m.tag === tag)) return this.snack(name + ':' + tag + ' is already installed.');
+      if (st.pulls.some(p => p.name === name && p.tag === tag)) return this.snack('Already pulling ' + name + ':' + tag + '.');
+      const p = { name, tag, gb, pct: 0 };
+      this.setState({ pulls: st.pulls.concat([p]), ollamaTab: 'overview' });
+      const iv = setInterval(() => {
+        const pulls = this.state.pulls.map(x => x.name === name && x.tag === tag ? Object.assign({}, x, { pct: Math.min(100, x.pct + 4 + Math.random() * 8) }) : x);
+        const done = pulls.find(x => x.name === name && x.tag === tag);
+        if (!done) return clearInterval(iv);
+        if (done.pct >= 100) {
+          clearInterval(iv);
+          const installed = this.state.installed.concat([{ name, tag, gb, modified: Date.now() }]);
+          this.setSave('installed', installed);
+          this.setState({ pulls: this.state.pulls.filter(x => !(x.name === name && x.tag === tag)) });
+          this.snack('Pulled ' + name + ':' + tag + '.'); this.log('Model pulled: ' + name + ':' + tag);
+        } else this.setState({ pulls });
+      }, 350);
+    };
+    return {
+      olTabVMs: tabs.map(([id, label]) => ({ label, bg: st.ollamaTab === id ? 'var(--schigh)' : 'transparent', fg: st.ollamaTab === id ? 'var(--ons)' : 'var(--onsv)', go: () => this.setState({ ollamaTab: id }) })),
+      olOverview: st.ollamaTab === 'overview', olStore: st.ollamaTab === 'store', olChat: st.ollamaTab === 'chat',
+      olUrl: st.settings.ollamaUrl, olCount: st.installed.length,
+      olInstVMs: st.installed.map(m => ({ full: m.name + ':' + m.tag, meta: fmtGb(m.gb) + ' · modified ' + new Date(m.modified).toLocaleDateString(), chat: () => this.setState({ ollamaTab: 'chat', ollamaChat: Object.assign({}, st.ollamaChat, { model: m.name + ':' + m.tag }) }), del: () => this.superConfirm('Delete model ' + m.name + ':' + m.tag + ' (' + fmtGb(m.gb) + ')', () => { const installed = this.state.installed.filter(x => !(x.name === m.name && x.tag === m.tag)); this.setSave('installed', installed); this.log('Model deleted: ' + m.name + ':' + m.tag); }) })),
+      olPullsVisible: !!st.pulls.length,
+      olPullVMs: st.pulls.map(p => ({ full: p.name + ':' + p.tag, pct: Math.floor(p.pct), cancel: () => this.setState({ pulls: this.state.pulls.filter(x => !(x.name === p.name && x.tag === p.tag)) }) })),
+      storeQ: st.search.store.q, onStoreQ: e => this.setQ('store', e.target.value),
+      rxStore: e => this.openRx('store', e), rxStoreBg: st.search.store.rx ? 'var(--p)' : 'transparent', rxStoreFg: st.search.store.rx ? 'var(--onp)' : 'var(--onsv)',
+      storeVMs: this.core.OLLAMA_STORE.filter(m => this.match('store', m.name + ' ' + m.desc)).map(m => ({
+        name: m.name, meta: m.pulls + ' pulls · updated ' + m.updated, desc: m.desc,
+        caps: m.caps.map(c => ({ label: c })),
+        tags: m.tags.map(t => {
+          const inst = st.installed.some(x => x.name === m.name && x.tag === t.tag);
+          const pulling = st.pulls.some(x => x.name === m.name && x.tag === t.tag);
+          const fit = this.core.fitVerdict(t.gb);
+          return { tag: t.tag, size: fmtGb(t.gb), fit: fit.v, why: fit.why, disabled: inst,
+            fitBg: fit.v === 'Fits' ? 'rgba(74,157,95,.18)' : fit.v === 'Tight' ? 'rgba(200,150,40,.18)' : 'var(--errc)',
+            fitFg: fit.v === 'Fits' ? '#4a9d5f' : fit.v === 'Tight' ? '#c89628' : 'var(--onerrc)',
+            bg: inst ? 'var(--secc)' : 'transparent', fg: inst ? 'var(--onsecc)' : 'var(--ons)',
+            icon: inst ? 'check' : pulling ? 'progress_activity' : 'download',
+            act: () => inst ? null : startPull(m.name, t.tag, t.gb) };
+        })
+      })),
+      storeEmpty: !this.core.OLLAMA_STORE.some(m => this.match('store', m.name + ' ' + m.desc)),
+      olcModel: st.ollamaChat.model || (st.installed[0] ? st.installed[0].name + ':' + st.installed[0].tag : ''),
+      onOlcModel: e => this.setState({ ollamaChat: Object.assign({}, st.ollamaChat, { model: e.target.value }) }),
+      olcModelOpts: st.installed.map(m => ({ v: m.name + ':' + m.tag })),
+      olcEmpty: !st.ollamaChat.msgs.length,
+      olcMsgVMs: st.ollamaChat.msgs.map(m => ({ text: m.content, bg: m.role === 'user' ? 'var(--pc)' : 'var(--sc)', align: m.role === 'user' ? 'flex-end' : 'flex-start' })),
+      olcDraft: st.ollamaChat.draft, onOlcDraft: e => this.setState({ ollamaChat: Object.assign({}, st.ollamaChat, { draft: e.target.value }) }),
+      onOlcKey: e => { if (e.key === 'Enter') this.olcSend(); }, olcSend: () => this.olcSend()
+    };
+  }
+  olcSend() {
+    const oc = this.state.ollamaChat; const text = oc.draft.trim(); if (!text) return;
+    const msgs = oc.msgs.concat([{ role: 'user', content: text }, { role: 'assistant', content: '' }]);
+    this.setState({ ollamaChat: Object.assign({}, oc, { msgs, draft: '' }) });
+    const reply = this.core.simulatedReply((this._olcIdx = (this._olcIdx || 0) + 1)).split('```')[0].trim();
+    let pos = 0;
+    const iv = setInterval(() => {
+      pos += 4;
+      const oc2 = this.state.ollamaChat; const ms = oc2.msgs.slice();
+      ms[ms.length - 1] = { role: 'assistant', content: reply.slice(0, pos) };
+      this.setState({ ollamaChat: Object.assign({}, oc2, { msgs: ms }) });
+      if (pos >= reply.length) clearInterval(iv);
+    }, 30);
+  }
+  convVals() {
+    const st = this.state; if (!this.core) return {};
+    const cv = st.conv; const sniff = cv.sniff;
+    const catIcons = { 'Documents/PDF': 'description', Images: 'image', Audio: 'music_note', Video: 'movie', Archives: 'folder_zip', 'Structured Data/Spreadsheets': 'table', 'Code/Text': 'code', 'Binary Encodings': 'memory' };
+    const cats = ['All'].concat(this.core.ADAPTER_CATS);
+    const applies = a => sniff && (a.from.includes('*') || a.from.includes(sniff.mime));
+    const adapters = this.core.ADAPTERS
+      .filter(a => cv.cat === 'All' || a.cat === cv.cat)
+      .filter(a => this.match('conv', a.to + ' ' + a.cat + ' ' + (a.reason || '')));
+    return {
+      convCta: cv.file ? 'Pick a different file' : 'Pick a file to convert',
+      onConvFile: async e => {
+        const f = e.target.files[0]; if (!f) return;
+        const u8 = new Uint8Array(await f.slice(0, 4096).arrayBuffer());
+        const sn = this.core.sniffBytes(u8);
+        let imgPrev = null, textPrev = null;
+        if (sn.mime.startsWith('image/')) imgPrev = URL.createObjectURL(f);
+        else if (sn.cat === 'Code/Text' || sn.cat === 'Structured Data/Spreadsheets') textPrev = new TextDecoder().decode(u8.slice(0, 600));
+        this.setState({ conv: Object.assign({}, cv, { file: f, sniff: sn, imgPrev, textPrev }) });
+        this.log('File inspected: ' + sn.type); e.target.value = '';
+      },
+      convHasFile: !!cv.file, convName: cv.file ? cv.file.name : '', convType: sniff ? sniff.type : '', convCat: sniff ? sniff.cat : '',
+      convSize: cv.file ? (cv.file.size > 1048576 ? (cv.file.size / 1048576).toFixed(1) + ' MB' : Math.ceil(cv.file.size / 1024) + ' KB') : '',
+      convImgPrev: cv.imgPrev || null, convBgImg: cv.imgPrev ? 'url("' + cv.imgPrev + '")' : 'none', convTextPrev: cv.textPrev || null,
+      convQ: st.search.conv.q, onConvQ: e => this.setQ('conv', e.target.value),
+      rxConv: e => this.openRx('conv', e), rxConvBg: st.search.conv.rx ? 'var(--p)' : 'transparent', rxConvFg: st.search.conv.rx ? 'var(--onp)' : 'var(--onsv)',
+      convCatVMs: cats.map(c => ({ label: c, bg: cv.cat === c ? 'var(--secc)' : 'transparent', fg: cv.cat === c ? 'var(--onsecc)' : 'var(--ons)', go: () => this.setState({ conv: Object.assign({}, cv, { cat: c }) }) })),
+      adapterVMs: adapters.map(a => {
+        const ok = a.available; const app = applies(a);
+        return {
+          to: a.to, cat: a.cat, icon: ok ? (catIcons[a.cat] || 'sync_alt') : 'block',
+          iconColor: ok ? 'var(--p)' : 'var(--onsv)', opacity: ok ? 1 : 0.55,
+          sub: ok ? (app ? 'Ready for the selected file' : cv.file ? 'Does not apply to the selected file type' : 'Accepts: ' + a.from.join(', ')) : 'Unavailable — ' + a.reason,
+          canRun: ok && app && !cv.busy,
+          run: async () => {
+            this.setState({ conv: Object.assign({}, this.state.conv, { busy: true }) });
+            try {
+              const blob = await this.core.runAdapter(a, cv.file);
+              const name = cv.file.name.replace(/\.[^.]*$/, '') + '.' + a.ext;
+              const rec = { name, meta: (blob.size > 1048576 ? (blob.size / 1048576).toFixed(1) + ' MB' : Math.ceil(blob.size / 1024) + ' KB') + ' · ' + a.to, url: URL.createObjectURL(blob) };
+              const results = [rec].concat(this.state.conv.results).slice(0, 10);
+              this.setState({ conv: Object.assign({}, this.state.conv, { busy: false, results }) });
+              this.snack('Converted to ' + a.to + '.'); this.log('File converted → ' + a.to);
+            } catch (err) {
+              this.setState({ conv: Object.assign({}, this.state.conv, { busy: false }) });
+              this.snack('Conversion failed honestly: ' + err.message);
+            }
+          }
+        };
+      }),
+      convResultsVisible: !!cv.results.length,
+      convResultVMs: cv.results
+    };
+  }
+  authVals() {
+    const st = this.state; const f = st.totpForm;
+    return {
+      totpLabel: f.label, onTotpLabel: e => this.setState({ totpForm: Object.assign({}, f, { label: e.target.value }) }),
+      totpSecret: f.secret, onTotpSecret: e => this.setState({ totpForm: Object.assign({}, f, { secret: e.target.value }) }),
+      onTotpKey: e => { if (e.key === 'Enter') this.totpAdd(); }, totpAdd: () => this.totpAdd(), totpErr: f.err,
+      totpQ: st.search.auth.q, onTotpQ: e => this.setQ('auth', e.target.value),
+      rxTotp: e => this.openRx('auth', e), rxTotpBg: st.search.auth.rx ? 'var(--p)' : 'transparent', rxTotpFg: st.search.auth.rx ? 'var(--onp)' : 'var(--onsv)',
+      totpCountdown: st.totpSec || 30,
+      totpEmpty: !st.totp.length,
+      totpVMs: st.totp.filter(t => this.match('auth', t.label)).map(t => ({
+        label: t.label, masked: t.secret.slice(0, 4) + '••••••••',
+        code: (st.totpCodes[t.id] || '······').replace(/(\d{3})(\d{3})/, '$1 $2'),
+        copy: () => { navigator.clipboard.writeText(st.totpCodes[t.id] || ''); this.snack('Code copied.'); },
+        del: () => this.superConfirm('Remove authenticator entry "' + t.label + '"', () => { const totp = this.state.totp.filter(x => x.id !== t.id); this.setSave('totp', totp); })
+      }))
+    };
+  }
+  totpAdd() {
+    const f = this.state.totpForm;
+    if (!f.label.trim()) return this.setState({ totpForm: Object.assign({}, f, { err: 'A label is required.' }) });
+    if (this.core.b32decode(f.secret).length < 8) return this.setState({ totpForm: Object.assign({}, f, { err: 'That is not a valid Base32 secret (min 8 decoded bytes).' }) });
+    const totp = this.state.totp.concat([{ id: Math.random().toString(36).slice(2, 9), label: f.label.trim(), secret: f.secret.replace(/\s/g, '') }]);
+    this.setSave('totp', totp); this.setState({ totpForm: { label: '', secret: '', err: '' } });
+    this.snack('Entry added — live code below.'); this.log('Authenticator entry added'); this.tickTotp();
+  }
+  wsVals() {
+    const st = this.state;
+    const tabs = [['models', 'Models'], ['knowledge', 'Knowledge'], ['prompts', 'Prompts'], ['tools', 'Tools']];
+    const cfg = {
+      models: { key: 'wsModels', icon: 'smart_toy', createLabel: 'New model', title: 'Create a workspace model', namePh: 'Model name, e.g. Helpful Reviewer', bodyPh: 'System prompt', modelSel: true, empty: 'No workspace models yet. A workspace model wraps an installed base model with a name and system prompt, and shows up in the chat model selector.', sub: m => m.base + ' · ' + (m.body || '').slice(0, 80) },
+      knowledge: { key: 'knowledge', icon: 'auto_stories', createLabel: 'New collection', title: 'Create a knowledge collection', namePh: 'Collection name', bodyPh: 'Paste seed text (files can be added in the packaged build)', empty: 'No knowledge collections yet.', sub: m => (m.body || '').length + ' characters of seed text' },
+      prompts: { key: 'prompts', icon: 'bolt', createLabel: 'New prompt', title: 'Create a prompt', namePh: 'Command, e.g. /summarize', bodyPh: 'Prompt text', empty: 'No saved prompts yet.', sub: m => (m.body || '').slice(0, 90) },
+      tools: { key: 'tools', icon: 'build', createLabel: 'Import tool', title: 'Import a tool (JSON spec)', namePh: 'Tool name', bodyPh: 'Paste the tool JSON spec', empty: 'No tools installed. Import a tool JSON spec; execution requires the packaged build\u2019s sandbox.', sub: m => 'JSON spec · ' + (m.body || '').length + ' chars' }
+    };
+    const c = cfg[st.wsTab]; const items = st[c.key];
+    const f = st.wsForm;
+    return {
+      wsTabVMs: tabs.map(([id, label]) => ({ label, bg: st.wsTab === id ? 'var(--schigh)' : 'transparent', fg: st.wsTab === id ? 'var(--ons)' : 'var(--onsv)', go: () => this.setState({ wsTab: id }) })),
+      wsQ: st.search.ws.q, onWsQ: e => this.setQ('ws', e.target.value), wsSearchPh: 'Search ' + st.wsTab,
+      rxWs: e => this.openRx('ws', e), rxWsBg: st.search.ws.rx ? 'var(--p)' : 'transparent', rxWsFg: st.search.ws.rx ? 'var(--onp)' : 'var(--onsv)',
+      wsCreate: () => this.setState({ wsForm: { tab: st.wsTab, name: '', body: '', base: (st.installed[0] ? st.installed[0].name + ':' + st.installed[0].tag : '') } }),
+      wsCreateLabel: c.createLabel,
+      wsEmpty: !items.filter(m => this.match('ws', m.name + ' ' + (m.body || ''))).length, wsEmptyMsg: c.empty,
+      wsItemVMs: items.filter(m => this.match('ws', m.name + ' ' + (m.body || ''))).map(m => ({
+        icon: c.icon, name: m.name, sub: c.sub(m),
+        del: () => this.superConfirm('Delete "' + m.name + '" from ' + st.wsTab, () => { const arr = this.state[c.key].filter(x => x.id !== m.id); this.setSave(c.key, arr); })
+      })),
+      wsFormOpen: !!f, wsFormTitle: f ? cfg[f.tab].title : '', wsFormName: f ? f.name : '', wsFormBody: f ? f.body : '',
+      wsFormNamePh: f ? cfg[f.tab].namePh : '', wsFormBodyPh: f ? cfg[f.tab].bodyPh : '',
+      wsFormModelSel: f ? !!cfg[f.tab].modelSel : false, wsFormBase: f ? f.base : '',
+      onWsFormName: e => this.setState({ wsForm: Object.assign({}, f, { name: e.target.value }) }),
+      onWsFormBody: e => this.setState({ wsForm: Object.assign({}, f, { body: e.target.value }) }),
+      onWsFormBase: e => this.setState({ wsForm: Object.assign({}, f, { base: e.target.value }) }),
+      wsFormCancel: () => this.setState({ wsForm: null }),
+      wsFormSave: () => {
+        if (!f.name.trim()) return this.snack('A name is required.');
+        if (f.tab === 'tools') { try { JSON.parse(f.body); } catch (e) { return this.snack('Tool spec must be valid JSON: ' + e.message); } }
+        const key = cfg[f.tab].key;
+        const arr = this.state[key].concat([{ id: Math.random().toString(36).slice(2, 9), name: f.name.trim(), body: f.body, base: f.base }]);
+        this.setSave(key, arr); this.setState({ wsForm: null });
+        this.snack('Saved to ' + f.tab + '.'); this.log('Workspace ' + f.tab + ' item created');
+      }
+    };
+  }
+  adminVals() {
+    const st = this.state; const s = st.settings;
+    const sw = on => ({ bg: on ? 'var(--p)' : 'var(--schighest)', knob: on ? 'var(--onp)' : 'var(--out)', x: on ? 24 : 4 });
+    const swSign = sw(s.signupEnabled);
+    const u = st.user;
+    return {
+      adTabVMs: [['users', 'Users'], ['settings', 'Instance settings']].map(([id, label]) => ({ label, bg: st.adminTab === id ? 'var(--schigh)' : 'transparent', fg: st.adminTab === id ? 'var(--ons)' : 'var(--onsv)', go: () => this.setState({ adminTab: id }) })),
+      adUsers: st.adminTab === 'users', adSettings: st.adminTab === 'settings',
+      adUserVMs: u ? [{ name: u.name, email: u.email, role: u.role, created: new Date(u.created).toLocaleDateString() }] : [],
+      toggleSignup: () => this.setSettings({ signupEnabled: !s.signupEnabled }),
+      signupOnStr: String(s.signupEnabled), swSignBg: swSign.bg, swSignKnob: swSign.knob, swSignX: swSign.x,
+      defRole: s.defaultRole, onDefRole: e => this.setSettings({ defaultRole: e.target.value }),
+      olUrlDraft: st.olUrlDraft !== undefined ? st.olUrlDraft : s.ollamaUrl,
+      onOlUrl: e => this.setState({ olUrlDraft: e.target.value }),
+      saveOlUrl: () => { if (st.olUrlDraft) { this.setSettings({ ollamaUrl: st.olUrlDraft }); this.snack('Ollama URL saved.'); } },
+      bannerDraft: st.bannerDraft !== undefined ? st.bannerDraft : s.banner,
+      onBanner: e => this.setState({ bannerDraft: e.target.value }),
+      saveBanner: () => { this.setSettings({ banner: st.bannerDraft || '' }); }
+    };
+  }
+  statusVals() {
+    const st = this.state;
+    const active = Object.entries(st.locks).filter(([k, v]) => !this.lockExpired(v)).length;
+    return {
+      statusNow: new Date().toLocaleTimeString(),
+      statChats: st.chats.length, statModels: st.installed.length, statTotp: st.totp.length, statLocks: active,
+      statusVMsList: st.statusLog.slice(0, 20).map(e => ({ time: new Date(e.t).toLocaleTimeString(), ev: e.ev })),
+      clVMs: (this.core ? this.core.CHANGELOG : []).map(v => ({ version: v.version, date: v.date, sections: v.sections.map(s => ({ title: s.title.toUpperCase(), items: s.items.map(text => ({ text })) })) }))
+    };
+  }
+  settingsVals() {
+    const st = this.state; const s = st.settings; const school = s.school;
+    const secs = [
+      ['general', 'General', 'tune', 'theme language funny emoji dark light'],
+      ['personal', 'Personalization', 'palette', 'vocabulary upload logo preset custom image'],
+      ['narrator', 'TTS narrator', 'record_voice_over', 'voice speech speak tts'],
+      ['schedule', 'Scheduled settings', 'schedule', 'time automatic theme schedule'],
+      ['school', school.name || 'School mode', 'lock_person', 'pin lock serious school'],
+      ['data', 'Data controls', 'database', 'export wipe delete storage'],
+      ['about', 'About', 'info', 'version changelog credits']
+    ];
+    const setSec = {}; setSec[st.settingsSection] = true;
+    const sw = on => ({ bg: on ? 'var(--p)' : 'var(--schighest)', knob: on ? 'var(--onp)' : 'var(--out)', x: on ? 24 : 4 });
+    const swE = sw(s.emojiDialogs), swN = sw(s.narrator.on), swS = sw(school.on);
+    const schedValOpts = { theme: [{ v: 'dark', label: 'Dark' }, { v: 'light', label: 'Light' }], language: [{ v: 'English', label: 'English' }, { v: 'Cantonese', label: 'Cantonese' }, { v: 'Bilingual', label: 'Bilingual' }], narrator: [{ v: 'on', label: 'On' }, { v: 'off', label: 'Off' }] }[st.schedForm.key] || [];
+    const vocab = s.vocab;
+    return {
+      setQ: st.search.settings.q, onSetQ: e => this.setQ('settings', e.target.value),
+      rxSet: e => this.openRx('settings', e), rxSetBg: st.search.settings.rx ? 'var(--p)' : 'transparent', rxSetFg: st.search.settings.rx ? 'var(--onp)' : 'var(--onsv)',
+      setNavVMs: secs.filter(x => this.match('settings', x[1] + ' ' + x[3])).map(([id, label, icon]) => ({ label, icon, bg: st.settingsSection === id ? 'var(--secc)' : 'transparent', fg: st.settingsSection === id ? 'var(--onsecc)' : 'var(--ons)', go: () => this.setState({ settingsSection: id }) })),
+      setSec, notSchool: !school.on,
+      setThemeLight: () => { this.setSettings({ theme: 'light' }); document.body.dataset.theme = 'light'; },
+      setThemeDark: () => { this.setSettings({ theme: 'dark' }); document.body.dataset.theme = 'dark'; },
+      thLightBg: s.theme === 'light' ? 'var(--secc)' : 'transparent', thLightFg: s.theme === 'light' ? 'var(--onsecc)' : 'var(--ons)',
+      thDarkBg: s.theme === 'dark' ? 'var(--secc)' : 'transparent', thDarkFg: s.theme === 'dark' ? 'var(--onsecc)' : 'var(--ons)',
+      langMode: s.language, onLangMode: e => { this.setSettings({ language: e.target.value }); this.snack(e.target.value === 'English' ? 'Language: English.' : 'Mode saved — Cantonese copy is pending, so strings fall back to English for now.'); },
+      funnyEn: s.funnyEn, onFunnyEn: e => this.setSettings({ funnyEn: Number(e.target.value) }),
+      funnyZh: s.funnyZh, onFunnyZh: e => this.setSettings({ funnyZh: Number(e.target.value) }),
+      toggleEmoji: () => this.setSettings({ emojiDialogs: !s.emojiDialogs }),
+      emojiOnStr: String(s.emojiDialogs), swEmojiBg: swE.bg, swEmojiKnob: swE.knob, swEmojiX: swE.x,
+      vocabStatus: vocab ? 'Loaded: ' + vocab.name + ' — ' + vocab.count + ' terms, version ' + vocab.version + '. Cached privately on this machine.' : 'No vocabulary file loaded. Upload a local JSON file with a "version" field and a "terms" array.',
+      vocabCta: vocab ? 'Replace file' : 'Upload vocabulary JSON',
+      vocabLoaded: !!vocab,
+      onVocabFile: async e => {
+        const f = e.target.files[0]; if (!f) return;
+        try {
+          const obj = JSON.parse(await f.text());
+          if (f.size > 2 * 1024 * 1024) throw new Error('File exceeds the 2 MB bound.');
+          const err = this.core.validateVocabulary(obj); if (err) throw new Error(err);
+          const terms = obj.terms || obj.vocabulary || obj.entries;
+          this.setSettings({ vocab: { name: f.name, version: String(obj.version), count: terms.length } });
+          this.snack('Vocabulary loaded: ' + terms.length + ' terms.'); this.log('Vocabulary file loaded');
+        } catch (err) { this.snack('Invalid vocabulary file: ' + err.message); }
+        e.target.value = '';
+      },
+      vocabClear: () => this.superConfirm('Clear the loaded personal vocabulary', () => { this.setSettings({ vocab: null }); this.snack('Vocabulary cleared.'); }),
+      logoPresetVMs: [['chat', 'forum'], ['bolt', 'bolt'], ['hub', 'hub'], ['leaf', 'eco']].map(([id, glyph]) => ({ name: id, glyph, bd: !s.logo.custom && s.logo.preset === id ? 'var(--p)' : 'transparent', pick: () => this.setSettings({ logo: Object.assign({}, s.logo, { preset: id, custom: null }) }) })),
+      onLogoFile: e => {
+        const f = e.target.files[0]; if (!f) return;
+        if (!f.type.startsWith('image/')) return this.snack('Invalid logo: not an image file.');
+        if (f.size > 1024 * 1024) return this.snack('Invalid logo: over the 1 MB bound.');
+        const r = new FileReader(); r.onload = () => { this.setSettings({ logo: Object.assign({}, s.logo, { custom: r.result }) }); this.snack('Custom logo applied live.'); this.log('Custom logo uploaded'); }; r.readAsDataURL(f);
+        e.target.value = '';
+      },
+      logoFitSel: s.logo.fit, onLogoFitSel: e => this.setSettings({ logo: Object.assign({}, s.logo, { fit: e.target.value }) }),
+      logoBgSel: s.logo.bg, onLogoBgSel: e => this.setSettings({ logo: Object.assign({}, s.logo, { bg: e.target.value }) }),
+      logoReset: () => this.setSettings({ logo: { preset: 'chat', custom: null, fit: 'cover', bg: 'var(--p)' } }),
+      logoState: s.logo.custom ? 'Custom image active' : 'Preset "' + s.logo.preset + '" active',
+      toggleNarrator: () => { const on = !s.narrator.on; this.setSettings({ narrator: Object.assign({}, s.narrator, { on }) }); if (on) setTimeout(() => this.narrate('Narrator enabled.'), 100); },
+      narrOnStr: String(s.narrator.on), swNarrBg: swN.bg, swNarrKnob: swN.knob, swNarrX: swN.x,
+      voiceCount: st.voices.length,
+      narrVoice: s.narrator.voice, onNarrVoice: e => this.setSettings({ narrator: Object.assign({}, s.narrator, { voice: e.target.value }) }),
+      voiceVMs: [{ uri: '', label: 'System default' }].concat(st.voices.map(v => ({ uri: v.voiceURI, label: v.name + ' (' + v.lang + ')' }))),
+      testNarrator: () => { if (!window.speechSynthesis) return this.snack('This runtime has no speech synthesis.'); const u = new SpeechSynthesisUtterance('This is your Open WebUI narrator voice.'); const v = st.voices.find(v => v.voiceURI === s.narrator.voice); if (v) u.voice = v; speechSynthesis.speak(u); },
+      schedTime: st.schedForm.time, onSchedTime: e => this.setState({ schedForm: Object.assign({}, st.schedForm, { time: e.target.value }) }),
+      schedKey: st.schedForm.key, onSchedKey: e => this.setState({ schedForm: { time: st.schedForm.time, key: e.target.value, value: { theme: 'dark', language: 'English', narrator: 'on' }[e.target.value] } }),
+      schedValue: st.schedForm.value, onSchedValue: e => this.setState({ schedForm: Object.assign({}, st.schedForm, { value: e.target.value }) }),
+      schedValOpts,
+      schedAdd: () => { const f = st.schedForm; if (!f.time) return this.snack('Pick a time first.'); const sch = s.schedules.concat([{ id: Math.random().toString(36).slice(2, 8), time: f.time, key: f.key, value: f.value, lastFired: null }]); this.setSettings({ schedules: sch }); this.snack('Scheduled: ' + f.key + ' → ' + f.value + ' at ' + f.time + ' daily.'); },
+      schedVMs: s.schedules.map(x => ({ time: x.time, desc: x.key + ' → ' + x.value + ' (daily)', fired: x.lastFired ? 'last fired ' + x.lastFired.split(' ').slice(0, 3).join(' ') : 'not fired yet', del: () => this.setSettings({ schedules: s.schedules.filter(y => y.id !== x.id) }) })),
+      noScheds: !s.schedules.length,
+      schoolName: school.name || 'School mode',
+      schoolNameDraft: st.schoolNameDraft !== undefined ? st.schoolNameDraft : (school.name || 'School mode'),
+      onSchoolName: e => this.setState({ schoolNameDraft: e.target.value }),
+      saveSchoolName: () => { const n = (st.schoolNameDraft || '').trim(); if (n) { this.setSettings({ school: Object.assign({}, school, { name: n }) }); this.snack('Mode renamed to "' + n + '".'); } },
+      schoolToggleLabel: school.on ? 'Turn off (needs PIN)' : 'Turn on',
+      schoolHint: school.on ? 'Playful surfaces are hidden while on' : 'You will set a PIN when turning it on',
+      schoolOnStr: String(school.on), swSchoolBg: swS.bg, swSchoolKnob: swS.knob, swSchoolX: swS.x,
+      toggleSchool: () => {
+        if (!school.on) {
+          this.setState({ pinPrompt: { title: 'Set a PIN for ' + (school.name || 'School mode'), note: 'You will need this exact PIN to turn the mode off. It is stored locally and can be reset by clearing local data.', val: '', err: '', onGo: pin => { if (!pin || pin.length < 4) return this.setState({ pinPrompt: Object.assign({}, this.state.pinPrompt, { err: 'PIN needs at least 4 characters.' }) }); this.setSettings({ school: Object.assign({}, this.state.settings.school, { on: true, pin }) }); this.setState({ pinPrompt: null }); this.snack((school.name || 'School mode') + ' is on.'); this.log('School-type mode enabled'); } } });
+        } else {
+          this.setState({ pinPrompt: { title: 'Enter PIN to turn off ' + (school.name || 'School mode'), note: 'Forgot it? Clearing this app\u2019s local data resets the mode — that is the documented recovery path.', val: '', err: '', onGo: pin => { if (pin !== this.state.settings.school.pin) return this.setState({ pinPrompt: Object.assign({}, this.state.pinPrompt, { err: 'Wrong PIN.' }) }); this.setSettings({ school: Object.assign({}, this.state.settings.school, { on: false }) }); this.setState({ pinPrompt: null }); this.snack('Mode turned off. Your previous choices are restored.'); } } });
+        }
+      },
+      exportData: () => {
+        const out = {}; for (let i = 0; i < localStorage.length; i++) { const k = localStorage.key(i); if (k.startsWith('owmd3.')) { try { out[k] = JSON.parse(localStorage.getItem(k)); } catch (e) { out[k] = localStorage.getItem(k); } } }
+        delete out['owmd3.locks']; delete out['owmd3.totp'];
+        const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([JSON.stringify(out, null, 2)], { type: 'application/json' })); a.download = 'open-webui-md3-export.json'; a.click();
+        this.snack('Exported (credentials and lock secrets excluded).');
+      },
+      wipeData: () => this.superConfirm('Wipe ALL local app data, including your account, chats, and locks', () => { const ks = []; for (let i = 0; i < localStorage.length; i++) { const k = localStorage.key(i); if (k.startsWith('owmd3.')) ks.push(k); } ks.forEach(k => localStorage.removeItem(k)); location.reload(); }),
+      goChangelog: e => { e.preventDefault(); this.openPage('changelog'); }
+    };
+  }
+  dialogVals() {
+    const st = this.state; const sc = st.superConfirm, ds = st.dimsum, lw = st.lockWizard, up = st.unlockPrompt, pp = st.pinPrompt;
+    const emoji = st.settings.emojiDialogs;
+    const scReady = sc && sc.typed === 'DELETE' && Number(sc.slider) >= 100;
+    return {
+      scOpen: !!sc, scLabel: sc ? sc.label : '', scEmoji: emoji ? ' 🧨' : '', scTyped: sc ? sc.typed : '', scSlider: sc ? sc.slider : 0,
+      onScTyped: e => this.setState({ superConfirm: Object.assign({}, sc, { typed: e.target.value }) }),
+      onScSlider: e => this.setState({ superConfirm: Object.assign({}, sc, { slider: e.target.value }) }),
+      scCancel: () => this.setState({ superConfirm: null }),
+      scDisabled: !scReady, scBtnBg: scReady ? 'var(--err)' : 'var(--sc)', scBtnFg: scReady ? 'var(--onerr)' : 'var(--onsv)',
+      scGo: () => { if (!scReady) return; const fn = sc.onYes; this.setState({ superConfirm: null }); fn(); },
+      dsOpen: !!ds, dsName: ds ? ds.name : '', dsCanto: ds ? ds.canto : '', dsImg: ds ? ds.img : null, dsBgImg: ds && ds.img ? 'url("' + ds.img + '")' : 'none', dsNoImg: ds ? !ds.img : true,
+      dsEmoji: emoji ? ' 🥟' : '', dsClose: () => this.setState({ dimsum: null }),
+      lwOpen: !!lw, lwX: lw ? lw.x : 0, lwY: lw ? lw.y : 0, lwName: lw ? lw.name : '',
+      lwTypePw: () => this.setState({ lockWizard: Object.assign({}, lw, { type: 'password' }) }),
+      lwTypeTotp: () => this.setState({ lockWizard: Object.assign({}, lw, { type: 'totp' }) }),
+      lwPwBg: lw && lw.type === 'password' ? 'var(--secc)' : 'transparent', lwPwFg: lw && lw.type === 'password' ? 'var(--onsecc)' : 'var(--ons)',
+      lwTotpBg: lw && lw.type === 'totp' ? 'var(--secc)' : 'transparent', lwTotpFg: lw && lw.type === 'totp' ? 'var(--onsecc)' : 'var(--ons)',
+      lwInputType: lw && lw.type === 'password' ? 'password' : 'text',
+      lwSecret: lw ? lw.secret : '', lwSecretPh: lw && lw.type === 'totp' ? 'Base32 TOTP secret (e.g. JBSWY3DPEHPK3PXP)' : 'Choose a password for this element',
+      onLwSecret: e => this.setState({ lockWizard: Object.assign({}, lw, { secret: e.target.value }) }),
+      lwDuration: lw ? lw.duration : '3600', onLwDuration: e => this.setState({ lockWizard: Object.assign({}, lw, { duration: e.target.value }) }),
+      lwDisclosed: lw ? lw.disclosed : false, onLwDisclosed: () => this.setState({ lockWizard: Object.assign({}, lw, { disclosed: !lw.disclosed }) }),
+      lwErr: lw ? lw.err : '', lwCancel: () => this.setState({ lockWizard: null }),
+      lwCreate: () => {
+        if (!lw.secret) return this.setState({ lockWizard: Object.assign({}, lw, { err: 'A credential is required.' }) });
+        if (lw.type === 'totp' && this.core.b32decode(lw.secret).length < 8) return this.setState({ lockWizard: Object.assign({}, lw, { err: 'That is not a valid Base32 secret.' }) });
+        if (!lw.disclosed) return this.setState({ lockWizard: Object.assign({}, lw, { err: 'Please confirm the toy-lock disclosure.' }) });
+        const locks = Object.assign({}, st.locks); const dur = Number(lw.duration);
+        locks[lw.lockId] = { type: lw.type, secret: lw.secret, until: dur === 0 ? 0 : Date.now() + dur * 1000 };
+        this.setSave('locks', locks); this.setState({ lockWizard: null }); this.snack('Locked: ' + lw.name); this.log('Lock created on ' + lw.name);
+      },
+      upOpen: !!up, upName: up ? up.name : '', upVal: up ? (up.val || '') : '',
+      upInputType: up && st.locks[up.lockId] && st.locks[up.lockId].type === 'password' ? 'password' : 'text',
+      upPh: up && st.locks[up.lockId] && st.locks[up.lockId].type === 'totp' ? '6-digit code from your authenticator' : 'Password',
+      onUpVal: e => this.setState({ unlockPrompt: Object.assign({}, up, { val: e.target.value }) }),
+      onUpKey: e => { if (e.key === 'Enter') this.tryUnlock(); },
+      upErr: up ? up.err : '', upCancel: () => this.setState({ unlockPrompt: null }),
+      upGo: () => this.tryUnlock(),
+      ppOpen: !!pp, ppTitle: pp ? pp.title : '', ppNote: pp ? pp.note : '', ppVal: pp ? (pp.val || '') : '', ppErr: pp ? pp.err : '',
+      onPpVal: e => this.setState({ pinPrompt: Object.assign({}, pp, { val: e.target.value }) }),
+      onPpKey: e => { if (e.key === 'Enter') pp.onGo(pp.val); },
+      ppCancel: () => this.setState({ pinPrompt: null }), ppGo: () => pp.onGo(pp.val)
+    };
+  }
+  async tryUnlock() {
+    const up = this.state.unlockPrompt; if (!up) return;
+    const lk = this.state.locks[up.lockId]; if (!lk) return this.setState({ unlockPrompt: null });
+    let ok = false;
+    if (lk.type === 'password') ok = up.val === lk.secret;
+    else { try { ok = up.val === await this.core.totp(lk.secret); } catch (e) { ok = false; } }
+    if (!ok) return this.setState({ unlockPrompt: Object.assign({}, up, { err: 'Wrong credential. This is a toy lock — clear local data to reset.' }) });
+    const locks = Object.assign({}, this.state.locks); delete locks[up.lockId];
+    this.setSave('locks', locks); const then = up.then; this.setState({ unlockPrompt: null });
+    this.snack('Unlocked: ' + up.name); then && then();
+  }
+  renderVals() {
+    const st = this.state;
+    const activeTabObj = st.tabs.find(t => t.id === st.activeTab) || st.tabs[0];
+    const page = activeTabObj ? activeTabObj.page : 'chat';
+    const pg = {}; pg[page] = true;
+    const chat = this.curChat();
+    const msgs = chat ? chat.msgs : [];
+    const parseParts = c => { const out = []; const bits = String(c).split('```'); bits.forEach((b, i) => { if (!b) return; if (i % 2) out.push({ isCode: true, isText: false, text: b.replace(/^\w+\n/, '') }); else out.push({ isCode: false, isText: true, text: b.replace(/\*\*(.+?)\*\*/g, '$1') }); }); return out.length ? out : [{ isCode: false, isText: true, text: '' }]; };
+    const user = st.user || { name: 'there' };
+    const funny = st.settings.funnyEn;
+    const greet = funny >= 4 ? 'Wotcha, ' + user.name.split(' ')[0] + '! Ready to cook?' : funny >= 2 ? 'Hello, ' + user.name.split(' ')[0] + ' 👋'.replace(' 👋', st.settings.emojiDialogs ? ' 👋' : '') : 'Hello, ' + user.name.split(' ')[0];
+    const navPages = [['workspace', 'category', 'Workspace'], ['ollama', 'host', 'Ollama manager'], ['converter', 'sync_alt', 'File converter'], ['authenticator', 'phonelink_lock', 'Authenticator'], ['status', 'monitor_heart', 'Status Hub']];
+    const pal = st.palette ? this.paletteResults() : [];
+    const rx = st.rx; let rxStatus = '', rxOk = true;
+    if (rx) { if (!rx.pattern) { rxStatus = 'Type a pattern; live-checked as you go.'; } else { try { new RegExp(rx.pattern, rx.flags); const sample = st.chats.map(c => c.title).concat(['ollama chat', 'settings general']); const hits = sample.filter(s => new RegExp(rx.pattern, rx.flags).test(s)).length; rxStatus = 'Valid ✓ matches ' + hits + ' of ' + sample.length + ' sample items'; } catch (e) { rxOk = false; rxStatus = e.message; } } }
+    return Object.assign({
+      showAuth: !st.authed,
+      authIsSignup: !st.user, authTitle: st.user ? 'Sign in' : 'Create admin account', authCta: st.user ? 'Sign in' : 'Create account',
+      authName: st.authName, authEmail: st.authEmail, authPass: st.authPass, authError: st.authError,
+      onAuthName: e => this.setState({ authName: e.target.value }), onAuthEmail: e => this.setState({ authEmail: e.target.value }), onAuthPass: e => this.setState({ authPass: e.target.value }),
+      onAuthKey: e => { if (e.key === 'Enter') this.doAuth(); }, doAuth: this.doAuth,
+      guardLocks: this.guardLocks, onCtx: this.onCtx,
+      themeIcon: st.settings.theme === 'dark' ? 'light_mode' : 'dark_mode', toggleTheme: this.toggleTheme,
+      winMin: () => this.snack('Minimize is routed to Electron ipc "window:minimize" in the packaged build.'),
+      winMax: () => { if (document.fullscreenElement) document.exitFullscreen(); else document.documentElement.requestFullscreen && document.documentElement.requestFullscreen(); },
+      winClose: () => { window.close(); this.snack('Close is routed to Electron ipc "window:close" in the packaged build.'); },
+      openPalette: this.openPalette,
+      tabVMs: st.tabs.map(t => { const [title, icon] = this.pageMeta(t.page); const active = t.id === st.activeTab; const lk = st.locks['tab:' + t.id]; return { id: t.id, title, icon, locked: !!(lk && !this.lockExpired(lk)), bg: active ? 'var(--sur)' : 'transparent', fg: active ? 'var(--ons)' : 'var(--onsv)', bd: active ? 'var(--outv)' : 'transparent', iconColor: active ? 'var(--p)' : 'var(--onsv)', activate: () => this.activateTab(t.id), close: e => { e.stopPropagation(); this.closeTab(t.id); } }; }),
+      newTabMenu: e => { e.stopPropagation(); const items = ['chat', 'workspace', 'admin', 'ollama', 'converter', 'authenticator', 'settings', 'status', 'changelog'].map(p => { const [label, icon] = this.pageMeta(p); return { label, icon, act: () => { this.openPage(p); this.setState({ ctx: null }); } }; }); const r = e.currentTarget.getBoundingClientRect(); this.setState({ ctx: { x: Math.min(r.left, innerWidth - 240), y: r.bottom + 4, items } }); },
+      pg,
+      navVMs: navPages.map(([p, icon, label]) => ({ icon, label, go: () => this.openPage(p) })),
+      newChat: this.newChat,
+      chatQ: st.search.chats.q, onChatQ: e => this.setQ('chats', e.target.value),
+      rxChat: e => this.openRx('chats', e), rxChatBg: st.search.chats.rx ? 'var(--p)' : 'transparent', rxChatFg: st.search.chats.rx ? 'var(--onp)' : 'var(--onsv)',
+      noChats: !st.chats.length,
+      chatVMs: st.chats.filter(c => this.match('chats', c.title)).map(c => ({ title: c.title, bg: c.id === st.activeChat ? 'var(--secc)' : 'transparent', fg: c.id === st.activeChat ? 'var(--onsecc)' : 'var(--ons)', open: () => this.setState({ activeChat: c.id }), del: e => { e.stopPropagation(); this.superConfirm('Delete chat "' + c.title + '"', () => { const chats = st.chats.filter(x => x.id !== c.id); this.setSave('chats', chats); if (st.activeChat === c.id) this.setState({ activeChat: null }); this.log('Chat deleted'); }); } })),
+      userInitial: (user.name || 'U')[0].toUpperCase(), userName: user.name || 'User',
+      toggleUserMenu: e => { e.stopPropagation(); this.setState({ userMenu: !st.userMenu }); }, closeUserMenu: () => this.setState({ userMenu: false }),
+      userMenuOpen: st.userMenu,
+      userMenuVMs: [
+        { label: 'Settings', icon: 'settings', act: () => { this.openPage('settings'); this.setState({ userMenu: false }); } },
+        { label: 'Admin panel', icon: 'admin_panel_settings', act: () => { this.openPage('admin'); this.setState({ userMenu: false }); } },
+        { label: 'Changelog', icon: 'history_edu', act: () => { this.openPage('changelog'); this.setState({ userMenu: false }); } },
+        { label: 'Status Hub', icon: 'monitor_heart', act: () => { this.openPage('status'); this.setState({ userMenu: false }); } },
+        { label: 'Sign out', icon: 'logout', act: () => { localStorage.removeItem('owmd3.session'); this.setState({ authed: false, userMenu: false }); } }
+      ],
+      curModel: chat ? chat.model : (this.allModels()[0] || {}).v, onModelSel: e => { if (chat) this.updateChat(chat.id, c => { c.model = e.target.value; return c; }); },
+      modelOpts: this.allModels(),
+      chatEmpty: !msgs.length, greeting: greet,
+      msgVMs: msgs.map((m, i) => ({ isAi: m.role === 'assistant', isUser: m.role === 'user', who: m.role === 'assistant' ? ((chat && chat.model) || 'assistant') : user.name, initial: (user.name || 'U')[0].toUpperCase(), avBg: m.role === 'assistant' ? 'var(--pc)' : 'var(--terc)', avFg: m.role === 'assistant' ? 'var(--onpc)' : 'var(--onterc)', parts: parseParts(m.content), streaming: st.streaming && i === msgs.length - 1 && m.role === 'assistant', copy: () => { navigator.clipboard.writeText(m.content); this.snack('Copied to clipboard.'); }, del: () => this.updateChat(chat.id, c => { c.msgs = c.msgs.filter((x, j) => j !== i); return c; }) })),
+      draft: st.draft, onDraft: e => this.setState({ draft: e.target.value }),
+      onDraftKey: e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); this.sendMsg(); } },
+      sendMsg: this.sendMsg, stopStream: this.stopStream, notStreaming: !st.streaming, isStreaming: st.streaming,
+      pickAttach: () => { this.openPage('converter'); this.snack('Attachments route through the File Converter for type detection.'); },
+      paletteOpen: !!st.palette, closePalette: () => this.setState({ palette: null }),
+      paletteQ: st.search.palette.q, onPaletteQ: e => { this.setQ('palette', e.target.value); this.setState({ palette: Object.assign({}, st.palette, { sel: 0 }) }); },
+      onPaletteKey: this.onPaletteKey,
+      rxPalette: e => this.openRx('palette', e), rxPaletteBg: st.search.palette.rx ? 'var(--p)' : 'var(--sc)', rxPaletteFg: st.search.palette.rx ? 'var(--onp)' : 'var(--onsv)',
+      paletteVMs: pal.map((r, i) => Object.assign({}, r, { bg: st.palette && st.palette.sel === i ? 'var(--secc)' : 'transparent' })),
+      paletteEmpty: st.palette && !pal.length,
+      rxOpen: !!rx, rxClose: () => this.setState({ rx: null }),
+      rxX: rx ? rx.x : 0, rxY: rx ? rx.y : 0, rxTarget: rx ? rx.target : '', rxPattern: rx ? rx.pattern : '',
+      onRxPattern: e => this.rxSet({ pattern: e.target.value }),
+      rxTokens: ['\\d+', '\\w+', '^', '$', '.*', '[a-z]+', '(a|b)'].map(t => ({ label: t, ins: () => this.rxSet({ pattern: (rx.pattern || '') + t }) })),
+      rxFlagI: rx ? rx.flags.includes('i') : true, rxFlagM: rx ? rx.flags.includes('m') : false,
+      toggleRxI: () => this.rxSet({ flags: rx.flags.includes('i') ? rx.flags.replace('i', '') : rx.flags + 'i' }),
+      toggleRxM: () => this.rxSet({ flags: rx.flags.includes('m') ? rx.flags.replace('m', '') : rx.flags + 'm' }),
+      rxStatus, rxStatusColor: rxOk ? 'var(--onsv)' : 'var(--err)', rxBorder: rxOk ? 'var(--out)' : 'var(--err)',
+      rxDisable: () => this.applyRx(false), rxApply: () => this.applyRx(true),
+      ctxOpen: !!st.ctx, ctxClose: e => { e && e.preventDefault && e.preventDefault(); this.setState({ ctx: null }); }, ctxX: st.ctx ? st.ctx.x : 0, ctxY: st.ctx ? st.ctx.y : 0,
+      ctxVMs: st.ctx ? st.ctx.items : [],
+      snackOpen: !!st.snack, snackMsg: st.snack || ''
+    }, this.logoVals(), this.pageVals(), this.dialogVals());
+  }
+}
+</script>
+</body>
+</html>
