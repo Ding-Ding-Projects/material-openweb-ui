@@ -208,103 +208,103 @@ Ok 'School mode omits rather than disables'
 if ($LASTEXITCODE -ne 0) {
   Fail 'the QR encoder no longer round-trips through its own decoder. A wrong code looks completely convincing and scans as nothing. Run: node scripts/test-qr.mjs'
 }
-Step 'The QR encoder round-trips through its own decoder.'
+Ok 'the QR encoder round-trips through its own decoder'
 
 & $nodeExe (Join-Path $Root 'scripts/test-tokens.mjs') | Out-Null
 if ($LASTEXITCODE -ne 0) {
   Fail 'a stylesheet reads a custom property nothing defines. CSS drops that rule in silence. Run: node scripts/test-tokens.mjs'
 }
-Step 'Every custom property read by a stylesheet is defined by one.'
+Ok 'every custom property read by a stylesheet is defined by one'
 
 & $nodeExe (Join-Path $Root 'scripts/test-colour.mjs') | Out-Null
 if ($LASTEXITCODE -ne 0) {
   Fail 'the colour translator no longer matches published values. Every colour through it would be quietly wrong. Run: node scripts/test-colour.mjs'
 }
-Step 'The colour translator matches published values in every space.'
+Ok 'the colour translator matches published values in every space'
 
 & $nodeExe (Join-Path $Root 'scripts/test-appearance.mjs') | Out-Null
 if ($LASTEXITCODE -ne 0) {
   Fail 'an appearance key is unstable or an imported override is unscreened. Run: node scripts/test-appearance.mjs'
 }
-Step 'Appearance keys are stable and imported overrides are screened.'
+Ok 'appearance keys are stable and imported overrides are screened'
 
 & $nodeExe (Join-Path $Root 'scripts/test-logo.mjs') | Out-Null
 if ($LASTEXITCODE -ne 0) {
   Fail 'the application mark is trusting a file extension, applying a rejected image in part, or letting a display name reach the identity. Run: node scripts/test-logo.mjs'
 }
-Step 'The mark is decided by its bytes and never moves the identity.'
+Ok 'the mark is decided by its bytes and never moves the identity'
 
 & $nodeExe (Join-Path $Root 'scripts/test-schedule.mjs') | Out-Null
 if ($LASTEXITCODE -ne 0) {
   Fail 'a scheduled rule no longer behaves as documented at midnight or a daylight-saving boundary. That kind of error is wrong twice a year and silent both times. Run: node scripts/test-schedule.mjs'
 }
-Step 'Schedules behave as documented at midnight and both daylight-saving boundaries.'
+Ok 'schedules behave as documented at midnight and both daylight-saving boundaries'
 
 & $nodeExe (Join-Path $Root 'scripts/test-tabs.mjs') | Out-Null
 if ($LASTEXITCODE -ne 0) {
   Fail 'a tab invariant no longer holds — a pinned tab can be swept away by a bulk close, a deleted group can take its tabs with it, or the four searches have stopped agreeing. Run: node scripts/test-tabs.mjs'
 }
-Step 'Pinned tabs survive bulk closes and all four searches read the same text.'
+Ok 'pinned tabs survive bulk closes and all four searches read the same text'
 
 & $nodeExe (Join-Path $Root 'scripts/test-formats.mjs') | Out-Null
 if ($LASTEXITCODE -ne 0) {
   Fail 'an export format no longer survives a comma, a quote or an ampersand. The file will open without complaint and be wrong. Run: node scripts/test-formats.mjs'
 }
-Step 'Every export format survives the values that break naive writers.'
+Ok 'every export format survives the values that break naive writers'
 
 & $nodeExe (Join-Path $Root 'scripts/test-history.mjs') | Out-Null
 if ($LASTEXITCODE -ne 0) {
   Fail 'the history is no longer append-only, or a secret can reach it. Run: node scripts/test-history.mjs'
 }
-Step 'History only ever grows, and no secret is written into it.'
+Ok 'history only ever grows, and no secret is written into it'
 
 & $nodeExe (Join-Path $Root 'scripts/test-selection.mjs') | Out-Null
 if ($LASTEXITCODE -ne 0) {
   Fail 'a bulk action can now run without stating how much of the selection it cannot show. That is the path that deletes something. Run: node scripts/test-selection.mjs'
 }
-Step 'No bulk action runs without saying what it cannot show you.'
+Ok 'no bulk action runs without saying what it cannot show you'
 
 & $nodeExe (Join-Path $Root 'scripts/test-changelog.mjs') | Out-Null
 if ($LASTEXITCODE -ne 0) {
   Fail 'a changelog entry names a commit that does not resolve. Either it describes work that was never committed, or the commit was rewritten. Run: node scripts/test-changelog.mjs'
 }
-Step 'Every changelog entry names a commit that resolves.'
+Ok 'every changelog entry names a commit that resolves'
 
 & $nodeExe (Join-Path $Root 'scripts/test-download.mjs') | Out-Null
 if ($LASTEXITCODE -ne 0) {
   Fail 'the download surface no longer states the unsigned warning before it offers a file, or it has started softening it. Run: node scripts/test-download.mjs'
 }
-Step 'The unsigned warning comes before any download link.'
+Ok 'the unsigned warning comes before any download link'
 
 & $nodeExe (Join-Path $Root 'scripts/test-a11y.mjs') | Out-Null
 if ($LASTEXITCODE -ne 0) {
   Fail 'a control has lost its focus ring, dropped below the minimum target size, or started conveying a state by colour alone. Run: node scripts/test-a11y.mjs'
 }
-Step 'Focus is visible and every target is large enough to hit.'
+Ok 'focus is visible and every target is large enough to hit'
 
 & $nodeExe (Join-Path $Root 'scripts/test-dimsum.mjs') | Out-Null
 if ($LASTEXITCODE -ne 0) {
   Fail 'the dim sum surprise can now fire twice in a load, has gained an off switch, or has stopped being honest about a dish it has no photograph of. Run: node scripts/test-dimsum.mjs'
 }
-Step 'The surprise fires at most once a load and is absent under School mode.'
+Ok 'the surprise fires at most once a load and is absent under School mode'
 
 & $nodeExe (Join-Path $Root 'scripts/test-regex.mjs') | Out-Null
 if ($LASTEXITCODE -ne 0) {
   Fail 'a regex builder has become a detached dialog, or a search field has been hand-rolled without one beside it. Run: node scripts/test-regex.mjs'
 }
-Step 'Every regex builder opens beside the field it belongs to.'
+Ok 'every regex builder opens beside the field it belongs to'
 
 & $nodeExe (Join-Path $Root 'scripts/test-catalogue.mjs') | Out-Null
 if ($LASTEXITCODE -ne 0) {
   Fail 'the catalogue is claiming a completeness it did not check, or has stopped counting the pages it fetched. Run: node scripts/test-catalogue.mjs'
 }
-Step 'The catalogue counts its pages and names what its verdict is based on.'
+Ok 'the catalogue counts its pages and names what its verdict is based on'
 
 & $nodeExe (Join-Path $Root 'scripts/test-fit.mjs') | Out-Null
 if ($LASTEXITCODE -ne 0) {
   Fail 'a fit verdict is unevidenced, over-optimistic when metadata is missing, or no longer reaches the screen. Run: node scripts/test-fit.mjs'
 }
-Step 'Fit verdicts are evidenced and reach the screen.'
+Ok 'fit verdicts are evidenced and reach the screen'
 
 & $nodeExe (Join-Path $Root 'scripts/test-locks.mjs') | Out-Null
 if ($LASTEXITCODE -ne 0) {
