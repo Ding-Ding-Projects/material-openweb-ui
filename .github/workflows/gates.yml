@@ -1,0 +1,95 @@
+name: Gates
+
+# The checks that decide whether work may proceed. They run on every push and
+# every pull request, and they fail closed: a red gate is a blocked change, not
+# a warning to read later.
+
+on:
+  push:
+    branches: [main]
+    paths-ignore:
+      - '**/*.md'
+      - '!INVENTORY.md'
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: gates-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  inventory:
+    name: Completeness inventory
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          # The line counter reports the delta since the fork point, which needs
+          # more than the default single commit to resolve.
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v4
+        with:
+          # Upstream declares <=22.x.x with engine-strict, and a transitive
+          # dependency wants ^22.13.0. The usable window is narrow on purpose.
+          node-version: '22.23.2'
+
+      - name: Inventory matches the tree
+        run: node scripts/check-inventory.mjs
+
+      - name: The guard can actually fail
+        # A guard nobody has watched fail is a guard nobody should trust. This
+        # removes one asserted item at a time and requires red each time.
+        run: node scripts/test-inventory-guard.mjs
+
+      - name: Line count
+        run: |
+          node scripts/count-lines.mjs --markdown >> "$GITHUB_STEP_SUMMARY"
+
+  site:
+    name: Documentation site
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22.23.2'
+
+      - name: Every module parses
+        # The site ships as untranspiled ES modules, so a syntax error would
+        # reach a reader as a blank page rather than a failed build.
+        run: |
+          set -e
+          for f in docs/assets/js/*.js; do
+            node --input-type=module --check < "$f" || { echo "::error file=$f::failed to parse"; exit 1; }
+          done
+          echo "parsed $(ls docs/assets/js/*.js | wc -l) modules"
+
+      - name: No third-party requests
+        # The site claims to load nothing from anyone else. That claim is worth
+        # exactly as much as the check behind it.
+        run: |
+          set -e
+          if grep -rnE 'https?://(fonts\.googleapis|fonts\.gstatic|cdn\.|unpkg|jsdelivr|googletagmanager|google-analytics)' docs/ ; then
+            echo "::error::A third-party asset host is referenced under docs/. The site must serve everything from its own origin."
+            exit 1
+          fi
+          echo "no third-party asset hosts referenced"
+
+      - name: Every asset referenced by the page exists
+        run: |
+          set -e
+          missing=0
+          for ref in $(grep -oE '(href|src)="[^"]+"' docs/index.html | sed -E 's/.*"(.*)"/\1/' | grep -v '^https\?:' | grep -v '^#'); do
+            if [ ! -f "docs/$ref" ]; then
+              echo "::error file=docs/index.html::references docs/$ref, which does not exist"
+              missing=1
+            fi
+          done
+          [ "$missing" = "0" ] || exit 1
+          echo "every referenced asset resolves"
