@@ -162,6 +162,30 @@ check(
 );
 
 const shell = readFileSync(join(ROOT, 'electron', 'main.ts'), 'utf8');
+
+
+// The shell and the surface must name the SAME package identifier.
+//
+// They did not. main.ts declared projects.dingding.material-openweb-ui while
+// the panel that tells users "this is what stays fixed" showed
+// com.dingdingprojects.material-openwebui. Nothing compared them, so both were
+// confidently wrong about each other — and an installer writes one of them into
+// the registry permanently, which is not a decision that can be quietly revised
+// once anybody has installed it.
+const shellId = (shell.match(/const APP_ID = '([^']+)'/) || [])[1];
+check('the desktop shell declares a package identifier', Boolean(shellId), String(shellId));
+check(
+	'and it is the same one the surface shows',
+	shellId === logo.IDENTITY.packageId,
+	shellId + ' vs ' + logo.IDENTITY.packageId
+);
+
+// The root the shell resolves must be the project, not its parent.
+check(
+	'the shell resolves the project root one level up from its own directory',
+	new RegExp("const REPO_ROOT = join\\(__dirname_, '\\.\\.'\\);").test(shell),
+	'two levels lands outside the repository, and every symptom of that is silent'
+);
 check(
 	'the desktop shell does not build a path from a display name',
 	!/app\.setPath\([^)]*displayName|getPath\([^)]*name\b[^)]*\)\s*\+/.test(shell)

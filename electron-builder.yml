@@ -1,0 +1,100 @@
+# Packaging for the desktop application.
+#
+# Kept in its own file rather than under a "build" key in package.json, because
+# package.json belongs to upstream Open WebUI and this fork tries to leave it
+# recognisable. The one field taken from it — the version — is overridden on the
+# command line, since package.json's version is UPSTREAM's and this installer
+# carries the fork's own.
+#
+# Nothing here signs anything, and that is deliberate rather than unfinished:
+# a code-signing certificate is an annual fee this project does not pay, the
+# operating system's warning about that is accurate, and the download page says
+# so before it offers a link. See docs/assets/js/download.js.
+
+appId: com.dingdingprojects.material-openwebui
+productName: Material Open WebUI
+
+# Three fields taken out of upstream's package.json rather than edited into it.
+#
+# `name` matters most: package.json says "open-webui", and an installer built
+# straight from that would be called open-webui-setup.exe and would identify
+# itself as upstream's package. A fork shipping an artefact under upstream's
+# name is impersonating it — the same rule the release workflows are fenced by,
+# and it applies to the file this project builds itself.
+#
+# `version` is the fork's own. package.json's is upstream's, and this release is
+# not upstream's release.
+#
+# `main` is absent from package.json entirely, because upstream has no desktop
+# shell to point at.
+extraMetadata:
+  name: material-openweb-ui
+  version: 0.1.0
+  main: dist-electron/main.js
+  type: module
+  description: Open WebUI rebuilt in Material Design 3, running locally in a desktop shell.
+  author: Ding-Ding-Projects
+  license: SEE LICENSE IN LICENSE
+
+# The executable name is an identity constant, declared in
+# app/js/core/logo.js and checked by scripts/test-logo.mjs. Left to
+# electron-builder it would be derived from productName, which is the display
+# name — the one thing the identity must never follow.
+executableName: material-openwebui
+
+directories:
+  output: dist-release
+  buildResources: build-resources
+
+# What actually ships.
+#
+# The application's HTML reaches into docs/assets for the shared token sheet,
+# the fonts and every module both surfaces use, so that tree travels with it.
+# Everything else in this repository — upstream's Svelte frontend, the Python
+# backend, the tests, the design export — is not part of the desktop app.
+files:
+  - dist-electron/**/*
+  - app/**/*
+  - docs/assets/css/**/*
+  - docs/assets/js/**/*
+  - docs/assets/fonts/**/*
+  - docs/assets/favicon.svg
+  - package.json
+  - '!**/*.map'
+  - '!**/node_modules/**/*'
+
+# asar keeps the app one file and makes startup faster. It is not protection and
+# is not described as such: anyone can unpack it, and nothing secret is in it.
+asar: true
+
+win:
+  target:
+    - target: nsis
+      arch:
+        - x64
+  # No certificate, no timestamp server, no signing step. Stated rather than
+  # omitted, so nobody adds one by accident and quietly changes what this is.
+  signAndEditExecutable: false
+
+nsis:
+  oneClick: false
+  perMachine: false
+  allowToChangeInstallationDirectory: true
+  createDesktopShortcut: true
+  createStartMenuShortcut: true
+  # Uninstalling removes the application. It does NOT remove the data directory,
+  # because settings, chats and history belong to the person rather than to the
+  # installer, and an uninstaller that deletes them is a data-loss bug wearing a
+  # checkbox.
+  deleteAppDataOnUninstall: false
+  artifactName: ${name}-setup-${version}-${arch}.exe
+  shortcutName: Material Open WebUI
+
+# The update feed named in app/js/core/logo.js. Declared so the value lives in
+# one place; no auto-updater is wired up yet, and the application does not claim
+# one.
+publish:
+  - provider: github
+    owner: Ding-Ding-Projects
+    repo: material-openweb-ui
+    releaseType: release

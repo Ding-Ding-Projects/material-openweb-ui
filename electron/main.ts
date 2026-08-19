@@ -15,9 +15,34 @@ import { Backend } from './backend.js';
 import { probe, fit } from './hardware.js';
 
 const __dirname_ = dirname(fileURLToPath(import.meta.url));
-const REPO_ROOT = join(__dirname_, '..', '..');
 
-const APP_ID = 'projects.dingding.material-openweb-ui';
+/**
+ * The directory holding app/, docs/ and package.json.
+ *
+ * This file compiles to dist-electron/main.js, so ONE level up is the root.
+ * It said two, which resolved to the parent of the repository entirely — and
+ * every consequence of that was masked:
+ *
+ *   - the version was read from a package.json that does not exist there, so
+ *     appIdentity() silently fell back to reporting 0.0.0;
+ *   - the frontend still loaded, but only because a second candidate below
+ *     happens to be written relative to __dirname_ rather than to this;
+ *   - the backend probe was looking for a Python environment one directory
+ *     above the project, and reported it absent.
+ *
+ * Nothing errored. Packaging is what surfaced it, because a wrong root is the
+ * difference between an installer that works and one that opens on a page
+ * explaining how to build the thing you just installed.
+ */
+const REPO_ROOT = join(__dirname_, '..');
+
+// The package identifier, which must match app/js/core/logo.js's IDENTITY.
+// Those two disagreed until the first release was built: this file said
+// projects.dingding.material-openweb-ui while the surface showed users
+// com.dingdingprojects.material-openwebui. An installer stamps one of them into
+// the registry permanently, so they are reconciled here and checked by
+// scripts/test-logo.mjs rather than left to be noticed later.
+const APP_ID = 'com.dingdingprojects.material-openwebui';
 const SHIPPED_NAME = 'Material Open WebUI';
 
 let win: BrowserWindow | null = null;
