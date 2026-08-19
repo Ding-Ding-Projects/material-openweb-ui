@@ -23,7 +23,8 @@ const DEFAULTS = {
     paletteSize: 'card',
     emojiDialogs: false,
     narrator: { on: false, voiceEn: '', voiceZh: '', rate: 1, pitch: 1 },
-    school: { on: false, name: 'School mode', pin: '' }
+    school: { on: false, name: 'School mode', pin: '' },
+    displayName: 'Material Open WebUI'
   },
   settingsWritten: [],
   appearance: {},

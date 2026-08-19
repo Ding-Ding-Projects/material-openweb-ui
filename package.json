@@ -23,7 +23,7 @@
 		"electron:compile": "tsc -p electron/tsconfig.json && node -e \"require('fs').copyFileSync('dist-electron/preload.js','dist-electron/preload.mjs')\"",
 		"electron:dev": "npm run electron:compile && electron dist-electron/main.js",
 		"electron:build": "npm run electron:compile",
-		"gates": "node scripts/test-parse.mjs && node scripts/check-inventory.mjs && node scripts/test-inventory-guard.mjs && node scripts/test-totp.mjs && node scripts/test-convert.mjs && node scripts/test-dom-safety.mjs && node scripts/test-school-mode.mjs && node scripts/test-locks.mjs && node scripts/test-qr.mjs && node scripts/test-tokens.mjs && node scripts/test-colour.mjs && node scripts/test-appearance.mjs && node scripts/test-logo.mjs && node scripts/test-schedule.mjs && node scripts/test-tabs.mjs && node scripts/test-formats.mjs && node scripts/test-history.mjs && node scripts/test-selection.mjs",
+		"gates": "node scripts/test-parse.mjs && node scripts/check-inventory.mjs && node scripts/test-inventory-guard.mjs && node scripts/test-totp.mjs && node scripts/test-convert.mjs && node scripts/test-dom-safety.mjs && node scripts/test-school-mode.mjs && node scripts/test-locks.mjs && node scripts/test-qr.mjs && node scripts/test-tokens.mjs && node scripts/test-colour.mjs && node scripts/test-appearance.mjs && node scripts/test-logo.mjs && node scripts/test-schedule.mjs && node scripts/test-tabs.mjs && node scripts/test-formats.mjs && node scripts/test-history.mjs && node scripts/test-selection.mjs && node scripts/test-changelog.mjs",
 		"lines": "node scripts/count-lines.mjs"
 	},
 	"devDependencies": {

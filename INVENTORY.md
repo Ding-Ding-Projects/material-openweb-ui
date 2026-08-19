@@ -29,6 +29,16 @@ nobody should trust.
 | `site` | The documentation and landing site in `docs/`, published to GitHub Pages |
 | `app` | The Electron desktop application in `app/`, run by the shell in `electron/` |
 
+A cell reads `shipped`, `partial`, `planned` or `na`.
+
+`na` means the feature does not belong on that surface and is not going to —
+the documentation site has no reason to contain an authenticator, and the
+desktop application has no reason to contain a landing page. It is distinct
+from `planned`, which claims an intention. A row carrying a fictional intention
+misleads exactly as much as one carrying a fictional implementation, so a
+feature that will never be built on a surface says `na` rather than staying
+`planned` forever.
+
 ## Rows
 
 | id | Feature | site | app | Implementation anchor | Docs |
@@ -43,27 +53,27 @@ nobody should trust.
 | ollama | Local Ollama suite manager | na | partial | `app/js/core/ollama.js#export async function pull` | content.js |
 | fit | Evidence-backed hardware fit verdicts | na | partial | `electron/hardware.ts#export function fit` | content.js |
 | converter | Universal file converter | na | partial | `app/js/core/convert.js#export function sniff` | content.js |
-| authenticator | Built-in authenticator | planned | partial | `app/js/core/totp.js#export async function totp` | content.js |
+| authenticator | Built-in authenticator | na | partial | `app/js/core/totp.js#export async function totp` | content.js |
 | qr | QR pairing for one-time-code registration | na | shipped | `app/js/core/qr.js#export function encode` | content.js |
-| locks | Toy locks on every element | planned | shipped | `app/js/core/locks.js#export async function create` | content.js |
-| tickets | Support Tickets | planned | shipped | `app/js/locks-ui.js#export function supportTickets` | content.js |
-| ladder | The unlock ladder | planned | shipped | `app/js/locks-ui.js#export function startingRung` | content.js |
+| locks | Toy locks on every element | na | shipped | `app/js/core/locks.js#export async function create` | content.js |
+| tickets | Support Tickets | na | shipped | `app/js/locks-ui.js#export function supportTickets` | content.js |
+| ladder | The unlock ladder | na | shipped | `app/js/locks-ui.js#export function startingRung` | content.js |
 | language | Three language modes | shipped | shipped | `app/js/i18n.js#export const LANGUAGES` | content.js |
 | funny | A funny level for each language | shipped | shipped | `app/js/i18n.js#export function levelLabel` | content.js |
 | vocab | Personal vocabulary upload | shipped | shipped | `app/js/core/vocabulary.js#export function validate` | content.js |
-| narrator | Spoken narrator | planned | shipped | `app/js/core/narrator.js#export function resolve` | content.js |
-| school | School mode | planned | shipped | `app/js/i18n.js#PLAYFUL_SETTINGS` | content.js |
+| narrator | Spoken narrator | na | shipped | `app/js/core/narrator.js#export function resolve` | content.js |
+| school | School mode | partial | shipped | `app/js/i18n.js#PLAYFUL_SETTINGS` | content.js |
 | schedule | Scheduled settings | na | shipped | `app/js/core/schedule.js#export function resolve` | content.js |
 | appearance | Per-element appearance editor | na | shipped | `app/js/appearance.js#export function editor` | content.js |
 | colour | Infinite colour picker with translator | na | shipped | `app/js/colour-picker.js#export function colourPicker` | content.js |
 | logo | App logo customisation | na | shipped | `app/js/core/logo.js#export function inspect` | content.js |
-| rename | Rename the product | shipped | planned | `docs/assets/js/settings.js#set-app-name` | content.js |
+| rename | Rename the product | shipped | shipped | `app/js/core/logo.js#export const IDENTITY` | content.js |
 | confirm | Destructive-action super confirmation | shipped | shipped | `docs/assets/js/ui.js#export function superConfirm` | content.js |
 | notify | Non-blocking notifications with a reviewable centre | shipped | shipped | `docs/assets/js/ui.js#export function notify` | content.js |
 | bulk | Bulk actions on every list | partial | shipped | `app/js/core/selection.js#export function describeScope` | content.js |
 | export | Export everything, in every format that fits | shipped | shipped | `app/js/core/formats.js#export function serialise` | content.js |
 | history | Local version history | shipped | shipped | `app/js/core/history.js#export async function verify` | content.js |
-| changelog | Changelog viewer | shipped | planned | `docs/assets/js/pages.js#function changelog` | content.js |
+| changelog | Changelog viewer | shipped | shipped | `app/js/pages/changelog.js#export function render` | content.js |
 | status | Status Hub | shipped | partial | `app/js/pages/misc.js#export function renderStatus` | content.js |
 | dimsum | Dim sum surprise | partial | partial | `app/js/app.js#function maybeDimSum` | content.js |
 | a11y | Accessibility and responsive layout | shipped | partial | `docs/assets/css/site.css#skip-link` | content.js |

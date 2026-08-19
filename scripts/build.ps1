@@ -264,6 +264,12 @@ if ($LASTEXITCODE -ne 0) {
 }
 Step 'No bulk action runs without saying what it cannot show you.'
 
+& $nodeExe (Join-Path $Root 'scripts/test-changelog.mjs') | Out-Null
+if ($LASTEXITCODE -ne 0) {
+  Fail 'a changelog entry names a commit that does not resolve. Either it describes work that was never committed, or the commit was rewritten. Run: node scripts/test-changelog.mjs'
+}
+Step 'Every changelog entry names a commit that resolves.'
+
 & $nodeExe (Join-Path $Root 'scripts/test-locks.mjs') | Out-Null
 if ($LASTEXITCODE -ne 0) {
   Fail 'a lock or unlock-ladder safety rule no longer holds. Run: node scripts/test-locks.mjs'

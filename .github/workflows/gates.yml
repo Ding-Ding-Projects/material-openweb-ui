@@ -96,6 +96,9 @@ jobs:
       - name: No bulk action runs without saying what it cannot show you
         run: node scripts/test-selection.mjs
 
+      - name: Every changelog entry names a commit that resolves
+        run: node scripts/test-changelog.mjs
+
       - name: Line count
         run: |
           node scripts/count-lines.mjs --markdown >> "$GITHUB_STEP_SUMMARY"

@@ -86,7 +86,7 @@ export const FEATURES = [
   },
   {
     id: 'authenticator', name: 'Built-in authenticator', group: 'Tools',
-    icon: 'phonelock', site: 'planned', app: 'partial',
+    icon: 'phonelock', site: 'na', app: 'partial',
     blurb: 'Standards-correct one-time codes for whatever accounts you like, computed locally and checked against the published test vectors.',
     detail: 'RFC 6238 over RFC 4226, SHA-1/256/512, six to eight digits and an arbitrary period, defaulting to SHA-1/6/30 because that is what the rest of the world issues. The current code is shown large and grouped with a copy action, a countdown that is never colour-only, and a peek at the next code so nobody starts typing one with two seconds left. A skewed system clock is reported in plain words rather than producing confidently wrong digits.',
     verify: 'Run the RFC 6238 published test vectors; every one must match. Set the system clock forward and confirm the surface says so.'
@@ -100,21 +100,21 @@ export const FEATURES = [
   },
   {
     id: 'locks', name: 'Toy locks on every element', group: 'Locks',
-    icon: 'lock', site: 'planned', app: 'shipped',
+    icon: 'lock', site: 'na', app: 'shipped',
     blurb: 'Any tab, control or appearance value takes its own password or one-time-code lock, each with its own independent credential.',
     detail: 'There is no master credential and no inheritance: unlocking one surface never unlocks another, and a locked property inside a locked tab is two locks with two answers. The copy never claims this secures anything — it is a speed bump you set for yourself, and the recovery route is documented rather than hidden behind a support process.',
     verify: 'Lock two elements with different credentials and confirm unlocking one leaves the other locked.'
   },
   {
     id: 'tickets', name: 'Support Tickets', group: 'Locks',
-    icon: 'file', site: 'planned', app: 'shipped',
+    icon: 'file', site: 'na', app: 'shipped',
     blurb: 'The recovery route for a forgotten lock, dressed as a service desk, whose resolution is the only thing that actually works.',
     detail: 'A ticket form, a locally generated number, a severity nobody will honour and a canned first response — and then the resolution opens the folder you need to clear, with the exact path shown beside the button. One plain unstyled line states that nothing is sent anywhere, no ticket exists outside this machine and nobody is reading it, so nobody waits for a reply that was never coming.',
     verify: 'Confirm the disclosure line is present and unstyled at every funny level, and that no network request is made.'
   },
   {
     id: 'ladder', name: 'The unlock ladder', group: 'Locks',
-    icon: 'unlock', site: 'planned', app: 'shipped',
+    icon: 'unlock', site: 'na', app: 'shipped',
     blurb: 'Locked out? Play your way through dim sum, then sums, then whack-a-mole — or serve the clock.',
     detail: 'It clears the waiting and never the credential: winning returns you to the ordinary sign-in form still needing to know your password. It never refunds the attempt budget, it is capped at three skips per rolling hour, and it never slows the exponential escalation it skips. Under School mode the ladder starts at the sums, because the dim-sum rung must be absent rather than skipped with a message naming it.',
     verify: 'Confirm a cleared ladder sets no session and leaves the surface exactly as closed as it was.'
@@ -142,14 +142,14 @@ export const FEATURES = [
   },
   {
     id: 'narrator', name: 'Spoken narrator', group: 'Language',
-    icon: 'bell', site: 'planned', app: 'shipped',
+    icon: 'bell', site: 'na', app: 'shipped',
     blurb: 'Off by default, with a separate voice picker for each narrated language, plus rate and pitch.',
     detail: 'One picker per language, because choosing an English voice says nothing about which Cantonese voice should read the other half of a bilingual line. Each lists the voices this machine actually has, resolved at runtime, with Choose automatically as the shipped default — nothing ships naming a voice most installs do not have. It says beneath the picker what will actually be heard, including when a chosen voice is not installed here and the choice is being kept rather than reset.',
     verify: 'Confirm the picker fills in after the platform\'s late enumeration rather than reporting no voices on a machine with forty.'
   },
   {
     id: 'school', name: 'School mode', group: 'Settings',
-    icon: 'shield', site: 'planned', app: 'shipped',
+    icon: 'shield', site: 'partial', app: 'shipped',
     blurb: 'A renameable mode that omits the playful surfaces entirely and needs a PIN to leave.',
     detail: 'While on, the playful capabilities behave as though they are not installed — omitted from controls, copy, labels, search results and notifications rather than merely disabled, because a greyed-out control still names the thing it is hiding. Prior choices stay stored and return when it is turned off. It is a user-experience lock, not a security boundary, and the product says so rather than implying protection.',
     verify: 'Turn it on and confirm the hidden features produce no search results at all, not disabled ones.'
@@ -184,7 +184,7 @@ export const FEATURES = [
   },
   {
     id: 'rename', name: 'Rename the product', group: 'Appearance',
-    icon: 'gear', site: 'shipped', app: 'planned',
+    icon: 'gear', site: 'shipped', app: 'shipped',
     blurb: 'Change the name it shows you, without moving anything the name is not.',
     detail: 'Display comes from a setting; identity comes from a constant. A rename that moved the data directory would orphan every stored profile and history entry, which is exactly why the two are decoupled. Where the real product name matters — a diagnostic report, an issue you file — the shipped name is sent rather than your chosen one, and the setting says so.',
     verify: 'Rename it, reload, and confirm your stored settings are still there under the original storage keys.'
@@ -226,7 +226,7 @@ export const FEATURES = [
   },
   {
     id: 'changelog', name: 'Changelog viewer', group: 'Data',
-    icon: 'clock', site: 'shipped', app: 'planned',
+    icon: 'clock', site: 'shipped', app: 'shipped',
     blurb: 'Every released version in-product, filterable by date, searchable by pattern, each entry linking to its commit.',
     detail: 'An entry that says what changed but not where is unverifiable, so every one carries the full commit SHA rendered as a short clickable reference. A wrong SHA is worse than none, so the build fails rather than emitting a dead link. A version with no recorded changes says so rather than being padded.',
     verify: 'Follow a commit link and confirm it resolves in the repository the build came from.'
@@ -278,6 +278,45 @@ export const FEATURES = [
 export const FEATURE_GROUPS = ['Interface', 'Navigation', 'Search', 'Models', 'Tools', 'Locks', 'Language', 'Settings', 'Appearance', 'Safety', 'Data', 'Delight', 'Quality'];
 
 export const CHANGELOG = [
+  {
+    version: '0.1.0',
+    date: '2026-08-19',
+    codename: 'First light',
+    sections: [
+      {
+        title: 'Added',
+        items: [
+          { text: 'The Material Design 3 desktop application: frameless window, real window controls over IPC, and the token sheet shared with the documentation site so the two cannot drift apart.', sha: '324be60de' },
+          { text: 'The Electron shell, with a narrow four-origin network allowlist and a backend probe that reports honestly when Python is absent.', sha: '58d546e2d' },
+          { text: 'A command palette on Ctrl+Shift+F whose rows are live controls rather than labels, an export of everything, and the dim sum surprise.', sha: 'e6b77913d' },
+          { text: 'Language modes, funny levels, the vocabulary contract, the spoken narrator with a voice picker per narrated language, and School mode — which omits rather than disables.', sha: 'd4fbc0337' },
+          { text: 'Toy locks with a credential each, the support desk, and the unlock ladder that clears the waiting and never the credential.', sha: '5858e967c' },
+          { text: 'QR pairing for the authenticator, encoded in this process from local code so no third-party service ever sees the secret.', sha: '0a681078c' },
+          { text: 'A colour translator across every space the contract names, and a per-element appearance editor reachable from any context menu.', sha: '8af736fd7' },
+          { text: 'The application mark: presets, a local image decided by its actual bytes, crop with a focal point, a maskable safe-area preview, and generated variants verified by signature.', sha: '3e6b1fd0c' },
+          { text: 'Scheduled settings, with midnight crossings and both daylight-saving boundaries decided and documented rather than discovered.', sha: 'c57638c11' },
+          { text: 'The tab system: docking to any edge, pinning, grouping, and the four discovery searches — all sharing one match predicate with the bulk closes.', sha: 'b459f5df5' },
+          { text: 'Nine export formats, an append-only local history with a hash chain, and one bulk-action bar that states how much of a selection it cannot show you.', sha: 'a2bf591d2' }
+        ]
+      },
+      {
+        title: 'Fixed',
+        items: [
+          { text: 'An apostrophe in a string made content.js invalid JavaScript and the live site served a blank page. A parse gate now runs first, locally and in CI.', sha: 'bcbf470b8' },
+          { text: 'The QR format-information second copy was transposed, row for column. It passed every structural eye-test and every real scanner would have rejected it.', sha: '0a681078c' },
+          { text: 'An icon-name guard was reporting green while matching nothing: a shell layer had collapsed an escape into a literal backspace character, so the pattern required an unprintable byte. No file this project writes may now contain a control character.', sha: '3e6b1fd0c' },
+          { text: 'A bulk action opting out of the routine confirmation was also skipping the out-of-view warning, so it could reach items the dialog never mentioned.', sha: 'a2bf591d2' }
+        ]
+      },
+      {
+        title: 'Notes',
+        items: [
+          { text: 'No installer has been published yet. Releases will be permanently unsigned, and the reason is stated rather than hidden.', sha: null },
+          { text: 'Every entry above names the commit it shipped in. An entry whose commit does not resolve is a build failure, not a documentation slip.', sha: null }
+        ]
+      }
+    ]
+  },
   {
     version: '0.0.0',
     date: '2026-08-19',

@@ -90,6 +90,7 @@ check('identity carries a package id, executable, data directory and update feed
 // The rule that costs the most when broken: read the source and require that
 // nothing in the identity is built from a setting.
 const src = readFileSync(join(ROOT, 'app', 'js', 'core', 'logo.js'), 'utf8');
+const src0 = src;
 const identityBlock = (src.match(/export const IDENTITY = Object\.freeze\(\{[\s\S]*?\}\);/) || [''])[0];
 check('every identity value is a literal, never derived from a setting',
   identityBlock.length > 0 && !/\$\{|\+|state\.|settings|displayName|logo/.test(
@@ -253,6 +254,41 @@ check('a preset fetches nothing from anywhere',
   logo.PRESETS.every((p) => !/https?:/.test(p.svg)));
 check('every preset carries an accessible name',
   logo.PRESETS.every((p) => logo.presetSvg(p).includes('aria-label')));
+
+// ---------- the display name never becomes the identity ----------
+//
+// The display name is an editable setting now, so the rule has to be checked
+// against every line that mentions it rather than against the one file that
+// happened to exist when the rule was written. A name that reaches the data
+// directory loses every chat the moment it is edited; one that reaches the
+// update feed stops updates without saying so. Neither announces itself.
+
+console.log('');
+console.log('the display name');
+
+const IDENTITY_SINKS = /(setPath|getPath|userData|appData|app\\.setName|setAppUserModelId|updateFeed|setFeedURL|packageId|executable|dataDirectory)/;
+const leaks = [];
+for (const rel of [
+  join('app', 'js', 'app.js'), join('app', 'js', 'state.js'), join('app', 'js', 'logo-ui.js'),
+  join('app', 'js', 'core', 'logo.js'), join('electron', 'main.ts'), join('electron', 'backend.ts')
+]) {
+  let src;
+  try { src = readFileSync(join(ROOT, rel), 'utf8'); } catch { continue; }
+  for (const line of src.split(String.fromCharCode(10))) {
+    // Comments discuss the rule at length; only code can break it.
+    const code = line.split('//')[0];
+    if (!/displayName/.test(code)) continue;
+    if (IDENTITY_SINKS.test(code)) leaks.push(rel + ': ' + line.trim().slice(0, 90));
+  }
+}
+check('no line anywhere passes the display name to something that decides identity',
+  leaks.length === 0, leaks.join(' | '));
+
+// And the reverse: the identity constants are not read out of settings.
+const afterIdentity = src0.slice(src0.indexOf('export const IDENTITY'));
+check('the identity is never read out of settings',
+  !/state\\.get|settings\\./.test(afterIdentity.slice(0, 600)),
+  afterIdentity.slice(0, 90).replace(/\\s+/g, ' '));
 
 console.log('');
 if (failures) {

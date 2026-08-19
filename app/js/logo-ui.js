@@ -305,7 +305,42 @@ export function render(box, onChanged) {
 
   paintPreview();
 
+  // ---------- the display name ----------
+
+  const nameInput = h('input', {
+    type: 'text',
+    value: state.get('settings').displayName || 'Material Open WebUI',
+    'aria-label': 'What this application is called',
+    maxlength: '60'
+  });
+  const nameErr = h('div', { class: 'logo__nameerr' });
+
+  function commitName() {
+    const next = nameInput.value.trim();
+    if (!next) {
+      nameErr.textContent = 'A name is required. Leaving it empty would give the window no title at all.';
+      return;
+    }
+    nameErr.textContent = '';
+    if (next === (state.get('settings').displayName || 'Material Open WebUI')) return;
+    state.patchSettings({ displayName: next });
+    state.log('Display name changed', next);
+    if (onChanged) onChanged();
+  }
+  nameInput.addEventListener('blur', commitName);
+  nameInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); commitName(); } });
+
   add(box,
+    h('h2', { class: 'card__title' }, 'Name and mark'),
+    h('p', { class: 'card__sub' },
+      'What this application is called, and what it looks like. Both are presentation and nothing else.'),
+    h('div', { class: 'logo__name' },
+      h('label', { class: 'logo__namelabel', for: 'display-name' }, 'Display name'),
+      h('div', { class: 'field' }, nameInput),
+      nameErr,
+      h('p', { class: 'logo__hint' },
+        'This changes the window title, the title bar and the About screen. It does not change the package identifier, the folder your settings live in, the executable name or where updates are fetched from — those are fixed constants. A name that reached the data directory would lose every chat the moment it was edited, and one that reached the update feed would stop updates without saying so.')),
+    h('hr'),
     h('h2', { class: 'card__title' }, 'Application mark'),
     h('p', { class: 'card__sub' },
       'Presentation only. The mark and the window name never move the package identity, the data directory or the update feed — those are fixed, so renaming the window cannot orphan your settings or point updates at nothing.'),
