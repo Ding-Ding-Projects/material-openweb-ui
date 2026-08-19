@@ -108,6 +108,45 @@ function edit(dir, rel, fn) {
  */
 const COL = { id: 0, feature: 1, site: 2, app: 3, anchor: 4, docs: 5 };
 
+/**
+ * Finds a row matching a predicate.
+ *
+ * Cases used to name a feature directly — `ladder`, `notify`, `palette` — and
+ * every one of them went stale the moment that feature's status changed,
+ * turning the case into a silent no-op. A regression suite that breaks when the
+ * project makes progress is worse than none, because it trains people to ignore
+ * it. Cases now describe the SHAPE of row they need and take whichever one fits.
+ */
+function findRow(dir, predicate) {
+  const text = readFileSync(join(dir, 'INVENTORY.md'), 'utf8');
+  for (const line of text.split(NL)) {
+    const t = line.trim();
+    if (!t.startsWith('|')) continue;
+    const cells = t.split('|').slice(1, -1).map((c) => c.trim());
+    if (cells.length < 6) continue;
+    const row = { id: cells[0], feature: cells[1], site: cells[2], app: cells[3], anchor: cells[4] };
+    if (!['shipped', 'partial', 'planned', 'na'].includes(row.site)) continue;
+    if (predicate(row)) return row;
+  }
+  return null;
+}
+
+const hasAnchor = (r) => r.anchor && r.anchor !== '—' && r.anchor !== '-';
+
+/** A row that is not built on either surface, so an anchor on it is fiction. */
+function unbuiltRow(dir) {
+  const r = findRow(dir, (x) => x.site === 'planned' && x.app === 'planned' && !hasAnchor(x));
+  if (!r) throw new Error('no unbuilt row left in the inventory to test with');
+  return r;
+}
+
+/** A row that IS built, so its anchor must resolve. */
+function builtRow(dir) {
+  const r = findRow(dir, (x) => (x.site === 'shipped' || x.app === 'shipped') && hasAnchor(x));
+  if (!r) throw new Error('no built row in the inventory to test with');
+  return r;
+}
+
 /** The file one row's anchor points at, as a path relative to the tree. */
 function anchorPathFor(dir, rowId) {
   const text = readFileSync(join(dir, 'INVENTORY.md'), 'utf8');
@@ -165,20 +204,29 @@ const CASES = [
   },
   {
     name: 'a shipped claim loses its anchor',
-    apply: (dir) => setCell(dir, 'notify', 'anchor', '—')
+    apply: (dir) => setCell(dir, builtRow(dir).id, 'anchor', '—')
   },
   {
     name: 'a planned row quietly gains an anchor it cannot back up',
-    apply: (dir) => setCell(dir, 'ladder', 'anchor', '`docs/assets/js/ui.js#notify`')
+    apply: (dir) => setCell(dir, unbuiltRow(dir).id, 'anchor', '`docs/assets/js/ui.js#export function notify`')
   },
   {
     name: 'an inventory row overstates what the desktop application does',
-    apply: (dir) => setCell(dir, 'ladder', 'app', 'shipped')
+    apply: (dir) => setCell(dir, unbuiltRow(dir).id, 'app', 'shipped')
   },
   {
     name: 'the page claims a feature is shipped while the inventory says planned',
-    apply: (dir) => edit(dir, join('docs', 'assets', 'js', 'content.js'), (s) =>
-      s.replace("icon: 'unlock', site: 'planned', app: 'planned'", "icon: 'unlock', site: 'shipped', app: 'planned'"))
+    apply: (dir) => {
+      const row = unbuiltRow(dir);
+      edit(dir, join('docs', 'assets', 'js', 'content.js'), (src) => {
+        // The dotAll flag rather than a [\s\S] class: inside a double-quoted JS
+        // string "\s" is just "s", so the class silently collapses to [sS] and
+        // matches nothing across a line break. The flag needs no escaping and
+        // cannot lose a level the same way.
+        const re = new RegExp("(id: '" + row.id + "',.*?site: ')planned(', app: ')planned(')", 's');
+        return src.replace(re, '$1shipped$2planned$3');
+      });
+    }
   },
   {
     name: 'the inventory table is emptied entirely',

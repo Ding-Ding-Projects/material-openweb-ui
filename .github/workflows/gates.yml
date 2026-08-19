@@ -61,6 +61,11 @@ jobs:
       - name: School mode omits rather than disables
         run: node scripts/test-school-mode.mjs
 
+      - name: Locks and the unlock ladder stay safe
+        # Five rules are the whole safety of the ladder, and they are very easy
+        # to break by accident while making the games nicer.
+        run: node scripts/test-locks.mjs
+
       - name: Line count
         run: |
           node scripts/count-lines.mjs --markdown >> "$GITHUB_STEP_SUMMARY"

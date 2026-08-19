@@ -13,6 +13,9 @@ import * as chatPage from './pages/chat.js';
 import * as converterPage from './pages/converter.js';
 import * as authPage from './pages/authenticator.js';
 import * as misc from './pages/misc.js';
+import * as locksPage from './pages/locks.js';
+import * as locksUi from './locks-ui.js';
+import * as locksCore from './core/locks.js';
 import { palette, wire as wirePalette } from './palette.js';
 import * as i18n from './i18n.js';
 import * as narrator from './core/narrator.js';
@@ -22,6 +25,7 @@ const PAGES = {
   ollama:        { ...ollamaPage.meta, render: ollamaPage.render },
   converter:     { ...converterPage.meta, render: converterPage.render },
   authenticator: { ...authPage.meta, render: authPage.render },
+  locks:         { ...locksPage.meta, render: locksPage.render },
   workspace:     { id: 'workspace', title: 'Workspace', zh: '工作區', icon: 'grid', render: misc.renderWorkspace },
   admin:         { id: 'admin', title: 'Admin', zh: '管理', icon: 'shield', render: misc.renderAdmin },
   settings:      { id: 'settings', title: 'Settings', zh: '設定', icon: 'gear', render: misc.renderSettings },
@@ -29,7 +33,7 @@ const PAGES = {
   changelog:     { id: 'changelog', title: 'Changelog', zh: '更新紀錄', icon: 'clock', render: misc.renderChangelog }
 };
 
-const ORDER = ['chat', 'ollama', 'converter', 'authenticator', 'workspace', 'admin', 'settings', 'status', 'changelog'];
+const ORDER = ['chat', 'ollama', 'converter', 'authenticator', 'locks', 'workspace', 'admin', 'settings', 'status', 'changelog'];
 
 const titlebar = document.getElementById('titlebar');
 const rail = document.getElementById('rail');
@@ -117,7 +121,16 @@ function buildTitlebar() {
       onclick: () => { state.set('activeTab', t.id); render(); },
       oncontextmenu: (e) => {
         e.preventDefault();
+        const lockId = 'tab:' + t.page;
+        const existing = locksCore.get(lockId);
         ui.menu(btn, [
+          existing
+            ? { label: locksCore.isLocked(lockId) ? 'Unlock this tab…' : 'Lock it again', icon: 'lock',
+                run: () => locksCore.isLocked(lockId) ? locksUi.unlockPrompt(lockId, render) : (locksCore.relock(lockId), render()) }
+            : { label: 'Lock this tab…', icon: 'lock',
+                run: () => locksUi.wizard(lockId, pageLabel(t.page)) },
+          { label: 'Manage every lock', icon: 'unlock', run: () => open('locks') },
+          { separator: true },
           { label: 'Close this tab', icon: 'x', danger: true, run: () => close(t.id) },
           { label: 'Close other tabs', icon: 'x', run: () => {
             state.set('tabs', tabs().filter((x) => x.id === t.id));
@@ -129,6 +142,7 @@ function buildTitlebar() {
     },
       icon(page.icon, 'icon icon--sm'),
       h('span', { class: 'wtab__label' }, pageLabel(t.page)),
+      locksCore.isLocked('tab:' + t.page) ? icon('lock', 'icon tab__lock') : null,
       h('span', {
         class: 'wtab__close', role: 'button', 'aria-label': 'Close ' + page.title,
         onclick: (e) => { e.stopPropagation(); close(t.id); }

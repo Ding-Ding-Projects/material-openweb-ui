@@ -100,21 +100,21 @@ export const FEATURES = [
   },
   {
     id: 'locks', name: 'Toy locks on every element', group: 'Locks',
-    icon: 'lock', site: 'planned', app: 'planned',
+    icon: 'lock', site: 'planned', app: 'shipped',
     blurb: 'Any tab, control or appearance value takes its own password or one-time-code lock, each with its own independent credential.',
     detail: 'There is no master credential and no inheritance: unlocking one surface never unlocks another, and a locked property inside a locked tab is two locks with two answers. The copy never claims this secures anything — it is a speed bump you set for yourself, and the recovery route is documented rather than hidden behind a support process.',
     verify: 'Lock two elements with different credentials and confirm unlocking one leaves the other locked.'
   },
   {
     id: 'tickets', name: 'Support Tickets', group: 'Locks',
-    icon: 'file', site: 'planned', app: 'planned',
+    icon: 'file', site: 'planned', app: 'shipped',
     blurb: 'The recovery route for a forgotten lock, dressed as a service desk, whose resolution is the only thing that actually works.',
     detail: 'A ticket form, a locally generated number, a severity nobody will honour and a canned first response — and then the resolution opens the folder you need to clear, with the exact path shown beside the button. One plain unstyled line states that nothing is sent anywhere, no ticket exists outside this machine and nobody is reading it, so nobody waits for a reply that was never coming.',
     verify: 'Confirm the disclosure line is present and unstyled at every funny level, and that no network request is made.'
   },
   {
     id: 'ladder', name: 'The unlock ladder', group: 'Locks',
-    icon: 'unlock', site: 'planned', app: 'planned',
+    icon: 'unlock', site: 'planned', app: 'shipped',
     blurb: 'Locked out? Play your way through dim sum, then sums, then whack-a-mole — or serve the clock.',
     detail: 'It clears the waiting and never the credential: winning returns you to the ordinary sign-in form still needing to know your password. It never refunds the attempt budget, it is capped at three skips per rolling hour, and it never slows the exponential escalation it skips. Under School mode the ladder starts at the sums, because the dim-sum rung must be absent rather than skipped with a message naming it.',
     verify: 'Confirm a cleared ladder sets no session and leaves the surface exactly as closed as it was.'
@@ -247,14 +247,14 @@ export const FEATURES = [
   },
   {
     id: 'a11y', name: 'Accessibility and responsive layout', group: 'Quality',
-    icon: 'check', site: 'shipped', app: 'planned',
+    icon: 'check', site: 'shipped', app: 'partial',
     blurb: 'Keyboard reachable end to end, screen-reader named, contrast-safe, and readable from 320px upward.',
     detail: 'Visible focus everywhere, correct roles and states, reduced motion respected, adequate touch targets with enough separation, and no clipping at 100/125/150/200% display scale or in bilingual mode where labels are longest. Wide content scrolls inside its own container so the page body never scrolls sideways.',
     verify: 'Tab through this page without touching the mouse and confirm every control is reachable and visibly focused.'
   },
   {
     id: 'buildscript', name: 'One-click build script', group: 'Quality',
-    icon: 'file', site: 'planned', app: 'planned',
+    icon: 'file', site: 'shipped', app: 'shipped',
     blurb: 'A build.bat at the repository root that takes a bare machine to a running program.',
     detail: 'It assumes nothing is installed and obtains every dependency itself, without a prompt and without a sentence beginning "install X and run this again". It builds the real artifact through the same path CI uses, reports honestly at each phase, is safe to re-run, and has a silent mode that never blocks and exits non-zero on the first real failure.',
     verify: 'Run it on a machine with no toolchain and confirm it completes without manual intervention.'
@@ -268,7 +268,7 @@ export const FEATURES = [
   },
   {
     id: 'free', name: 'Nothing is ever for sale', group: 'Quality',
-    icon: 'check', site: 'shipped', app: 'planned',
+    icon: 'check', site: 'shipped', app: 'shipped',
     blurb: 'No purchase, no licence, no subscription, no trial, no feature held behind an unlock.',
     detail: 'Every capability is available to everyone who runs it. This is not a pricing decision to revisit later. There are also no nagging prompts asking for donations, reviews, ratings or upgrades — where the product is built on somebody else\'s work, any funding link points at them and says so.',
     verify: 'Search the interface for any purchase, upgrade or donation prompt; there should be none.'

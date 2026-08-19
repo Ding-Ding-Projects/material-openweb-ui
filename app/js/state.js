@@ -27,6 +27,8 @@ const DEFAULTS = {
   },
   settingsWritten: [],
   vocabulary: null,
+  locks: {},
+  tickets: [],
   tabs: [{ id: 'tb-ollama', page: 'ollama' }],
   activeTab: 'tb-ollama',
   chats: [],

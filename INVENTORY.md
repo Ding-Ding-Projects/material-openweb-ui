@@ -45,9 +45,9 @@ nobody should trust.
 | converter | Universal file converter | na | partial | `app/js/core/convert.js#export function sniff` | content.js |
 | authenticator | Built-in authenticator | planned | partial | `app/js/core/totp.js#export async function totp` | content.js |
 | qr | QR pairing for one-time-code registration | planned | planned | — | content.js |
-| locks | Toy locks on every element | planned | planned | — | content.js |
-| tickets | Support Tickets | planned | planned | — | content.js |
-| ladder | The unlock ladder | planned | planned | — | content.js |
+| locks | Toy locks on every element | planned | shipped | `app/js/core/locks.js#export async function create` | content.js |
+| tickets | Support Tickets | planned | shipped | `app/js/locks-ui.js#export function supportTickets` | content.js |
+| ladder | The unlock ladder | planned | shipped | `app/js/locks-ui.js#export function startingRung` | content.js |
 | language | Three language modes | shipped | shipped | `app/js/i18n.js#export const LANGUAGES` | content.js |
 | funny | A funny level for each language | shipped | shipped | `app/js/i18n.js#export function levelLabel` | content.js |
 | vocab | Personal vocabulary upload | shipped | shipped | `app/js/core/vocabulary.js#export function validate` | content.js |
@@ -66,10 +66,10 @@ nobody should trust.
 | changelog | Changelog viewer | shipped | planned | `docs/assets/js/pages.js#function changelog` | content.js |
 | status | Status Hub | shipped | partial | `app/js/pages/misc.js#export function renderStatus` | content.js |
 | dimsum | Dim sum surprise | partial | partial | `app/js/app.js#function maybeDimSum` | content.js |
-| a11y | Accessibility and responsive layout | shipped | planned | `docs/assets/css/site.css#skip-link` | content.js |
-| buildscript | One-click build script | planned | planned | — | content.js |
+| a11y | Accessibility and responsive layout | shipped | partial | `docs/assets/css/site.css#skip-link` | content.js |
+| buildscript | One-click build script | shipped | shipped | `scripts/build.ps1#Get-EngineRange` | content.js |
 | nosign | Permanently unsigned releases | na | planned | — | content.js |
-| free | Nothing is ever for sale | shipped | planned | `docs/assets/js/i18n.js#foot.free` | content.js |
+| free | Nothing is ever for sale | shipped | shipped | `docs/assets/js/i18n.js#foot.free` | content.js |
 
 ## What the guard checks
 
