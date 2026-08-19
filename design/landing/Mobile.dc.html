@@ -1,0 +1,162 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto+Flex:opsz,wght@8..144,400;8..144,500;8..144,600;8..144,700&amp;family=Roboto+Mono:wght@400;500&amp;display=swap">
+  <style>
+    :root{--p:#6750A4;--onp:#FFFFFF;--pc:#EADDFF;--onpc:#21005D;--secc:#E8DEF8;--onsecc:#1D192B;--ter:#7D5260;--errc:#F9DEDC;--onerrc:#410E0B;--sur:#FEF7FF;--sclow:#F7F2FA;--sc:#F3EDF7;--schighest:#E6E0E9;--ons:#1D1B20;--onsv:#49454F;--outv:#CAC4D0;--elev1:0 1px 2px rgba(0,0,0,.3),0 1px 3px 1px rgba(0,0,0,.15)}
+    .dark{--p:#D0BCFF;--onp:#381E72;--pc:#4F378B;--onpc:#EADDFF;--secc:#4A4458;--onsecc:#E8DEF8;--ter:#EFB8C8;--errc:#8C1D18;--onerrc:#F9DEDC;--sur:#141218;--sclow:#1D1B20;--sc:#211F26;--schighest:#36343B;--ons:#E6E0E9;--onsv:#CAC4D0;--outv:#49454F}
+    *{box-sizing:border-box}
+    body{margin:0;font-family:"Roboto Flex","Segoe UI Variable Text","Segoe UI",system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+    a{color:var(--p);text-decoration:none}
+    a:hover{color:var(--p);text-decoration:underline}
+    .mono{font-family:"Roboto Mono",ui-monospace,"Cascadia Mono",Consolas,monospace}
+    .mcard{display:flex;gap:14px;background:var(--sc);border-radius:18px;padding:16px;align-items:flex-start}
+    .mchip{width:44px;height:44px;border-radius:15px;background:var(--secc);display:flex;align-items:center;justify-content:center;flex:none}
+    .mname{font-size:15.5px;font-weight:600;line-height:1.25}
+    .mbody{font-size:13px;line-height:1.6;color:var(--onsv)}
+    .pill{height:38px;border-radius:19px;padding:0 15px;display:flex;align-items:center;font-size:13.5px;font-weight:500;color:var(--onsv);flex:none}
+  </style>
+</helmet>
+<div class="{{ rootClass }}" style="background:var(--sur);color:var(--ons);width:390px">
+
+  <div style="display:flex;align-items:center;gap:10px;height:60px;padding:0 12px 0 16px;background:var(--sclow);border-bottom:1px solid var(--outv)">
+    <div style="width:32px;height:32px;border-radius:10px;background:var(--p);display:flex;align-items:center;justify-content:center;flex:none">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--onp)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7.5A3.5 3.5 0 0 1 7.5 4h9A3.5 3.5 0 0 1 20 7.5v6a3.5 3.5 0 0 1-3.5 3.5H11l-4.2 3.1a.6.6 0 0 1-1-.5V17H7.5A3.5 3.5 0 0 1 4 13.5z"></path><path d="M9 10.5h6"></path></svg>
+    </div>
+    <div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:1px">
+      <div style="font-size:14.5px;font-weight:600;letter-spacing:-.01em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Material Open WebUI</div>
+      <div class="mono" style="font-size:10.5px;color:var(--onsv)">v0.0.0 · unreleased</div>
+    </div>
+    <div style="width:44px;height:44px;border-radius:22px;background:var(--sc);display:flex;align-items:center;justify-content:center;flex:none">
+      <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="var(--ons)" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="6.5"></circle><path d="m20 20-3.6-3.6"></path></svg>
+    </div>
+    <div style="width:44px;height:44px;border-radius:22px;background:var(--sc);display:flex;align-items:center;justify-content:center;flex:none">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--ons)" stroke-width="2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"></path></svg>
+    </div>
+  </div>
+
+  <div style="display:flex;align-items:center;gap:6px;padding:10px 16px;background:var(--sclow);border-bottom:1px solid var(--outv);overflow-x:auto">
+    <div class="pill" style="background:var(--schighest);color:var(--ons);font-weight:600">Home</div>
+    <div class="pill" style="background:var(--sc)">Features</div>
+    <div class="pill" style="background:var(--sc)">Docs</div>
+    <div class="pill" style="background:var(--sc)">Changelog</div>
+    <div class="pill" style="background:var(--sc)">Settings</div>
+  </div>
+
+  <div style="display:flex;flex-direction:column;gap:20px;padding:28px 16px 32px 16px">
+    <div style="display:flex;align-items:center;gap:9px;align-self:flex-start;height:30px;border-radius:15px;background:var(--secc);color:var(--onsecc);padding:0 13px;font-size:12px;font-weight:600">
+      <span style="width:6px;height:6px;border-radius:3px;background:var(--ter)"></span>
+      <span>Open WebUI, rebuilt in Material 3</span>
+    </div>
+
+    <h1 style="margin:0;font-size:34px;line-height:1.12;font-weight:700;letter-spacing:-.025em;text-wrap:pretty">Every model you run, wrapped in Material 3.</h1>
+
+    <p style="margin:0;font-size:15.5px;line-height:1.62;color:var(--onsv);text-wrap:pretty">A frameless Windows desktop app for Open WebUI. Your chats, your models, your files and your one-time codes stay on the machine you are sitting at — no server to start, no account to make, and nothing in it is ever for sale.</p>
+
+    <div style="display:flex;flex-direction:column;gap:10px">
+      <div style="height:52px;border-radius:26px;background:var(--p);color:var(--onp);display:flex;align-items:center;justify-content:center;gap:10px;font-size:15px;font-weight:600;box-shadow:var(--elev1)">
+        <span>Read the docs</span>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h13"></path><path d="m12.5 6.5 6 5.5-6 5.5"></path></svg>
+      </div>
+      <div style="height:52px;border-radius:26px;background:var(--sc);color:var(--onsv);border:1px solid var(--outv);display:flex;align-items:center;justify-content:center;gap:10px;font-size:14px;font-weight:600;text-align:center;padding:0 16px">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><path d="M12 4v11"></path><path d="m7.5 11 4.5 4.5 4.5-4.5"></path><path d="M5 19h14"></path></svg>
+        <span>Download — not yet released</span>
+      </div>
+      <div style="height:52px;border-radius:26px;border:1px solid var(--outv);color:var(--ons);display:flex;align-items:center;justify-content:center;gap:10px;font-size:15px;font-weight:600">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19.5c-4 1.2-4-2.2-5.5-2.7M15 21v-3.2a2.8 2.8 0 0 0-.8-2.2c2.7-.3 5.4-1.3 5.4-5.9a4.6 4.6 0 0 0-1.2-3.2 4.3 4.3 0 0 0-.1-3.2s-1-.3-3.3 1.2a11.4 11.4 0 0 0-6 0C6.7 2.9 5.7 3.3 5.7 3.3a4.3 4.3 0 0 0-.1 3.2 4.6 4.6 0 0 0-1.2 3.2c0 4.6 2.7 5.6 5.4 5.9-.4.4-.7 1-.8 1.7V21"></path></svg>
+        <span>GitHub</span>
+      </div>
+    </div>
+
+    <div style="display:flex;gap:11px;align-items:flex-start;background:var(--errc);border-radius:16px;padding:14px 16px">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--onerrc)" stroke-width="2" stroke-linecap="round" style="flex:none;margin-top:1px"><circle cx="12" cy="12" r="8.5"></circle><path d="M12 8v5M12 16h.01"></path></svg>
+      <div style="display:flex;flex-direction:column;gap:4px">
+        <div style="font-size:13px;font-weight:600;color:var(--onerrc)">No installer has been published yet.</div>
+        <div style="font-size:12.5px;line-height:1.55;color:var(--onerrc);opacity:.9">The button turns on once the first installer is built and verified against its release. Installers here are permanently unsigned, and Windows will say so.</div>
+      </div>
+    </div>
+
+    <div style="height:210px;border-radius:20px;border:2px dashed var(--outv);background:var(--sclow);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:11px;padding:22px;text-align:center">
+      <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="var(--onsv)" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="4.5" width="19" height="13" rx="2.5"></rect><path d="M8 21h8"></path><path d="M12 17.5V21"></path><path d="m6.5 14 3-3.2 2.4 2.3 3-3.4 2.6 4.3"></path></svg>
+      <div style="font-size:14px;font-weight:600">Capture pending the first build</div>
+      <div style="font-size:12.5px;line-height:1.6;color:var(--onsv)">A real screenshot of the built app goes here, taken at a known commit. No mockup will sit here pretending to be one.</div>
+    </div>
+  </div>
+
+  <div style="display:flex;flex-direction:column;gap:14px;padding:28px 16px;background:var(--sclow);border-top:1px solid var(--outv);border-bottom:1px solid var(--outv)">
+    <h2 style="margin:0;font-size:24px;font-weight:700;letter-spacing:-.02em">Nine destinations, one tab strip</h2>
+    <p style="margin:0;font-size:14px;line-height:1.6;color:var(--onsv)">Every surface is a tab you open, pin, group and close. On a phone the strip becomes the scrolling row above rather than eating the width it exists to reveal.</p>
+
+    <div style="display:flex;flex-direction:column;gap:10px;margin-top:4px">
+      <div class="mcard">
+        <div class="mchip"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="var(--onsecc)" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7.5A3.5 3.5 0 0 1 7.5 4h9A3.5 3.5 0 0 1 20 7.5v6a3.5 3.5 0 0 1-3.5 3.5H11l-4.2 3.1a.6.6 0 0 1-1-.5V17H7.5A3.5 3.5 0 0 1 4 13.5z"></path></svg></div>
+        <div style="display:flex;flex-direction:column;gap:5px;min-width:0">
+          <div class="mname">Chat</div>
+          <div class="mbody">Streamed replies from a model running on this machine, with a chat list that searches by text or by pattern.</div>
+        </div>
+      </div>
+
+      <div class="mcard">
+        <div class="mchip"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="var(--onsecc)" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="7" rx="2.2"></rect><rect x="3" y="13" width="18" height="7" rx="2.2"></rect><path d="M7 7.5h.01M7 16.5h.01"></path></svg></div>
+        <div style="display:flex;flex-direction:column;gap:5px;min-width:0">
+          <div class="mname">Ollama manager</div>
+          <div class="mbody">The daemon, installed models, the full catalog with every tag, and pulls with real progress. Fit verdicts read your actual RAM and VRAM.</div>
+        </div>
+      </div>
+
+      <div class="mcard">
+        <div class="mchip"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="var(--onsecc)" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8.5h11l-3-3"></path><path d="M20 15.5H9l3 3"></path></svg></div>
+        <div style="display:flex;flex-direction:column;gap:5px;min-width:0">
+          <div class="mname">File converter</div>
+          <div class="mbody">Type detected from the actual bytes. Anything unavailable stays visible with the exact dependency it is missing.</div>
+        </div>
+      </div>
+
+      <div class="mcard">
+        <div class="mchip"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="var(--onsecc)" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="6.5" y="2.5" width="11" height="19" rx="2.6"></rect><path d="M10.5 17.5h3"></path><path d="M9.5 7.5h5M9.5 11h5"></path></svg></div>
+        <div style="display:flex;flex-direction:column;gap:5px;min-width:0">
+          <div class="mname">Authenticator</div>
+          <div class="mbody">Real one-time codes for whatever accounts you like, computed locally. No account, no sync, no network.</div>
+        </div>
+      </div>
+
+      <div style="height:48px;border-radius:24px;border:1px solid var(--outv);color:var(--ons);display:flex;align-items:center;justify-content:center;gap:9px;font-size:14px;font-weight:600;margin-top:2px">
+        <span>See all nine</span>
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h13"></path><path d="m12.5 6.5 6 5.5-6 5.5"></path></svg>
+      </div>
+    </div>
+  </div>
+
+  <div style="display:flex;flex-direction:column;gap:14px;padding:26px 16px 34px 16px">
+    <div style="font-size:14px;font-weight:600">Built on Open WebUI</div>
+    <div style="font-size:12.5px;line-height:1.7;color:var(--onsv)">A fork of the Open WebUI project, which does the hard work underneath. Its name and licence stay; this project changes the interface, not the credit.</div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:2px">
+      <div style="height:36px;border-radius:18px;background:var(--sc);color:var(--ons);display:flex;align-items:center;padding:0 14px;font-size:12.5px">Repository</div>
+      <div style="height:36px;border-radius:18px;background:var(--sc);color:var(--ons);display:flex;align-items:center;padding:0 14px;font-size:12.5px">Licence</div>
+      <div style="height:36px;border-radius:18px;background:var(--sc);color:var(--ons);display:flex;align-items:center;padding:0 14px;font-size:12.5px">Upstream</div>
+      <div style="height:36px;border-radius:18px;background:var(--sc);color:var(--ons);display:flex;align-items:center;padding:0 14px;font-size:12.5px">Reset this site</div>
+    </div>
+    <div style="height:1px;background:var(--outv);margin:6px 0"></div>
+    <div style="font-size:11.5px;line-height:1.6;color:var(--onsv)">A Ding Ding Projects application. Site preferences are stored in this browser only; nothing is sent anywhere, and there is no analytics on this page.</div>
+    <div style="height:28px;border-radius:14px;background:var(--secc);color:var(--onsecc);display:flex;align-items:center;padding:0 12px;font-size:11.5px;font-weight:600;align-self:flex-start">Free, always — nothing here is for sale</div>
+  </div>
+
+</div>
+</x-dc>
+<script data-dc-script data-props='{"theme":{"editor":"enum","default":"dark","options":["dark","light"],"tsType":"string","section":"Appearance"}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const theme = this.props.theme ?? 'dark';
+    return { rootClass: theme === 'dark' ? 'dark' : '' };
+  }
+}
+</script>
+</body>
+</html>

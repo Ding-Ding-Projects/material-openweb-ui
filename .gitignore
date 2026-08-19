@@ -311,3 +311,6 @@ cypress/videos
 cypress/screenshots
 .vscode/settings.json
 .cptr
+
+# Seeded design-canvas build output (regenerate with the canvas helper)
+/design/landing/material-open-webui-landing.html

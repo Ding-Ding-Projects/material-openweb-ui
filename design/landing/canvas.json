@@ -1,0 +1,24 @@
+{
+  "artboards": [
+    { "file": "Main.dc.html", "title": "Home — desktop", "x": 0, "y": 0, "w": 1280, "h": 2480 },
+    { "file": "Bilingual.dc.html", "title": "Home — bilingual mode", "x": 1400, "y": 0, "w": 1280, "h": 800 },
+    { "file": "Mobile.dc.html", "title": "Home — phone, 390px", "x": 2800, "y": 0, "w": 390, "h": 1920 }
+  ],
+  "annotations": [
+    {
+      "id": "brief",
+      "x": 1400,
+      "y": 900,
+      "w": 520,
+      "text": "Three views of ONE page — the site home.\n\nTokens, radii and control heights are lifted from the app prototype (seed #6750A4, Material baseline). Type is scaled up for reading distance; the app itself sits at 13px body.\n\nHonesty holds the layout in three places:\n• Download button is off, not fake — no release exists yet.\n• Screenshot slots say capture pending rather than showing a mockup.\n• The unsigned-installer warning is stated up front.\n\nSwap the theme chip above each artboard for light."
+    },
+    {
+      "id": "next",
+      "x": 1400,
+      "y": 1320,
+      "w": 520,
+      "text": "Not drawn yet — say the word and they get artboards:\n\n• Features index (every feature, not a highlight reel)\n• Documentation article template with suggested-articles footer\n• The site's own settings surface (language, funny sliders, appearance)\n• Changelog viewer with date picker and commit links"
+    }
+  ],
+  "launch": { "view": "canvas" }
+}

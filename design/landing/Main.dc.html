@@ -1,0 +1,286 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto+Flex:opsz,wght@8..144,400;8..144,500;8..144,600;8..144,700&amp;family=Roboto+Mono:wght@400;500&amp;display=swap">
+  <style>
+    :root{--p:#6750A4;--onp:#FFFFFF;--pc:#EADDFF;--onpc:#21005D;--sec:#625B71;--secc:#E8DEF8;--onsecc:#1D192B;--ter:#7D5260;--terc:#FFD8E4;--onterc:#31111D;--err:#B3261E;--errc:#F9DEDC;--onerrc:#410E0B;--sur:#FEF7FF;--sclowest:#FFFFFF;--sclow:#F7F2FA;--sc:#F3EDF7;--schigh:#ECE6F0;--schighest:#E6E0E9;--ons:#1D1B20;--onsv:#49454F;--out:#79747E;--outv:#CAC4D0;--elev1:0 1px 2px rgba(0,0,0,.3),0 1px 3px 1px rgba(0,0,0,.15);--elev2:0 1px 2px rgba(0,0,0,.3),0 2px 6px 2px rgba(0,0,0,.15)}
+    .dark{--p:#D0BCFF;--onp:#381E72;--pc:#4F378B;--onpc:#EADDFF;--sec:#CCC2DC;--secc:#4A4458;--onsecc:#E8DEF8;--ter:#EFB8C8;--terc:#633B48;--onterc:#FFD8E4;--err:#F2B8B5;--errc:#8C1D18;--onerrc:#F9DEDC;--sur:#141218;--sclowest:#0F0D13;--sclow:#1D1B20;--sc:#211F26;--schigh:#2B2930;--schighest:#36343B;--ons:#E6E0E9;--onsv:#CAC4D0;--out:#938F99;--outv:#49454F}
+    *{box-sizing:border-box}
+    body{margin:0;font-family:"Roboto Flex","Segoe UI Variable Text","Segoe UI",system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+    a{color:var(--p);text-decoration:none}
+    a:hover{color:var(--p);text-decoration:underline}
+    .mono{font-family:"Roboto Mono",ui-monospace,"Cascadia Mono",Consolas,monospace}
+    .card{display:flex;flex-direction:column;gap:12px;background:var(--sc);border-radius:20px;padding:22px}
+    .chip{width:40px;height:40px;border-radius:14px;background:var(--secc);display:flex;align-items:center;justify-content:center;flex:none}
+    .cname{font-size:16px;font-weight:600}
+    .cbody{font-size:13.5px;line-height:1.6;color:var(--onsv)}
+    .shot{border-radius:16px;border:2px dashed var(--outv);background:var(--sclow);display:flex;align-items:center;justify-content:center;padding:10px;text-align:center;font-size:11.5px;line-height:1.4;color:var(--onsv);height:88px}
+    .fcol{display:flex;flex-direction:column;gap:9px}
+    .fhead{font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--onsv)}
+    .flink{font-size:13.5px;color:var(--ons)}
+    .why{display:flex;gap:16px;border:1px solid var(--outv);border-radius:20px;padding:24px}
+    .wchip{width:44px;height:44px;border-radius:15px;background:var(--pc);display:flex;align-items:center;justify-content:center;flex:none}
+  </style>
+</helmet>
+<div class="{{ rootClass }}" style="background:var(--sur);color:var(--ons);width:1280px">
+
+  <div style="display:flex;align-items:center;gap:20px;height:64px;padding:0 32px;background:var(--sclow);border-bottom:1px solid var(--outv)">
+    <div style="display:flex;align-items:center;gap:12px;flex:none">
+      <div style="width:32px;height:32px;border-radius:10px;background:var(--p);display:flex;align-items:center;justify-content:center;flex:none">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--onp)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7.5A3.5 3.5 0 0 1 7.5 4h9A3.5 3.5 0 0 1 20 7.5v6a3.5 3.5 0 0 1-3.5 3.5H11l-4.2 3.1a.6.6 0 0 1-1-.5V17H7.5A3.5 3.5 0 0 1 4 13.5z"></path><path d="M9 10.5h6"></path></svg>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:1px">
+        <div style="font-size:15px;font-weight:600;letter-spacing:-.01em">Material Open WebUI</div>
+        <div class="mono" style="font-size:11px;color:var(--onsv)">v0.0.0 · unreleased</div>
+      </div>
+    </div>
+
+    <div style="display:flex;align-items:center;gap:4px;background:var(--sc);border-radius:22px;padding:4px;flex:none">
+      <div style="height:36px;border-radius:18px;background:var(--schighest);color:var(--ons);padding:0 16px;display:flex;align-items:center;font-size:13.5px;font-weight:600">Home</div>
+      <div style="height:36px;border-radius:18px;color:var(--onsv);padding:0 16px;display:flex;align-items:center;font-size:13.5px;font-weight:500">Features</div>
+      <div style="height:36px;border-radius:18px;color:var(--onsv);padding:0 16px;display:flex;align-items:center;font-size:13.5px;font-weight:500">Docs</div>
+      <div style="height:36px;border-radius:18px;color:var(--onsv);padding:0 16px;display:flex;align-items:center;font-size:13.5px;font-weight:500">Changelog</div>
+      <div style="height:36px;border-radius:18px;color:var(--onsv);padding:0 16px;display:flex;align-items:center;font-size:13.5px;font-weight:500">Settings</div>
+    </div>
+
+    <div style="flex:1"></div>
+
+    <div style="display:flex;align-items:center;gap:8px;height:40px;border:1px solid var(--outv);border-radius:20px;padding:0 6px 0 14px;width:268px;flex:none">
+      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="var(--onsv)" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="6.5"></circle><path d="m20 20-3.6-3.6"></path></svg>
+      <span style="flex:1;font-size:13px;color:var(--onsv)">Search every page and setting…</span>
+      <div class="mono" style="height:28px;border-radius:14px;background:var(--sc);color:var(--onsv);display:flex;align-items:center;justify-content:center;font-size:12px;padding:0 9px">.*</div>
+    </div>
+
+    <div style="display:flex;align-items:center;justify-content:center;width:40px;height:40px;border-radius:20px;background:var(--sc);flex:none">
+      <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="var(--ons)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4.2"></circle><path d="M12 3v2M12 19v2M3 12h2M19 12h2M5.6 5.6 7 7M17 17l1.4 1.4M18.4 5.6 17 7M7 17l-1.4 1.4"></path></svg>
+    </div>
+  </div>
+
+  <div style="display:flex;gap:56px;padding:88px 72px 72px 72px;align-items:flex-start">
+    <div style="flex:1;display:flex;flex-direction:column;gap:26px;max-width:600px">
+      <div style="display:flex;align-items:center;gap:10px;align-self:flex-start;height:30px;border-radius:15px;background:var(--secc);color:var(--onsecc);padding:0 14px;font-size:12.5px;font-weight:600">
+        <span style="width:6px;height:6px;border-radius:3px;background:var(--ter)"></span>
+        <span>Open WebUI, rebuilt in Material 3</span>
+      </div>
+
+      <h1 style="margin:0;font-size:58px;line-height:1.05;font-weight:700;letter-spacing:-.03em;text-wrap:pretty">Every model you run, wrapped in Material 3.</h1>
+
+      <p style="margin:0;font-size:18px;line-height:1.62;color:var(--onsv);max-width:560px;text-wrap:pretty">A frameless Windows desktop app for Open WebUI. Your chats, your models, your files and your one-time codes stay on the machine you are sitting at — no server to start, no account to make, and nothing in it is ever for sale.</p>
+
+      <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-top:6px">
+        <div style="height:52px;border-radius:26px;background:var(--sc);color:var(--onsv);padding:0 26px;display:flex;align-items:center;gap:11px;font-size:15px;font-weight:600;border:1px solid var(--outv)">
+          <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v11"></path><path d="m7.5 11 4.5 4.5 4.5-4.5"></path><path d="M5 19h14"></path></svg>
+          <span>Download for Windows — not yet released</span>
+        </div>
+        <div style="height:52px;border-radius:26px;background:var(--p);color:var(--onp);padding:0 26px;display:flex;align-items:center;gap:10px;font-size:15px;font-weight:600;box-shadow:var(--elev1)">
+          <span>Read the docs</span>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h13"></path><path d="m12.5 6.5 6 5.5-6 5.5"></path></svg>
+        </div>
+        <div style="height:52px;border-radius:26px;border:1px solid var(--outv);color:var(--ons);padding:0 24px;display:flex;align-items:center;gap:10px;font-size:15px;font-weight:600">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19.5c-4 1.2-4-2.2-5.5-2.7M15 21v-3.2a2.8 2.8 0 0 0-.8-2.2c2.7-.3 5.4-1.3 5.4-5.9a4.6 4.6 0 0 0-1.2-3.2 4.3 4.3 0 0 0-.1-3.2s-1-.3-3.3 1.2a11.4 11.4 0 0 0-6 0C6.7 2.9 5.7 3.3 5.7 3.3a4.3 4.3 0 0 0-.1 3.2 4.6 4.6 0 0 0-1.2 3.2c0 4.6 2.7 5.6 5.4 5.9-.4.4-.7 1-.8 1.7V21"></path></svg>
+          <span>GitHub</span>
+        </div>
+      </div>
+
+      <div style="display:flex;gap:12px;align-items:flex-start;background:var(--errc);border-radius:16px;padding:16px 18px;margin-top:4px">
+        <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="var(--onerrc)" stroke-width="2" stroke-linecap="round" style="flex:none;margin-top:1px"><circle cx="12" cy="12" r="8.5"></circle><path d="M12 8v5M12 16h.01"></path></svg>
+        <div style="display:flex;flex-direction:column;gap:4px">
+          <div style="font-size:13.5px;font-weight:600;color:var(--onerrc)">No installer has been published yet.</div>
+          <div style="font-size:13px;line-height:1.55;color:var(--onerrc);opacity:.9">The download button turns on when the first installer is built and verified against its release. Until then it stays off rather than pointing at a guessed address. Installers here are permanently unsigned — Windows will warn you, and that warning is telling the truth.</div>
+        </div>
+      </div>
+    </div>
+
+    <div style="flex:none;width:512px;display:flex;flex-direction:column;gap:12px">
+      <div style="height:340px;border-radius:24px;border:2px dashed var(--outv);background:var(--sclow);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:32px;text-align:center">
+        <svg width="38" height="38" viewBox="0 0 24 24" fill="none" stroke="var(--onsv)" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="4.5" width="19" height="13" rx="2.5"></rect><path d="M8 21h8"></path><path d="M12 17.5V21"></path><path d="m6.5 14 3-3.2 2.4 2.3 3-3.4 2.6 4.3"></path></svg>
+        <div style="font-size:15px;font-weight:600">Capture pending the first build</div>
+        <div style="font-size:13px;line-height:1.6;color:var(--onsv);max-width:380px">This fills with a real screenshot of the built application, taken through the project harness at a known commit. A mockup will never sit here pretending to be one.</div>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px">
+        <div class="shot">Ollama manager — pending</div>
+        <div class="shot">Converter — pending</div>
+        <div class="shot">Light theme — pending</div>
+      </div>
+    </div>
+  </div>
+
+  <div style="display:flex;flex-direction:column;gap:32px;padding:56px 72px;background:var(--sclow);border-top:1px solid var(--outv);border-bottom:1px solid var(--outv)">
+    <div style="display:flex;align-items:flex-end;gap:20px">
+      <div style="display:flex;flex-direction:column;gap:10px;flex:1">
+        <h2 style="margin:0;font-size:34px;font-weight:700;letter-spacing:-.02em">Nine destinations, one tab strip</h2>
+        <p style="margin:0;font-size:15px;line-height:1.6;color:var(--onsv);max-width:660px">Every surface is a tab you open, pin, group, rename and close — not a page you scroll to find. The command palette reaches all of them, and lands on the exact control rather than somewhere near it.</p>
+      </div>
+      <div class="mono" style="font-size:12px;color:var(--onsv);height:32px;border-radius:16px;border:1px solid var(--outv);display:flex;align-items:center;padding:0 14px;flex:none">Ctrl+Shift+F</div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px">
+
+      <div class="card">
+        <div style="display:flex;align-items:center;gap:12px">
+          <div class="chip"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--onsecc)" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7.5A3.5 3.5 0 0 1 7.5 4h9A3.5 3.5 0 0 1 20 7.5v6a3.5 3.5 0 0 1-3.5 3.5H11l-4.2 3.1a.6.6 0 0 1-1-.5V17H7.5A3.5 3.5 0 0 1 4 13.5z"></path></svg></div>
+          <div class="cname">Chat</div>
+        </div>
+        <div class="cbody">Streamed replies from a model running on this machine. Markdown, code blocks, message actions, and a chat list that searches by plain text or by pattern.</div>
+      </div>
+
+      <div class="card">
+        <div style="display:flex;align-items:center;gap:12px">
+          <div class="chip"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--onsecc)" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="3.5" width="7" height="7" rx="2"></rect><rect x="13.5" y="3.5" width="7" height="7" rx="2"></rect><rect x="3.5" y="13.5" width="7" height="7" rx="2"></rect><rect x="13.5" y="13.5" width="7" height="7" rx="2"></rect></svg></div>
+          <div class="cname">Workspace</div>
+        </div>
+        <div class="cbody">Models, prompts, knowledge and tools, each a real list with bulk actions, exports and its own search.</div>
+      </div>
+
+      <div class="card">
+        <div style="display:flex;align-items:center;gap:12px">
+          <div class="chip"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--onsecc)" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.5 5 6.5v5c0 4.2 2.9 7.6 7 9 4.1-1.4 7-4.8 7-9v-5z"></path><path d="m9.3 12 1.9 1.9 3.6-3.7"></path></svg></div>
+          <div class="cname">Admin panel</div>
+        </div>
+        <div class="cbody">Users, roles and instance settings when the backend is running. When it is not, the panel says so instead of showing an empty table.</div>
+      </div>
+
+      <div class="card">
+        <div style="display:flex;align-items:center;gap:12px">
+          <div class="chip"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--onsecc)" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="7" rx="2.2"></rect><rect x="3" y="13" width="18" height="7" rx="2.2"></rect><path d="M7 7.5h.01M7 16.5h.01"></path></svg></div>
+          <div class="cname">Ollama manager</div>
+        </div>
+        <div class="cbody">The daemon, the installed models, the full published catalog with every tag, and pulls with real progress. Fit verdicts come from your actual RAM and VRAM, never from a model name.</div>
+      </div>
+
+      <div class="card">
+        <div style="display:flex;align-items:center;gap:12px">
+          <div class="chip"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--onsecc)" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8.5h11l-3-3"></path><path d="M20 15.5H9l3 3"></path></svg></div>
+          <div class="cname">File converter</div>
+        </div>
+        <div class="cbody">Type detected from the actual bytes, not the extension. Eight adapter categories, and anything unavailable stays visible with the exact dependency it is missing.</div>
+      </div>
+
+      <div class="card">
+        <div style="display:flex;align-items:center;gap:12px">
+          <div class="chip"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--onsecc)" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="6.5" y="2.5" width="11" height="19" rx="2.6"></rect><path d="M10.5 17.5h3"></path><path d="M9.5 7.5h5M9.5 11h5"></path></svg></div>
+          <div class="cname">Authenticator</div>
+        </div>
+        <div class="cbody">Real RFC 6238 codes for whatever accounts you like, computed locally and checked against the published test vectors. No account, no sync, no network.</div>
+      </div>
+
+      <div class="card">
+        <div style="display:flex;align-items:center;gap:12px">
+          <div class="chip"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--onsecc)" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3.2"></circle><path d="M12 2.8v2.4M12 18.8v2.4M2.8 12h2.4M18.8 12h2.4M5.5 5.5l1.7 1.7M16.8 16.8l1.7 1.7M18.5 5.5l-1.7 1.7M7.2 16.8l-1.7 1.7"></path></svg></div>
+          <div class="cname">Settings</div>
+        </div>
+        <div class="cbody">Language, funny level, narrator, schedules, school mode, appearance and logo. Every row explains itself and says whether the value is yours or a shipped default.</div>
+      </div>
+
+      <div class="card">
+        <div style="display:flex;align-items:center;gap:12px">
+          <div class="chip"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--onsecc)" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 12h4l2-5 3.5 10 2.5-5h5"></path></svg></div>
+          <div class="cname">Status Hub</div>
+        </div>
+        <div class="cbody">A live session card and a real event log. Every feature writes to it, so the log is what happened rather than what was expected to.</div>
+      </div>
+
+      <div class="card">
+        <div style="display:flex;align-items:center;gap:12px">
+          <div class="chip"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--onsecc)" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"></circle><path d="M12 7v5l3.2 1.9"></path></svg></div>
+          <div class="cname">Changelog</div>
+        </div>
+        <div class="cbody">Every released version in the app, filterable by date and searchable by pattern, and every entry links to the commit that made the change.</div>
+      </div>
+
+    </div>
+  </div>
+
+  <div style="display:flex;flex-direction:column;gap:30px;padding:60px 72px">
+    <h2 style="margin:0;font-size:34px;font-weight:700;letter-spacing:-.02em">What is actually different</h2>
+    <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px">
+
+      <div class="why">
+        <div class="wchip"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="var(--onpc)" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="4" width="19" height="13" rx="2.5"></rect><path d="M8 21h8M12 17v4"></path></svg></div>
+        <div style="display:flex;flex-direction:column;gap:7px">
+          <div style="font-size:17px;font-weight:600">It runs where you are sitting</div>
+          <div style="font-size:14px;line-height:1.65;color:var(--onsv)">Chats, settings, one-time codes and converted files stay in this application on this computer. There is no account to make, and nothing you have to switch off to keep it that way.</div>
+        </div>
+      </div>
+
+      <div class="why">
+        <div class="wchip"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="var(--onpc)" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h9M8.5 4v2M11 6c0 4-3.5 7.5-7 8.5"></path><path d="M6 10.5c1.6 2.4 3.9 4 6.5 4.5"></path><path d="m13.5 20 4-9 4 9M15 17.2h5"></path></svg></div>
+        <div style="display:flex;flex-direction:column;gap:7px">
+          <div style="font-size:17px;font-weight:600">English and Cantonese, side by side</div>
+          <div style="font-size:14px;line-height:1.65;color:var(--onsv)">Three language modes, and a funny-level slider for each language from fully serious to maximum playfulness. The voice changes; the facts never do.</div>
+        </div>
+      </div>
+
+      <div class="why">
+        <div class="wchip"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="var(--onpc)" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="4.5" y="10.5" width="15" height="9.5" rx="2.4"></rect><path d="M8 10.5V8a4 4 0 0 1 8 0v2.5"></path><path d="M12 14.5v2"></path></svg></div>
+        <div style="display:flex;flex-direction:column;gap:7px">
+          <div style="font-size:17px;font-weight:600">Tabs you can lock, for fun</div>
+          <div style="font-size:14px;line-height:1.65;color:var(--onsv)">Any tab or element takes its own password or one-time-code lock, with its own credential. It is a speed bump you set for yourself, and the app says exactly that rather than claiming it protects anything.</div>
+        </div>
+      </div>
+
+      <div class="why">
+        <div class="wchip"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="var(--onpc)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12.5 4.5 4.5L19 7.5"></path></svg></div>
+        <div style="display:flex;flex-direction:column;gap:7px">
+          <div style="font-size:17px;font-weight:600">Nothing on screen is decoration</div>
+          <div style="font-size:14px;line-height:1.65;color:var(--onsv)">If it looks like a control, it works. A button that cannot do its job names the condition that is unmet, and an empty state stays honestly empty instead of being filled with sample data.</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div style="display:flex;flex-direction:column;gap:18px;padding:40px 72px 56px 72px;background:var(--sclow);border-top:1px solid var(--outv)">
+    <div style="display:flex;gap:56px;align-items:flex-start">
+      <div style="display:flex;flex-direction:column;gap:10px;max-width:520px">
+        <div style="font-size:15px;font-weight:600">Built on Open WebUI</div>
+        <div style="font-size:13px;line-height:1.7;color:var(--onsv)">This is a fork of the Open WebUI project, which does the hard work underneath. It keeps its name and its licence here; this project changes the interface, not the credit. Upstream: github.com/open-webui/open-webui</div>
+      </div>
+      <div class="fcol">
+        <div class="fhead">Product</div>
+        <div class="flink">Features</div>
+        <div class="flink">Documentation</div>
+        <div class="flink">Changelog</div>
+        <div class="flink">Status</div>
+      </div>
+      <div class="fcol">
+        <div class="fhead">Source</div>
+        <div class="flink">Repository</div>
+        <div class="flink">Issues</div>
+        <div class="flink">Licence</div>
+        <div class="flink">Upstream project</div>
+      </div>
+      <div class="fcol">
+        <div class="fhead">This site</div>
+        <div class="flink">Appearance</div>
+        <div class="flink">Language</div>
+        <div class="flink">Accessibility</div>
+        <div class="flink">Reset this site</div>
+      </div>
+    </div>
+    <div style="height:1px;background:var(--outv);margin-top:8px"></div>
+    <div style="display:flex;gap:16px;align-items:center;flex-wrap:wrap">
+      <div style="font-size:12.5px;color:var(--onsv);flex:1;line-height:1.6">A Ding Ding Projects application. Fork of Open WebUI, with upstream naming and licence retained. Site preferences are stored in this browser only; nothing is sent anywhere, and there is no analytics on this page.</div>
+      <div style="height:28px;border-radius:14px;background:var(--secc);color:var(--onsecc);display:flex;align-items:center;padding:0 12px;font-size:12px;font-weight:600">Free, always — nothing here is for sale</div>
+    </div>
+  </div>
+
+</div>
+</x-dc>
+<script data-dc-script data-props='{"theme":{"editor":"enum","default":"dark","options":["dark","light"],"tsType":"string","section":"Appearance"}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const theme = this.props.theme ?? 'dark';
+    return { rootClass: theme === 'dark' ? 'dark' : '' };
+  }
+}
+</script>
+</body>
+</html>
