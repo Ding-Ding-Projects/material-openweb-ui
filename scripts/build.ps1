@@ -282,6 +282,12 @@ if ($LASTEXITCODE -ne 0) {
 }
 Step 'Focus is visible and every target is large enough to hit.'
 
+& $nodeExe (Join-Path $Root 'scripts/test-dimsum.mjs') | Out-Null
+if ($LASTEXITCODE -ne 0) {
+  Fail 'the dim sum surprise can now fire twice in a load, has gained an off switch, or has stopped being honest about a dish it has no photograph of. Run: node scripts/test-dimsum.mjs'
+}
+Step 'The surprise fires at most once a load and is absent under School mode.'
+
 & $nodeExe (Join-Path $Root 'scripts/test-locks.mjs') | Out-Null
 if ($LASTEXITCODE -ne 0) {
   Fail 'a lock or unlock-ladder safety rule no longer holds. Run: node scripts/test-locks.mjs'

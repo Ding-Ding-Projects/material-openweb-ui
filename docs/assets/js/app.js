@@ -9,6 +9,7 @@ import * as store from './store.js';
 import * as i18n from './i18n.js';
 import * as palette from './palette.js';
 import { PAGES, PAGE_ORDER, REPO, UPSTREAM } from './pages.js';
+import * as dimsum from './dimsum.js';
 
 const SHIPPED_NAME = 'Material Open WebUI';
 
@@ -233,31 +234,20 @@ function footer() {
 // the reason is the contract's own instruction for a surface that cannot take
 // a rule literally.
 
-const DIM_SUM = [
-  { id: 'hk-dish-0001', en: 'Har Gow', zh: '蝦餃' },
-  { id: 'hk-dish-0002', en: 'Scallop Har Gow', zh: '帶子蝦餃' },
-  { id: 'hk-dish-0003', en: 'Bamboo Shoot Har Gow', zh: '筍尖蝦餃' },
-  { id: 'hk-dish-0004', en: 'Siu Mai', zh: '燒賣' },
-  { id: 'hk-dish-0005', en: 'Char Siu Bao', zh: '叉燒包' },
-  { id: 'hk-dish-0006', en: 'Cheung Fun', zh: '腸粉' }
-];
-const CATALOG = 'https://github.com/Ding-Ding-Projects/dim-sum-photos';
 
 function maybeDimSum() {
-  if (store.get('settings').school && store.get('settings').school.on) return; // omitted, not disabled
-  if (Math.random() >= 0.10) return;
-  const d = DIM_SUM[Math.floor(Math.random() * DIM_SUM.length)];
+  const school = store.get('settings').school;
+  const drawn = dimsum.draw({ schoolOn: Boolean(school && school.on) });
+  if (!drawn) return;
   ui.notify(
     h('span', {},
-      h('span', {}, d.en + ' · '),
-      h('span', { class: 'cjk' }, d.zh),
+      h('span', {}, drawn.dish.en + ' · '),
+      h('span', { class: 'cjk' }, drawn.dish.zh),
       h('br'),
       h('span', { style: { fontSize: '.78rem', opacity: '.85' } },
-        'The photograph lives in the public catalogue rather than in this repository, and this page loads no remote images. ',
-        h('a', { href: CATALOG, rel: 'noopener', style: { color: 'inherit', textDecoration: 'underline' } }, 'See the catalogue')
-      )
-    ),
-    { title: 'A dish, for no reason at all', kind: 'info', duration: 9000 }
+        drawn.provenance + ' ',
+        h('a', { href: drawn.catalogUrl, rel: 'noopener', style: { color: 'inherit', textDecoration: 'underline' } }, 'See the catalogue'))),
+    { title: drawn.title, kind: 'info', duration: 9000 }
   );
 }
 

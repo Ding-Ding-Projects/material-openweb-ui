@@ -74,8 +74,8 @@ feature that will never be built on a surface says `na` rather than staying
 | export | Export everything, in every format that fits | shipped | shipped | `app/js/core/formats.js#export function serialise` | content.js |
 | history | Local version history | shipped | shipped | `app/js/core/history.js#export async function verify` | content.js |
 | changelog | Changelog viewer | shipped | shipped | `app/js/pages/changelog.js#export function render` | content.js |
-| status | Status Hub | shipped | partial | `app/js/pages/misc.js#export function renderStatus` | content.js |
-| dimsum | Dim sum surprise | partial | partial | `app/js/app.js#function maybeDimSum` | content.js |
+| status | Status Hub | shipped | shipped | `app/js/pages/misc.js#export function renderStatus` | content.js |
+| dimsum | Dim sum surprise | shipped | shipped | `docs/assets/js/dimsum.js#export function draw` | content.js |
 | a11y | Accessibility and responsive layout | shipped | shipped | `docs/assets/css/site.css#input[type="checkbox"]` | content.js |
 | buildscript | One-click build script | shipped | shipped | `scripts/build.ps1#Get-EngineRange` | content.js |
 | nosign | Permanently unsigned releases | shipped | na | `docs/assets/js/download.js#These builds are unsigned` | content.js |

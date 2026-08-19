@@ -24,6 +24,7 @@ import * as narrator from './core/narrator.js';
 import * as appearance from './appearance.js';
 import * as tabsCore from './core/tabs.js';
 import * as tabsUi from './tabs-ui.js';
+import * as dimsum from '../../docs/assets/js/dimsum.js';
 
 const PAGES = {
   chat:          { ...chatPage.meta, render: chatPage.render },
@@ -298,33 +299,22 @@ function toggleTheme() {
 // never copied into this repository, so the surprise ships the part it can
 // honour offline — the dish, named in both languages — and links to the rest.
 
-const DIM_SUM = [
-  { en: 'Har Gow', zh: '蝦餃' },
-  { en: 'Scallop Har Gow', zh: '帶子蝦餃' },
-  { en: 'Bamboo Shoot Har Gow', zh: '筍尖蝦餃' },
-  { en: 'Siu Mai', zh: '燒賣' },
-  { en: 'Char Siu Bao', zh: '叉燒包' },
-  { en: 'Cheung Fun', zh: '腸粉' }
-];
 
 function maybeDimSum() {
-  // School mode covers every dim-sum capability, and covering it means the
-  // surprise does not happen at all - not that it happens with a note
-  // explaining what was hidden, which would name the thing being hidden.
+  // Every rule about when this may happen lives in the shared module, so the
+  // two surfaces cannot drift into disagreeing about them.
   const school = state.get('settings').school;
-  if (school && school.on) return;
-  if (Math.random() >= 0.10) return;
-  const d = DIM_SUM[Math.floor(Math.random() * DIM_SUM.length)];
+  const drawn = dimsum.draw({ schoolOn: Boolean(school && school.on) });
+  if (!drawn) return;
   ui.notify(
     h('span', {},
-      h('span', {}, d.en + ' · '),
-      h('span', { class: 'cjk' }, d.zh),
+      h('span', {}, drawn.dish.en + ' · '),
+      h('span', { class: 'cjk' }, drawn.dish.zh),
       h('br'),
-      h('span', { style: { fontSize: '.78rem', opacity: '.85' } },
-        'The photograph lives in the public dim-sum catalogue rather than in this repository, and this application loads no remote images.')),
-    { title: 'A dish, for no reason at all', kind: 'info', duration: 9000 }
+      h('span', { style: { fontSize: '.78rem', opacity: '.85' } }, drawn.provenance)),
+    { title: drawn.title, kind: 'info', duration: 9000 }
   );
-  state.log('Dim sum', d.en + ' · ' + d.zh);
+  state.log('Dim sum', drawn.dish.en + ' · ' + drawn.dish.zh);
 }
 
 window.mowuiApp = { open, refresh: render, exportAll, toggleTheme, palette, appearance };

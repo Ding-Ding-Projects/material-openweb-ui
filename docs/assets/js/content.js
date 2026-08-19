@@ -237,14 +237,14 @@ export const FEATURES = [
   },
   {
     id: 'status', name: 'Status Hub', group: 'Data',
-    icon: 'pulse', site: 'shipped', app: 'partial',
+    icon: 'pulse', site: 'shipped', app: 'shipped',
     blurb: 'A live session card and a real event log that every feature writes to.',
     detail: 'The log records what happened rather than what was expected to happen, which is the entire reason it is worth reading. It is a list, so it carries the same search, bulk actions and export as every other list.',
     verify: 'Perform an action and confirm the entry that appears describes what actually occurred.'
   },
   {
     id: 'dimsum', name: 'Dim sum surprise', group: 'Delight',
-    icon: 'image', site: 'partial', app: 'partial',
+    icon: 'image', site: 'shipped', app: 'shipped',
     blurb: 'A one-in-ten chance at startup of being shown a dish, named in both languages.',
     detail: 'Non-blocking and auto-dismissing: it never gates startup, never steals focus and never appears mid-task. There is no setting to switch it off. Photographs come from the public dim-sum catalogue rather than being copied into this repository, and where the catalogue has no published image the surface says so instead of filling the gap locally. School mode suppresses it entirely.',
     verify: 'Confirm it never fires twice in one load, and that School mode removes it rather than hiding it.'
