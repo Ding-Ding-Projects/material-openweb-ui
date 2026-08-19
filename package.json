@@ -23,7 +23,7 @@
 		"electron:compile": "tsc -p electron/tsconfig.json && node -e \"require('fs').copyFileSync('dist-electron/preload.js','dist-electron/preload.mjs')\"",
 		"electron:dev": "npm run electron:compile && electron dist-electron/main.js",
 		"electron:build": "npm run electron:compile",
-		"gates": "node scripts/check-inventory.mjs && node scripts/test-inventory-guard.mjs && node scripts/test-totp.mjs && node scripts/test-convert.mjs && node scripts/test-dom-safety.mjs",
+		"gates": "node scripts/test-parse.mjs && node scripts/check-inventory.mjs && node scripts/test-inventory-guard.mjs && node scripts/test-totp.mjs && node scripts/test-convert.mjs && node scripts/test-dom-safety.mjs",
 		"lines": "node scripts/count-lines.mjs"
 	},
 	"devDependencies": {

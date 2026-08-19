@@ -60,7 +60,7 @@ export const FEATURES = [
     id: 'chat', name: 'Chat with a local model', group: 'Models',
     icon: 'chat', site: 'na', app: 'partial',
     blurb: 'Streamed replies from a model running on this machine, with a model picker, cancellation and honest empty states.',
-    detail: 'The design prototype faked this with a timer and three canned paragraphs. Nothing here is canned: the reply is streamed from the local daemon token by token, it can be stopped mid-flight, and when no model is installed the surface says so and points at the catalogue rather than answering with something it invented. Token throughput is reported from the daemon's own timings.',
+    detail: 'The design prototype faked this with a timer and three canned paragraphs. Nothing here is canned: the reply is streamed from the local daemon token by token, it can be stopped mid-flight, and when no model is installed the surface says so and points at the catalogue rather than answering with something it invented. Token throughput is reported from the timings the daemon itself returns.',
     verify: 'Stop the Ollama daemon and confirm the page diagnoses that rather than replying. Press Stop mid-reply and confirm the partial text is kept and marked as stopped.'
   },
   {

@@ -162,6 +162,12 @@ Elapsed $t
 $t = Get-Date
 Phase '[3/4] Gates'
 
+& $nodeExe (Join-Path $Root 'scripts/test-parse.mjs') | Out-Null
+if ($LASTEXITCODE -ne 0) {
+  Fail 'a shipped module is not valid JavaScript, which renders as a blank page because nothing transpiles it. Run: node scripts/test-parse.mjs'
+}
+Ok 'every shipped module parses'
+
 & $nodeExe (Join-Path $Root 'scripts\check-inventory.mjs') --quiet
 if ($LASTEXITCODE -ne 0) {
   Fail 'the completeness inventory does not match the tree. Run: node scripts/check-inventory.mjs'
