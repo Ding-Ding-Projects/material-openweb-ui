@@ -11,11 +11,10 @@
 // pattern typed in another, which is confusing at best and, when it silently
 // applies, wrong.
 
-import { h, add, clear, icon } from '../../docs/assets/js/dom.js';
-import { searchField } from '../../docs/assets/js/regex.js';
-import * as ui from '../../docs/assets/js/ui.js';
-import * as tabsCore from './core/tabs.js';
-import * as appearance from './appearance.js';
+import { h, add, clear, icon } from './dom.js';
+import { searchField } from './regex.js';
+import * as ui from './ui.js';
+import * as tabsCore from './tabs.js';
 
 // ---------------------------------------------------------------- searches
 
@@ -258,7 +257,6 @@ export function renderStrip(container, { model, apply, labelFor, iconFor, extras
       { label: 'Move to group', icon: 'grid', sub: groupItems },
       { separator: true },
       ...(extras ? extras.items(anchor, t) : []),
-      appearance.menuItem(anchor),
       { separator: true },
       { label: 'Search these tabs…', icon: 'search',
         run: () => searchDialog({

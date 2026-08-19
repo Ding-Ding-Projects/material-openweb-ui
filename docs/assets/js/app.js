@@ -9,6 +9,8 @@ import * as store from './store.js';
 import * as i18n from './i18n.js';
 import * as palette from './palette.js';
 import { PAGES, PAGE_ORDER, REPO, UPSTREAM } from './pages.js';
+import * as tabsCore from './tabs.js';
+import * as tabsUi from './tabs-ui.js';
 import * as dimsum from './dimsum.js';
 
 const SHIPPED_NAME = 'Material Open WebUI';
@@ -44,17 +46,24 @@ function applySettings() {
 
 // ---------------------------------------------------------------- tabs
 
-function tabs() { return store.get('tabs') || []; }
-function activeTab() { return tabs().find((t) => t.id === store.get('activeTab')) || tabs()[0]; }
+function tabs() { return tabModel().tabs; }
+function activeTab() {
+  const m = tabModel();
+  return m.tabs.find((t) => t.id === m.activeTab) || m.tabs[0];
+}
 
 function openPage(page, article = null, target = null) {
-  const existing = tabs().find((t) => t.page === page);
+  const m = tabModel();
+  const existing = m.tabs.find((t) => t.page === page);
   if (existing) {
-    store.set('activeTab', existing.id, { record: false });
+    store.set('tabModel', { ...m, activeTab: existing.id }, { record: false });
   } else {
-    const t = { id: 't-' + page + '-' + Math.random().toString(36).slice(2, 6), page, pinned: false };
-    store.set('tabs', [...tabs(), t], { action: 'created', label: 'Opened the ' + page + ' tab' });
-    store.set('activeTab', t.id, { record: false });
+    const result = tabsCore.open(m, page);
+    if (result.error) {
+      ui.notify(result.error, { kind: 'bad' });
+      return;
+    }
+    store.set('tabModel', result.model, { action: 'created', label: 'Opened the ' + page + ' tab' });
   }
   currentArticle = article;
   pendingTarget = target;
@@ -62,102 +71,101 @@ function openPage(page, article = null, target = null) {
 }
 
 function closeTab(id) {
-  const list = tabs();
-  const t = list.find((x) => x.id === id);
-  if (!t || t.pinned) return;
-  const next = list.filter((x) => x.id !== id);
-  store.set('tabs', next.length ? next : [{ id: 't-home', page: 'home', pinned: true }], { action: 'deleted', label: 'Closed the ' + t.page + ' tab' });
-  if (store.get('activeTab') === id) store.set('activeTab', (next[0] || { id: 't-home' }).id, { record: false });
+  const m = tabModel();
+  const t = m.tabs.find((x) => x.id === id);
+  const result = tabsCore.close(m, id);
+  if (result.refused) {
+    ui.notify(result.refused, { kind: 'info' });
+    return;
+  }
+  store.set('tabModel', result.model, { action: 'deleted', label: 'Closed the ' + (t ? t.page : id) + ' tab' });
   render();
 }
 
-function tabContextMenu(anchor, tab) {
-  const isLast = tabs().length <= 1;
-  ui.menu(anchor, [
-    { label: tab.pinned ? 'Unpin this tab' : 'Pin this tab', icon: 'check', key: '', run: () => {
-      store.set('tabs', tabs().map((t) => t.id === tab.id ? { ...t, pinned: !t.pinned } : t), { action: 'updated', label: (tab.pinned ? 'Unpinned' : 'Pinned') + ' the ' + tab.page + ' tab' });
-      render();
-    } },
-    { label: 'Duplicate', icon: 'plus', run: () => ui.notify('This surface only opens one tab per page, so a duplicate would be the same tab. Nothing was opened.', { kind: 'info' }) },
-    { separator: true },
-    { label: 'Edit tab appearance…', icon: 'palette', key: 'Shift+RClick', run: () => ui.notify('Per-element appearance editing is a planned feature. It is listed as planned on the features page rather than shown here as if it worked.', { kind: 'info' }) },
-    { label: 'Lock this tab…', icon: 'lock', run: () => ui.notify('Toy locks are a planned feature on this site. The features page marks them planned rather than pretending otherwise.', { kind: 'info' }) },
-    { separator: true },
-    { label: 'Close tabs containing text…', icon: 'search', run: () => bulkClose(false) },
-    { label: 'Close tabs not containing text…', icon: 'search', run: () => bulkClose(true) },
-    { separator: true },
-    { label: 'Close this tab', icon: 'x', danger: true, run: () => closeTab(tab.id) }
-  ], { label: 'Tab menu', width: 300 });
+// The context menu, the bulk closes and the four discovery searches all live in
+// the shared strip now. What used to be here was a second implementation of the
+// same rules, and it had already drifted: it offered "Edit tab appearance" and
+// "Lock this tab" as entries that only explained why they did nothing.
+
+/**
+ * The tab model, read through the shared normaliser.
+ *
+ * The site kept its own array of `{ id, page, pinned }` and its own sort. That
+ * worked and stopped at pinning: no docking, no groups, no discovery searches,
+ * and a second implementation of the rules to keep in step with the first.
+ * There is one model now, and it is the application's.
+ */
+function tabModel() {
+  const stored = store.get('tabModel');
+  if (stored) return tabsCore.normalise(stored, PAGE_ORDER, 'home');
+  // A model written by the previous shape is read rather than discarded.
+  const legacy = store.get('tabs');
+  return tabsCore.normalise(
+    // No dock is stated, so the shared default applies — the same edge the
+    // application opens on. Forcing 'top' here would have made the contract's
+    // stated default true on one surface and false on the other.
+    { tabs: legacy || [], activeTab: store.get('activeTab'), groups: [] },
+    PAGE_ORDER,
+    'home'
+  );
 }
 
-function bulkClose(invert) {
-  const field = searchField({ placeholder: 'Text to match against tab labels…', label: 'Tab label match', sampleFrom: () => tabs().map((t) => PAGES[t.page].title()) });
-  const preview = h('div', { class: 'stack', style: { gap: '6px', marginTop: '12px' } });
+function applyTabModel(next) {
+  store.set('tabModel', next, { record: false });
+  currentArticle = null;
+  render();
+}
 
-  function affected() {
-    const m = field.matcher();
-    if (m.empty) return [];
-    return tabs().filter((t) => {
-      const hit = m.test(PAGES[t.page].title());
-      return (invert ? !hit : hit) && !t.pinned;
-    });
+/**
+ * Places the strip on whichever edge it is docked to.
+ *
+ * The topbar is a horizontal row and always was, so the strip sat in it and the
+ * dock setting had nowhere to go. It is moved out of the topbar for the three
+ * other edges and the body is flipped to a column, which is the same thing the
+ * desktop shell does — and it is done here rather than left as a difference
+ * between the two surfaces.
+ */
+function placeStrip(dock) {
+  const bar = document.querySelector('.topbar');
+  const main = document.getElementById('main');
+  if (!bar || !main) return;
+
+  document.body.dataset.dock = dock;
+  stripEl.remove();
+
+  if (dock === 'top') {
+    // Back where it started: inside the topbar, after the brand.
+    const anchor = bar.querySelector('.brand');
+    if (anchor && anchor.nextSibling) bar.insertBefore(stripEl, anchor.nextSibling);
+    else bar.appendChild(stripEl);
+    return;
   }
 
-  function renderPreview() {
-    clear(preview);
-    const m = field.matcher();
-    const list = affected();
-    if (!m.ok) { preview.appendChild(h('div', { class: 'muted', style: { fontSize: '.82rem' } }, 'That pattern is not valid yet.')); return; }
-    if (m.empty) { preview.appendChild(h('div', { class: 'muted', style: { fontSize: '.82rem' } }, 'Enter text or a pattern. A bulk close never runs on an empty query.')); return; }
-    preview.append(
-      h('div', { style: { fontSize: '.85rem', fontWeight: '600' } }, list.length + ' tab(s) would close'),
-      h('div', { class: 'muted', style: { fontSize: '.8rem' } }, 'Pinned tabs are excluded by default: ' + tabs().filter((t) => t.pinned).map((t) => PAGES[t.page].title()).join(', ')),
-      ...list.map((t) => h('div', { class: 'chip chip--tonal', style: { alignSelf: 'flex-start' } }, PAGES[t.page].title()))
-    );
+  let body = document.querySelector('.sitebody');
+  if (!body) {
+    body = h('div', { class: 'sitebody' });
+    main.parentNode.insertBefore(body, main);
+    body.appendChild(main);
   }
-  field.onChange(renderPreview);
-
-  const d = ui.dialog({
-    title: invert ? 'Close tabs NOT containing text' : 'Close tabs containing text',
-    emoji: '🧹',
-    body: h('div', { class: 'stack', style: { gap: '10px' } },
-      h('p', { class: 'muted', style: { fontSize: '.86rem' } }, 'Matches against the visible tab label only. Both actions share one predicate, so flags and casing cannot drift between them.'),
-      field.el, preview),
-    actions: [
-      { label: i18n.t('action.cancel') },
-      { label: 'Close them', danger: true, run: () => {
-        const list = affected();
-        if (!list.length) { ui.notify('Nothing matched, so nothing closed.', { kind: 'info' }); return; }
-        list.forEach((t) => closeTab(t.id));
-        ui.notify('Closed ' + list.length + ' tab(s). Pinned tabs were excluded.', { kind: 'ok' });
-      } }
-    ]
-  });
-  renderPreview();
-  return d;
+  if (dock === 'left') body.insertBefore(stripEl, body.firstChild);
+  else if (dock === 'right') body.appendChild(stripEl);
+  else document.body.appendChild(stripEl);
+  stripEl.classList.add('tabstrip--docked');
 }
 
 function renderStrip() {
-  clear(stripEl);
-  const act = activeTab();
-  const sorted = [...tabs()].sort((a, b) => Number(b.pinned) - Number(a.pinned));
-  for (const t of sorted) {
-    const page = PAGES[t.page];
-    if (!page) continue;
-    const btn = h('button', {
-      class: 'tab', role: 'tab', id: 'tab-' + t.id,
-      'aria-selected': String(act && t.id === act.id),
-      'aria-controls': 'main',
-      onclick: () => { store.set('activeTab', t.id, { record: false }); currentArticle = null; render(); },
-      oncontextmenu: (e) => { e.preventDefault(); tabContextMenu(btn, t); }
-    },
-      icon(page.icon, 'icon icon--sm'),
-      h('span', {}, page.title()),
-      i18n.isBilingual() ? h('span', { class: 'tab__zh cjk' }, page.zh) : null,
-      t.pinned ? icon('lock', 'icon tab__lock') : null
-    );
-    stripEl.appendChild(btn);
-  }
+  const model = tabModel();
+  placeStrip(model.dock);
+  tabsUi.renderStrip(stripEl, {
+    model,
+    apply: applyTabModel,
+    labelFor: (page) => (PAGES[page] ? PAGES[page].title() : page),
+    iconFor: (page) => (PAGES[page] ? PAGES[page].icon : 'file'),
+    extras: {
+      decorate: () => [],
+      items: () => []
+    }
+  });
 }
 
 // ---------------------------------------------------------------- teleport

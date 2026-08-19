@@ -6,7 +6,7 @@
 
 import { createPalette } from '../../docs/assets/js/palette-core.js';
 import * as state from './state.js';
-import * as tabsCore from './core/tabs.js';
+import * as tabsCore from '../../docs/assets/js/tabs.js';
 import { isPlayfulHidden } from './i18n.js';
 
 let getPages = () => ({});

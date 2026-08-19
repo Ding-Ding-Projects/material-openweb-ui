@@ -42,6 +42,11 @@ export const DEFAULTS = {
     { id: 't-settings', page: 'settings', pinned: false }
   ],
   activeTab: 't-home',
+  // The tab model the shared strip reads. Null until something writes one, at
+  // which point the two keys above are read once as its starting point and
+  // never again — a model written by the older shape must not be lost just
+  // because the shape changed.
+  tabModel: null,
   locks: {},
   totp: [],
   tickets: [],

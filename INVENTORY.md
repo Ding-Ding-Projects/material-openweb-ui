@@ -45,8 +45,8 @@ feature that will never be built on a surface says `na` rather than staying
 | --- | --- | --- | --- | --- | --- |
 | md3 | Material Design 3 throughout | shipped | shipped | `app/css/app.css#titlebar` | content.js |
 | frameless | Frameless window and custom title bar | na | shipped | `electron/main.ts#titleBarStyle` | content.js |
-| tabs | Browser-style tabs | partial | shipped | `app/js/core/tabs.js#export function ordered` | content.js |
-| tabsearch | Four tab-discovery searches | na | shipped | `app/js/tabs-ui.js#export function searchDialog` | content.js |
+| tabs | Browser-style tabs | shipped | shipped | `docs/assets/js/tabs.js#export function ordered` | content.js |
+| tabsearch | Four tab-discovery searches | na | shipped | `docs/assets/js/tabs-ui.js#export function searchDialog` | content.js |
 | palette | Command palette on Ctrl+Shift+F | shipped | shipped | `docs/assets/js/palette-core.js#export function createPalette` | content.js |
 | regex | A regex builder beside every search field | shipped | shipped | `docs/assets/js/regex.js#export function searchField` | content.js |
 | chat | Chat with a local model | na | shipped | `app/js/core/ollama.js#export async function chat` | content.js |

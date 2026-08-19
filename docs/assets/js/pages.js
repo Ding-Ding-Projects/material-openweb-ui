@@ -611,7 +611,7 @@ function status(root) {
   );
   root.appendChild(wrap);
   render();
-  sync();
+  bar.repaint();
 }
 
 // ---------------------------------------------------------------- registry

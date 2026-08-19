@@ -17,7 +17,7 @@
 import { pathToFileURL } from 'node:url';
 import { join } from 'node:path';
 
-const T = await import(pathToFileURL(join(process.cwd(), 'app', 'js', 'core', 'tabs.js')).href);
+const T = await import(pathToFileURL(join(process.cwd(), 'docs', 'assets', 'js', 'tabs.js')).href);
 
 let failures = 0;
 function check(name, ok, detail = '') {

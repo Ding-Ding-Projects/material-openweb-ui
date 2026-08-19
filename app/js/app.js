@@ -22,8 +22,8 @@ import { palette, wire as wirePalette } from './palette.js';
 import * as i18n from './i18n.js';
 import * as narrator from './core/narrator.js';
 import * as appearance from './appearance.js';
-import * as tabsCore from './core/tabs.js';
-import * as tabsUi from './tabs-ui.js';
+import * as tabsCore from '../../docs/assets/js/tabs.js';
+import * as tabsUi from '../../docs/assets/js/tabs-ui.js';
 import * as dimsum from '../../docs/assets/js/dimsum.js';
 
 const PAGES = {
@@ -139,13 +139,17 @@ const tabExtras = {
   },
   items(anchor, t) {
     const lockId = 'tab:' + t.page;
+    // The appearance editor is contributed here rather than imported by the
+    // strip, because the strip is shared with the documentation site and that
+    // surface has no per-element editor to offer.
     const existing = locksCore.get(lockId);
     return [
       existing
         ? { label: locksCore.isLocked(lockId) ? 'Unlock this tab…' : 'Lock it again', icon: 'lock',
             run: () => locksCore.isLocked(lockId) ? locksUi.unlockPrompt(lockId, render) : (locksCore.relock(lockId), render()) }
         : { label: 'Lock this tab…', icon: 'lock', run: () => locksUi.wizard(lockId, pageLabel(t.page)) },
-      { label: 'Manage every lock', icon: 'unlock', run: () => open('locks') }
+      { label: 'Manage every lock', icon: 'unlock', run: () => open('locks') },
+      appearance.menuItem(anchor)
     ];
   }
 };
