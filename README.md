@@ -111,10 +111,11 @@ first, because they were the parts that could not be checked by looking.
 
 **The Ollama page, against a running daemon.** Version and latency from
 `/api/version`; three installed models with their real sizes and quantisation
-from `/api/tags`; system memory and GPU measured through the desktop shell; the
-published catalogue verified complete.
+from `/api/tags`; system memory and GPU measured through the desktop shell. The
+model destination is empty in this capture, and the line beside it says so
+rather than reporting a free-space figure it did not measure.
 
-<img src="docs/assets/captures/app-ollama.png" width="820" alt="The Material Open WebUI Ollama page: a frameless dark Material 3 window with a destination rail, showing Ollama running at version 0.32.14 on 127.0.0.1:11434, this machine's 63.81 GB of memory and RTX 4070 GPU, and three installed models with their sizes.">
+<img src="docs/assets/captures/app-ollama.png" width="820" alt="The Material Open WebUI Ollama page: a frameless dark Material 3 window with a docked tab strip on the left and a destination rail, showing Ollama running at version 0.32.14 on 127.0.0.1:11434 with 34 ms latency, this machine's 63.81 GB of memory and RTX 4070 Laptop GPU with 8 GB of video memory, a model destination field reading the daemon default beside a note that free space was therefore not measured, and three installed models with their real sizes and quantisation.">
 
 **The authenticator, self-checked.** All eighteen RFC 6238 published vectors run
 at startup across SHA-1, SHA-256 and SHA-512, and the system clock is compared
@@ -132,9 +133,12 @@ Both were taken on an off-screen desktop, so the machine's visible session was
 never disturbed. Every capture records the commit it came from in
 [`docs/assets/captures/`](docs/assets/captures/).
 
-**What is missing:** any surface still marked `planned` in
-[`INVENTORY.md`](INVENTORY.md). Those gaps stay visible rather than being filled
-with something that has never run.
+**What is missing:** nothing that [`INVENTORY.md`](INVENTORY.md) claims. Every
+row there now reads `shipped` or `na` on both surfaces, and `na` means the
+feature does not belong on that surface rather than that it is pending. What is
+genuinely absent is stated in the rows themselves — the adapters the converter
+disables because nothing is bundled to run them, and the installer that has not
+been built. Those say so where you would look for them.
 
 </details>
 

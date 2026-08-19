@@ -9,9 +9,15 @@ the surface it claims to show is worse than no capture, because it is confidentl
 wrong and the reader has no way to tell — so when a surface changes, the capture
 is retaken rather than left to age.
 
+The Ollama capture has been retaken once for exactly that reason: the older one
+showed a banner reading "Catalogue verified complete", and that claim turned out
+to be printed on every successful fetch whether or not anything had been
+verified. Leaving the image would have preserved a sentence the code no longer
+says.
+
 | File | Shows | Commit | Taken |
 | --- | --- | --- | --- |
-| `app-ollama.png` | The Ollama page against a real daemon: version and latency from `/api/version`, three installed models with their real sizes and quantisation from `/api/tags`, system memory and GPU measured through the shell, and the published catalogue verified complete. | `58d546e2d` | 2026-08-19 |
+| `app-ollama.png` | The Ollama page against a real daemon: version and 34 ms latency from `/api/version`, three installed models with their real sizes and quantisation from `/api/tags`, system memory and GPU measured through the shell, the tab strip docked to the left edge, and the model destination empty with a line saying free space was therefore not measured. | `d27a54c00` | 2026-08-19 |
 | `app-authenticator.png` | The authenticator with all 18 RFC 6238 vectors passing, the system-clock check reporting a 3-second offset, and an honest empty state. | `58d546e2d` | 2026-08-19 |
 | `desktop-shell-not-built.png` | The Electron shell running with no compiled frontend present — frameless, on the Material 3 dark surface token, naming the command that would produce one. Kept because it is the state a fresh checkout is in. | `6173dc348` | 2026-08-19 |
 
