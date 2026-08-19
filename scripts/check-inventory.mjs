@@ -115,17 +115,23 @@ for (const r of rows) {
 
 // ---------- 3. shipped/partial claims must resolve ----------
 
+const BUILT = new Set(['shipped', 'partial']);
+
 for (const r of rows) {
-  const claimsCode = r.site === 'shipped' || r.site === 'partial';
+  // Either surface having code is enough to require an anchor. Checking only
+  // the site column left the desktop side unbacked, which is a hole an
+  // inventory cannot afford: a feature can be `na` on the web and real in the
+  // application, and that claim needs proving too.
+  const claimsCode = BUILT.has(r.site) || BUILT.has(r.app);
   const hasAnchor = r.anchor && r.anchor !== '—' && r.anchor !== '-';
 
   if (claimsCode && !hasAnchor) {
-    fail('Row "' + r.id + '" claims site: ' + r.site + ' but names no implementation anchor. A claim with nothing behind it is the thing an inventory is supposed to prevent.');
+    fail('Row "' + r.id + '" claims site: ' + r.site + ' / app: ' + r.app + ' but names no implementation anchor. A claim with nothing behind it is the thing an inventory is supposed to prevent.');
     continue;
   }
 
   if (!claimsCode && hasAnchor) {
-    fail('Row "' + r.id + '" is site: ' + r.site + ' yet carries an anchor (' + r.anchor + '). Either it actually shipped and the status is wrong, or the anchor is fiction.');
+    fail('Row "' + r.id + '" is site: ' + r.site + ' / app: ' + r.app + ' yet carries an anchor (' + r.anchor + '). Either it is actually built and the status is wrong, or the anchor is fiction.');
     continue;
   }
 

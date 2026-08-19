@@ -34,13 +34,13 @@ nobody should trust.
 | id | Feature | site | app | Implementation anchor | Docs |
 | --- | --- | --- | --- | --- | --- |
 | md3 | Material Design 3 throughout | shipped | planned | `docs/assets/css/tokens.css#--sclowest` | content.js |
-| frameless | Frameless window and custom title bar | na | planned | — | content.js |
+| frameless | Frameless window and custom title bar | na | partial | `electron/main.ts#titleBarStyle` | content.js |
 | tabs | Browser-style tabs | partial | planned | `docs/assets/js/app.js#renderStrip` | content.js |
 | tabsearch | Four tab-discovery searches | planned | planned | — | content.js |
 | palette | Command palette on Ctrl+Shift+F | shipped | planned | `docs/assets/js/palette.js#export function show` | content.js |
 | regex | A regex builder beside every search field | shipped | planned | `docs/assets/js/regex.js#export function searchField` | content.js |
 | ollama | Local Ollama suite manager | na | planned | — | content.js |
-| fit | Evidence-backed hardware fit verdicts | na | planned | — | content.js |
+| fit | Evidence-backed hardware fit verdicts | na | partial | `electron/hardware.ts#export function fit` | content.js |
 | converter | Universal file converter | na | planned | — | content.js |
 | authenticator | Built-in authenticator | planned | planned | — | content.js |
 | qr | QR pairing for one-time-code registration | planned | planned | — | content.js |

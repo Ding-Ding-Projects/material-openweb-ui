@@ -103,23 +103,27 @@ its own handoff document.
 
 ## Screenshots
 
-<details>
-<summary><b>Captures</b> — pending the first build, and deliberately not faked</summary>
+<details open>
+<summary><b>Captures</b> — one real one, and an honest gap where the rest go</summary>
 
 <br>
 
-There are none here yet, because there is no built artifact to capture.
+**The desktop shell, running.** Frameless, on the Material 3 dark surface token,
+with no compiled frontend present — so it says exactly that and names the command
+that would produce one, rather than opening an empty white rectangle.
 
-When there is, this section fills with real captures of the real application taken
-through the project's own harness at a known commit — never mockups, never design
-files, never hand-edited images — each with alt text naming what it shows.
+<img src="docs/assets/captures/desktop-shell-not-built.png" width="720" alt="The Material Open WebUI desktop shell running with no compiled frontend: a frameless dark window headed 'Nothing is built yet', explaining that the shell started but has nothing to load, and showing the command npm run build.">
 
-A capture of a screen that no longer looks like that is worse than none, because
-it is confidently wrong and the reader has no way to tell. A capture of a screen
-that never existed is worse still.
+That is a real capture of the real executable at commit `6173dc348`, taken on an
+off-screen desktop so the machine's visible session was never disturbed. Every
+capture in [`docs/assets/captures/`](docs/assets/captures/) records the commit it
+was taken at.
 
-The documentation site is live and can be looked at directly, which is the honest
-substitute until the application exists.
+**What is missing:** the Material Design 3 application interface, because it is
+not implemented yet. That gap is left visible rather than filled with a
+screenshot of the prototype, which would show something that has never run as
+this product. The documentation site is live and can be looked at directly in the
+meantime.
 
 </details>
 

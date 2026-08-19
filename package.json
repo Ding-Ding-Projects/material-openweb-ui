@@ -19,7 +19,12 @@
 		"i18n:parse": "i18next --config i18next-parser.config.ts && prettier --write \"src/lib/i18n/**/*.{js,json}\"",
 		"cy:open": "cypress open",
 		"test:frontend": "vitest --passWithNoTests",
-		"pyodide:fetch": "node scripts/prepare-pyodide.js"
+		"pyodide:fetch": "node scripts/prepare-pyodide.js",
+		"electron:compile": "tsc -p electron/tsconfig.json && node -e \"require('fs').copyFileSync('dist-electron/preload.js','dist-electron/preload.mjs')\"",
+		"electron:dev": "npm run electron:compile && electron dist-electron/main.js",
+		"electron:build": "npm run electron:compile",
+		"gates": "node scripts/check-inventory.mjs && node scripts/test-inventory-guard.mjs",
+		"lines": "node scripts/count-lines.mjs"
 	},
 	"devDependencies": {
 		"@sveltejs/adapter-auto": "3.2.2",
@@ -32,6 +37,7 @@
 		"@typescript-eslint/eslint-plugin": "^8.31.1",
 		"@typescript-eslint/parser": "^8.31.1",
 		"cypress": "^13.15.0",
+		"electron": "^33.4.11",
 		"eslint": "^8.56.0",
 		"eslint-config-prettier": "^9.1.0",
 		"eslint-plugin-cypress": "^3.4.0",

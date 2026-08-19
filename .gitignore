@@ -314,3 +314,6 @@ cypress/screenshots
 
 # Seeded design-canvas build output (regenerate with the canvas helper)
 /design/landing/material-open-webui-landing.html
+
+# Compiled Electron main/preload; produced by npm run electron:compile
+/dist-electron/

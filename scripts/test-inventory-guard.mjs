@@ -33,12 +33,36 @@ const NEEDED = [
   join('docs', 'assets', 'js', 'pages.js'),
   join('docs', 'assets', 'js', 'app.js'),
   join('docs', 'assets', 'css', 'tokens.css'),
-  join('docs', 'assets', 'css', 'site.css')
+  join('docs', 'assets', 'css', 'site.css'),
+  join('electron', 'main.ts'),
+  join('electron', 'hardware.ts'),
+  join('electron', 'backend.ts'),
+  join('electron', 'preload.ts')
 ];
+
+// Any file an inventory row points at has to exist in the scratch copy, or the
+// baseline goes red for the wrong reason and every case below proves nothing.
+// This is derived from the inventory rather than hand-listed, because a
+// hand-listed copy set is the same stale-list problem the guard exists to catch.
+function anchorFiles() {
+  try {
+    const text = readFileSync(join(ROOT, 'INVENTORY.md'), 'utf8');
+    const found = new Set();
+    for (const m of text.matchAll(/`([^`#]+)#[^`]+`/g)) {
+      found.add(m[1].split('/').join(sepOf()));
+    }
+    return [...found];
+  } catch {
+    return [];
+  }
+}
+function sepOf() {
+  return join('a', 'b').slice(1, 2);
+}
 
 function freshCopy() {
   const dir = mkdtempSync(join(tmpdir(), 'inv-guard-'));
-  for (const rel of NEEDED) {
+  for (const rel of [...new Set([...NEEDED, ...anchorFiles()])]) {
     const src = join(ROOT, rel);
     if (!existsSync(src)) continue;
     const dst = join(dir, rel);

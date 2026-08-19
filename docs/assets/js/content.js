@@ -23,7 +23,7 @@ export const FEATURES = [
   },
   {
     id: 'frameless', name: 'Frameless window and custom title bar', group: 'Interface',
-    icon: 'desktop', site: 'na', app: 'planned',
+    icon: 'desktop', site: 'na', app: 'partial',
     blurb: 'The desktop application draws its own title bar and window controls rather than showing the operating system\'s default chrome.',
     detail: 'Minimise, maximise and close are real controls wired to the main process over IPC. A web page has no window to manage, so this row is not applicable to the site rather than quietly counted as satisfied.',
     verify: 'In the built application, each control performs its action, and the window can still be moved and resized by its edges.'
@@ -65,7 +65,7 @@ export const FEATURES = [
   },
   {
     id: 'fit', name: 'Evidence-backed hardware fit verdicts', group: 'Models',
-    icon: 'pulse', site: 'na', app: 'planned',
+    icon: 'pulse', site: 'na', app: 'partial',
     blurb: 'Every model variant is rated Runs well, Runs with limits, Unlikely, or Unknown, from measured hardware rather than from its name.',
     detail: 'The verdict combines real system RAM, GPU and usable VRAM, driver support and free destination disk with the model\'s actual blob size, parameter count, quantisation and declared context window. Missing metadata produces Unknown or a more conservative verdict; it is never treated as zero. The evidence behind each verdict is shown and timestamped, and it recomputes when the hardware, the storage or the settings change.',
     verify: 'Change the destination drive to one with less free space and confirm affected verdicts recompute and say why.'
