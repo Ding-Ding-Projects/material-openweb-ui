@@ -12,7 +12,7 @@ import { join, dirname } from 'node:path';
 import { existsSync, readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { Backend } from './backend.js';
-import { probe } from './hardware.js';
+import { probe, fit } from './hardware.js';
 
 const __dirname_ = dirname(fileURLToPath(import.meta.url));
 const REPO_ROOT = join(__dirname_, '..', '..');
@@ -168,6 +168,18 @@ ipcMain.handle('desktop:send', async (_e, message: { type: string; [k: string]: 
 
     case 'hardware:probe':
       return probe(typeof message.destination === 'string' ? message.destination : undefined);
+
+    // Batched on purpose. A catalogue row is one of hundreds, and a probe per
+    // row would measure the same machine hundreds of times to produce hundreds
+    // of identical hardware readings.
+    case 'hardware:fit': {
+      const hw = await probe(typeof message.destination === 'string' ? message.destination : undefined);
+      const models = Array.isArray(message.models) ? message.models.slice(0, 500) : [];
+      return {
+        hardware: hw,
+        verdicts: models.map((m) => ({ id: String(m.id), ...fit(hw, m) }))
+      };
+    }
 
     case 'token:update':
       // Deliberately not stored, not logged and not written anywhere. The token

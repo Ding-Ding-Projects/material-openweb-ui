@@ -20,6 +20,11 @@ export type DesktopMessage =
   | { type: 'backend:state' }
   | { type: 'backend:start' }
   | { type: 'hardware:probe'; destination?: string }
+  | {
+      type: 'hardware:fit';
+      destination?: string;
+      models: Array<{ id: string; blobBytes?: number; parameterCount?: number; quantisation?: string; contextTokens?: number }>;
+    }
   | { type: 'token:update'; token: string }
   | { type: 'shell:openPath'; path: string }
   | { type: 'shell:showItemInFolder'; path: string };

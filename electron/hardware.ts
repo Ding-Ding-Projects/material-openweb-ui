@@ -151,10 +151,45 @@ export function fit(
   const weights = model.blobBytes;
   evidence.push('Model weights: ' + gb(weights) + ' (from the catalogue, not estimated).');
 
-  // Context and runtime overhead on top of the weights. Stated rather than
-  // folded silently into the number.
-  const overhead = Math.max(0.6 * 1024 ** 3, weights * 0.15);
-  assumptions.push('Allows ' + gb(overhead) + ' for the KV cache and runtime overhead on top of the weights.');
+  // The rest of the model's metadata, used rather than merely accepted.
+  //
+  // The first version took blobBytes and ignored parameterCount, quantisation
+  // and contextTokens entirely, while the contract said the verdict combined
+  // all four. A flat fifteen per cent for the KV cache is wrong in the
+  // direction that matters: it is the CONTEXT WINDOW that decides how large
+  // that cache gets, and a model declaring 128k tokens needs several times what
+  // one declaring 4k does, at identical weights.
+  if (model.parameterCount) {
+    evidence.push('Parameters: ' + model.parameterCount + ' (declared).');
+  } else {
+    assumptions.push('The parameter count was not declared, so nothing is inferred from it.');
+  }
+  if (model.quantisation) {
+    evidence.push('Quantisation: ' + model.quantisation + '.');
+  } else {
+    assumptions.push('The quantisation was not declared. It is not guessed at from the file size.');
+  }
+
+  // A 4096-token window is the baseline the flat allowance was calibrated for.
+  // Anything larger scales the cache; anything smaller does not shrink it below
+  // the floor, because the runtime itself needs room whatever the context is.
+  const BASELINE_CONTEXT = 4096;
+  const FLOOR = 0.6 * 1024 ** 3;
+  let overhead;
+  if (model.contextTokens && Number.isFinite(model.contextTokens) && model.contextTokens > 0) {
+    const scale = Math.max(1, model.contextTokens / BASELINE_CONTEXT);
+    overhead = Math.max(FLOOR, weights * 0.15 * scale);
+    evidence.push('Declared context window: ' + model.contextTokens.toLocaleString() + ' tokens.');
+    assumptions.push('Allows ' + gb(overhead) + ' for the KV cache and runtime overhead, scaled from the declared ' +
+      model.contextTokens.toLocaleString() + '-token window against a ' + BASELINE_CONTEXT.toLocaleString() + '-token baseline. This is a rule of thumb, not a measurement.');
+  } else {
+    // Missing metadata makes the answer MORE conservative, never less. Treating
+    // an unknown context as the baseline would quietly flatter every model that
+    // failed to declare one.
+    overhead = Math.max(FLOOR, weights * 0.30);
+    assumptions.push('The context window was not declared. Rather than assume a small one, this allows ' + gb(overhead) +
+      ' — twice the baseline — so an undeclared long context cannot turn an over-optimistic verdict into a surprise.');
+  }
   const needed = weights + overhead;
 
   const vram = hw.vramBytes.known ? hw.vramBytes.value : null;

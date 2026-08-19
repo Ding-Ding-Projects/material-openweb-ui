@@ -138,6 +138,58 @@ function catalogSection() {
 
   let view = { source: 'none', catalog: { models: [] }, note: '' };
 
+  /**
+   * Fit verdicts, keyed by model name, and what they were measured against.
+   *
+   * Recomputed rather than remembered: the contract asks for a verdict that
+   * follows the hardware, the storage and the settings, so changing the model
+   * destination has to produce different answers rather than the same ones with
+   * a newer timestamp.
+   */
+  let fitVerdicts = new Map();
+  let fitProbe = null;
+
+  async function recomputeFit(models) {
+    if (!desktop.isDesktop || !models.length) return;
+    const installedNow = installed.map((i) => i.name);
+    const result = await desktop.fitModels(
+      models.slice(0, 300).map((x) => ({
+        id: x.name,
+        blobBytes: x.blobBytes,
+        parameterCount: x.parameterCount,
+        quantisation: x.quantisation,
+        contextTokens: x.contextTokens
+      })),
+      state.get('settings').modelDestination || undefined
+    ).catch(() => null);
+    if (!result || !result.verdicts) return;
+    fitProbe = result.hardware;
+    fitVerdicts = new Map(result.verdicts.map((v) => [v.id, v]));
+    void installedNow;
+    render();
+  }
+
+  function verdictRow(name) {
+    const v = fitVerdicts.get(name);
+    if (!v) {
+      // Absent is said out loud rather than left blank: a missing verdict and a
+      // verdict of "Unknown" are different facts.
+      return h('div', { class: 'fit fit--pending' },
+        desktop.isDesktop ? 'Fit not measured yet.' : 'Fit verdicts need the desktop shell, which can measure this machine. A browser cannot.');
+    }
+    const tone = v.verdict === 'Runs well' ? 'ok' : v.verdict === 'Runs with limits' ? 'warn' : v.verdict === 'Unlikely' ? 'bad' : 'unknown';
+    return h('details', { class: 'fit fit--' + tone },
+      h('summary', {},
+        h('span', { class: 'fit__verdict' }, v.verdict),
+        h('span', { class: 'fit__when' }, 'measured ' + String(v.probedAt).replace('T', ' ').slice(0, 16))),
+      h('ul', { class: 'fit__evidence' }, ...(v.evidence || []).map((e) => h('li', {}, e))),
+      (v.assumptions || []).length
+        ? h('div', { class: 'fit__assumptions' },
+            h('strong', {}, 'Assumed: '),
+            ...(v.assumptions || []).map((a) => h('div', {}, a)))
+        : null);
+  }
+
   function render() {
     const m = field.matcher();
     clear(list);
@@ -205,6 +257,7 @@ function catalogSection() {
           ),
           pullBtn
         ),
+        verdictRow(model.name),
         bar
       ));
     }
@@ -214,22 +267,59 @@ function catalogSection() {
 
   (async () => {
     const cached = ollama.cachedCatalog();
+
+    // Said BEFORE the request, not after it. Every other thing this page does
+    // reaches only the daemon on this machine; browsing the published
+    // catalogue is the one exception, and someone deserves to know that at the
+    // moment it happens rather than to find it in a network log later.
+    clear(note);
+    note.className = 'state state--info';
+    note.append(
+      icon('info'),
+      h('div', { class: 'state__body' },
+        h('div', { class: 'state__title' }, 'Fetching the published catalogue from ollama.com'),
+        h('div', { class: 'state__text' },
+          'The daemon on this machine has no endpoint that lists the registry, so this reads ollama.com’s library page. It is the only request this application makes to anywhere other than your own computer, and nothing about you is sent with it.'))
+    );
+
     const fresh = await ollama.fetchCatalog({});
     view = ollama.catalogView(fresh, cached);
     clear(note);
-    note.className = 'state ' + (view.source === 'live' ? 'state--ok' : view.source === 'cached' ? 'state--info' : 'state--bad');
+    note.className = 'state ' + (view.source === 'live' && view.catalog.completeness === 'complete' ? 'state--ok'
+      : view.source === 'none' ? 'state--bad' : 'state--info');
     note.append(
-      icon(view.source === 'live' ? 'check' : view.source === 'cached' ? 'info' : 'warn'),
+      // A verdict of "unverified" is not a success tick. It is information.
+      icon(view.source === 'live' && view.catalog.completeness === 'complete' ? 'check'
+        : view.source === 'none' ? 'warn' : 'info'),
       h('div', { class: 'state__body' },
         h('div', { class: 'state__title' },
-          view.source === 'live' ? 'Catalogue verified complete' : view.source === 'cached' ? 'Showing the last verified catalogue' : 'No catalogue to show'),
+          view.title || (view.source === 'cached' ? 'Showing the last catalogue read' : 'No catalogue to show')),
         h('div', { class: 'state__text' }, view.note))
     );
     render();
+    recomputeFit(view.catalog.models || []);
   })();
+
+  // Re-decide whenever the machine or its storage is re-measured.
+  onHardwareChanged(() => recomputeFit(view.catalog.models || []));
 
   wrap.append(note, field.el, count, list);
   return wrap;
+}
+
+/**
+ * Sections that want to know when the measured hardware changed.
+ *
+ * The hardware card and the catalogue are separate functions with no shared
+ * closure, and the destination control lives in the first while the verdicts
+ * live in the second. Passing a callback down through render() would work; this
+ * is smaller and does not make every section's signature carry a concern only
+ * two of them have.
+ */
+const hardwareListeners = new Set();
+function onHardwareChanged(fn) {
+  hardwareListeners.add(fn);
+  return () => hardwareListeners.delete(fn);
 }
 
 // ---------------------------------------------------------------- hardware
@@ -237,7 +327,7 @@ function catalogSection() {
 function hardwareSection() {
   const card = h('div', { class: 'card', style: { marginBottom: '20px' } }, h('div', { class: 'muted' }, 'Probing this machine…'));
 
-  (async () => {
+  const paint = async () => {
     if (!desktop.isDesktop) {
       clear(card);
       card.append(h('div', { class: 'state state--info' }, icon('info'),
@@ -269,12 +359,38 @@ function hardwareSection() {
         row('GPU', fact(hardware.gpuName), hardware.gpuName.known ? null : hardware.gpuName.why),
         row('GPU memory', fact(hardware.vramBytes) ? gb(hardware.vramBytes.value) : null, hardware.vramBytes.known ? null : hardware.vramBytes.why)
       ),
+      // Where models are stored, because free space on THAT drive is half the
+      // verdict. Changing it has to move the answers, not just the timestamp —
+      // which is what the contract's own verification step checks.
+      h('div', { class: 'dest' },
+        h('label', { class: 'dest__label', for: 'model-destination' }, 'Model destination'),
+        h('div', { class: 'row', style: { gap: '8px', alignItems: 'center' } },
+          h('input', {
+            id: 'model-destination', type: 'text', class: 'mono',
+            value: state.get('settings').modelDestination || '',
+            placeholder: hardware.modelPath && hardware.modelPath.known ? hardware.modelPath.value : 'the daemon default',
+            'aria-label': 'Where models are stored',
+            onchange: async (e) => {
+              const next = e.target.value.trim();
+              state.patchSettings({ modelDestination: next });
+              state.log('Model destination changed', next || 'the daemon default');
+              // Re-probe and re-decide. Leaving verdicts that were measured
+              // against a different drive would show a stale answer with a
+              // current-looking timestamp, which is worse than showing none.
+              await paint();
+              for (const fn of hardwareListeners) await fn();
+              ui.notify('Re-measured against that location, and every fit verdict recomputed.', { kind: 'ok' });
+            }
+          }),
+          h('span', { class: 'muted', style: { fontSize: '.74rem' } },
+            fact(hardware.freeDiskBytes) ? gb(hardware.freeDiskBytes.value) + ' free' : (hardware.freeDiskBytes.why || 'free space unknown')))),
       hardware.notes.length
         ? h('div', { class: 'muted', style: { fontSize: '.74rem', marginTop: '12px', lineHeight: '1.6' } }, hardware.notes.join(' '))
         : null
     );
-  })();
+  };
 
+  paint();
   return card;
 }
 

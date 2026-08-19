@@ -111,6 +111,15 @@ jobs:
       - name: Every regex builder opens beside its own field
         run: node scripts/test-regex.mjs
 
+      - name: The catalogue counts its pages and names its verdict's basis
+        run: node scripts/test-catalogue.mjs
+
+      - name: Compile the desktop shell
+        run: npm run electron:compile
+
+      - name: Fit verdicts are evidenced and reach the screen
+        run: node scripts/test-fit.mjs
+
       - name: Line count
         run: |
           node scripts/count-lines.mjs --markdown >> "$GITHUB_STEP_SUMMARY"

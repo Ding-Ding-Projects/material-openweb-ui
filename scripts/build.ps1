@@ -294,6 +294,18 @@ if ($LASTEXITCODE -ne 0) {
 }
 Step 'Every regex builder opens beside the field it belongs to.'
 
+& $nodeExe (Join-Path $Root 'scripts/test-catalogue.mjs') | Out-Null
+if ($LASTEXITCODE -ne 0) {
+  Fail 'the catalogue is claiming a completeness it did not check, or has stopped counting the pages it fetched. Run: node scripts/test-catalogue.mjs'
+}
+Step 'The catalogue counts its pages and names what its verdict is based on.'
+
+& $nodeExe (Join-Path $Root 'scripts/test-fit.mjs') | Out-Null
+if ($LASTEXITCODE -ne 0) {
+  Fail 'a fit verdict is unevidenced, over-optimistic when metadata is missing, or no longer reaches the screen. Run: node scripts/test-fit.mjs'
+}
+Step 'Fit verdicts are evidenced and reach the screen.'
+
 & $nodeExe (Join-Path $Root 'scripts/test-locks.mjs') | Out-Null
 if ($LASTEXITCODE -ne 0) {
   Fail 'a lock or unlock-ladder safety rule no longer holds. Run: node scripts/test-locks.mjs'

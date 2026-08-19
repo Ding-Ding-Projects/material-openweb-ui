@@ -49,9 +49,9 @@ feature that will never be built on a surface says `na` rather than staying
 | tabsearch | Four tab-discovery searches | na | shipped | `app/js/tabs-ui.js#export function searchDialog` | content.js |
 | palette | Command palette on Ctrl+Shift+F | shipped | shipped | `docs/assets/js/palette-core.js#export function createPalette` | content.js |
 | regex | A regex builder beside every search field | shipped | shipped | `docs/assets/js/regex.js#export function searchField` | content.js |
-| chat | Chat with a local model | na | partial | `app/js/core/ollama.js#export async function chat` | content.js |
-| ollama | Local Ollama suite manager | na | partial | `app/js/core/ollama.js#export async function pull` | content.js |
-| fit | Evidence-backed hardware fit verdicts | na | partial | `electron/hardware.ts#export function fit` | content.js |
+| chat | Chat with a local model | na | shipped | `app/js/core/ollama.js#export async function chat` | content.js |
+| ollama | Local Ollama suite manager | na | shipped | `app/js/core/ollama.js#export async function pull` | content.js |
+| fit | Evidence-backed hardware fit verdicts | na | shipped | `electron/hardware.ts#export function fit` | content.js |
 | converter | Universal file converter | na | partial | `app/js/core/convert.js#export function sniff` | content.js |
 | authenticator | Built-in authenticator | na | partial | `app/js/core/totp.js#export async function totp` | content.js |
 | qr | QR pairing for one-time-code registration | na | shipped | `app/js/core/qr.js#export function encode` | content.js |

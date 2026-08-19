@@ -30,6 +30,15 @@ export const appData = () => send({ type: 'app:data' });
 export const backendState = () => send({ type: 'backend:state' });
 export const startBackend = () => send({ type: 'backend:start' });
 export const probeHardware = (destination) => send({ type: 'hardware:probe', destination });
+
+/**
+ * Fit verdicts for a list of models, against this machine as it is right now.
+ *
+ * The hardware is probed once per call rather than once per model, and the
+ * probe travels back with the verdicts so the surface can show what each one
+ * was measured against and when.
+ */
+export const fitModels = (models, destination) => send({ type: 'hardware:fit', models, destination });
 export const openPath = (path) => send({ type: 'shell:openPath', path });
 
 /** Subscribe to lifecycle events pushed by the main process. */

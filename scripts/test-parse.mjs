@@ -177,6 +177,63 @@ if (strays.length) {
   console.error('than typing it through a shell.');
   process.exit(1);
 }
+
+// ---------------------------------------------------------------- built patterns
+//
+// A regular expression built from a STRING is checked at construction, not at
+// parse. So `new RegExp('(a|?page=)')` is a perfectly valid JavaScript file
+// that throws the instant the module is evaluated — and everything above this
+// point passes it, because the syntax is fine and the import resolves.
+//
+// That happened: a shell layer ate the backslashes out of a pattern, and the
+// resulting module was syntactically flawless and completely unloadable.
+
+const badPatterns = [];
+// A literal, for exactly the reason this check exists. The first version of
+// this line was itself built from a string, lost its backslashes on the way to
+// disk, and threw "Unterminated group": the guard against the bug, containing
+// the bug, and unable to report on itself because it could not load.
+const PATTERN_CALL = /new RegExp\(\s*'([^']*)'(?:\s*,\s*'([a-z]*)')?/g;
+
+for (const dir of OWN) {
+  for (const file of everyOwnFile(join(ROOT, dir))) {
+    if (!/\.(js|mjs)$/.test(file)) continue;
+    // Comments first. The paragraph above this loop shows a deliberately
+    // broken pattern as its example, so a scan of raw source finds it and
+    // fails on the file explaining the rule — the third time in this project
+    // that an absence check has flagged its own documentation.
+    const text = readFileSync(file, 'utf8')
+      .replace(/\/\*[\s\S]*?\*\//g, ' ')
+      .replace(/(^|[^:])\/\/.*$/gm, '$1 ');
+    for (const m of text.matchAll(PATTERN_CALL)) {
+      // The literal as JavaScript will see it, with its escapes resolved.
+      let source;
+      try {
+        source = JSON.parse('"' + m[1].split(String.fromCharCode(92, 34)).join(String.fromCharCode(92, 92, 34)) + '"');
+      } catch {
+        continue; // not a plain literal; nothing to check statically
+      }
+      try {
+        new RegExp(source, m[2] || '');
+      } catch (e) {
+        const line = text.slice(0, m.index).split(String.fromCharCode(10)).length;
+        badPatterns.push(file.slice(ROOT.length + 1) + ' line ' + line + ': ' + e.message);
+      }
+    }
+  }
+}
+
+if (badPatterns.length) {
+  console.error('');
+  console.error('A regular expression built from a string does not compile:');
+  for (const b of badPatterns) console.error('  ' + b);
+  console.error('The file parses and the import resolves; it throws when the module is evaluated,');
+  console.error('which is a blank page rather than an error anyone can read. Prefer a regex');
+  console.error('literal, whose escapes cannot be eaten by a shell on the way to disk.');
+  process.exit(1);
+}
+console.log('Every regular expression built from a string actually compiles.');
+
 console.log('No stray control character in any file this project writes.');
 
 console.log('Every shipped module parses and every relative import resolves.');

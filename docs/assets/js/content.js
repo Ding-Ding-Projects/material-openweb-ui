@@ -62,21 +62,21 @@ export const FEATURES = [
   },
   {
     id: 'chat', name: 'Chat with a local model', group: 'Models',
-    icon: 'chat', site: 'na', app: 'partial',
+    icon: 'chat', site: 'na', app: 'shipped',
     blurb: 'Streamed replies from a model running on this machine, with a model picker, cancellation and honest empty states.',
     detail: 'The design prototype faked this with a timer and three canned paragraphs. Nothing here is canned: the reply is streamed from the local daemon token by token, it can be stopped mid-flight, and when no model is installed the surface says so and points at the catalogue rather than answering with something it invented. Token throughput is reported from the timings the daemon itself returns.',
     verify: 'Stop the Ollama daemon and confirm the page diagnoses that rather than replying. Press Stop mid-reply and confirm the partial text is kept and marked as stopped.'
   },
   {
     id: 'ollama', name: 'Local Ollama suite manager', group: 'Models',
-    icon: 'server', site: 'na', app: 'partial',
+    icon: 'server', site: 'na', app: 'shipped',
     blurb: 'Daemon health, installed models, the full published catalog with every tag, pulls with real progress, deletes behind the confirmation gate, and a chat surface.',
-    detail: 'It speaks only Ollama\'s documented local HTTP API. The catalog is exhaustive at each verified refresh rather than a curated shortlist, and records its source revision, refresh time, page count and a completeness verdict. Offline it shows the last verified catalog plus current installed state and says which is which, instead of guessing at new entries.',
-    verify: 'With the daemon stopped, the surface diagnoses that exact state and offers a retry, rather than spinning.'
+    detail: 'Everything about your own machine — health, installed models, pulls, deletes and generation — goes through Ollama\'s documented local HTTP API and nothing else. Browsing the PUBLISHED catalogue is the one exception, and the page states it before the request is made: the local daemon has no endpoint that lists the registry, so this fetches ollama.com\'s library page and reads it. That is a behaviour of this application rather than an API of Ollama\'s, and saying "only the local API" while reaching a website would have been the more comfortable sentence and the false one. The catalogue is never a curated shortlist, and each refresh records its source revision, refresh time, the number of pages actually fetched, and a verdict of complete, incomplete or unverified — the third meaning the source carried no pagination this parser recognises, which is a different and more honest answer than assuming there is nothing more.  Offline it shows the last catalogue read plus current installed state and says which is which, instead of guessing at new entries.',
+    verify: 'With the daemon stopped, the surface diagnoses that exact state and offers a retry, rather than spinning. Confirm the catalogue states where it fetches from before the request, and that its completeness verdict names what it is based on.'
   },
   {
     id: 'fit', name: 'Evidence-backed hardware fit verdicts', group: 'Models',
-    icon: 'pulse', site: 'na', app: 'partial',
+    icon: 'pulse', site: 'na', app: 'shipped',
     blurb: 'Every model variant is rated Runs well, Runs with limits, Unlikely, or Unknown, from measured hardware rather than from its name.',
     detail: 'The verdict combines real system RAM, GPU and usable VRAM, driver support and free destination disk with the model\'s actual blob size, parameter count, quantisation and declared context window. Missing metadata produces Unknown or a more conservative verdict; it is never treated as zero. The evidence behind each verdict is shown and timestamped, and it recomputes when the hardware, the storage or the settings change.',
     verify: 'Change the destination drive to one with less free space and confirm affected verdicts recompute and say why.'
