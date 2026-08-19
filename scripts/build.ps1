@@ -204,6 +204,12 @@ if ($LASTEXITCODE -ne 0) {
 }
 Ok 'School mode omits rather than disables'
 
+& $nodeExe (Join-Path $Root 'scripts/test-qr.mjs') | Out-Null
+if ($LASTEXITCODE -ne 0) {
+  Fail 'the QR encoder no longer round-trips through its own decoder. A wrong code looks completely convincing and scans as nothing. Run: node scripts/test-qr.mjs'
+}
+Step 'The QR encoder round-trips through its own decoder.'
+
 & $nodeExe (Join-Path $Root 'scripts/test-locks.mjs') | Out-Null
 if ($LASTEXITCODE -ne 0) {
   Fail 'a lock or unlock-ladder safety rule no longer holds. Run: node scripts/test-locks.mjs'

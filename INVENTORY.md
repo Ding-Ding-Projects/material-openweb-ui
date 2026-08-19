@@ -44,7 +44,7 @@ nobody should trust.
 | fit | Evidence-backed hardware fit verdicts | na | partial | `electron/hardware.ts#export function fit` | content.js |
 | converter | Universal file converter | na | partial | `app/js/core/convert.js#export function sniff` | content.js |
 | authenticator | Built-in authenticator | planned | partial | `app/js/core/totp.js#export async function totp` | content.js |
-| qr | QR pairing for one-time-code registration | planned | planned | — | content.js |
+| qr | QR pairing for one-time-code registration | na | shipped | `app/js/core/qr.js#export function encode` | content.js |
 | locks | Toy locks on every element | planned | shipped | `app/js/core/locks.js#export async function create` | content.js |
 | tickets | Support Tickets | planned | shipped | `app/js/locks-ui.js#export function supportTickets` | content.js |
 | ladder | The unlock ladder | planned | shipped | `app/js/locks-ui.js#export function startingRung` | content.js |

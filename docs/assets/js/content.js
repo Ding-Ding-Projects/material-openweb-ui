@@ -93,7 +93,7 @@ export const FEATURES = [
   },
   {
     id: 'qr', name: 'QR pairing for one-time-code registration', group: 'Tools',
-    icon: 'phonelock', site: 'planned', app: 'planned',
+    icon: 'phonelock', site: 'na', app: 'shipped',
     blurb: 'A scannable code encoding a standard otpauth:// URI, drawn in-process from local code.',
     detail: 'Never a third-party QR service and never a remote chart API — that would hand the secret to a stranger\'s server on the way to rendering it. The manual secret is always shown beside the code in grouped base32, because a QR is useless to someone who cannot see it and useless again to someone pairing on the very device displaying it. Pairing is confirmed by typing one live code back before the factor arms.',
     verify: 'Confirm no network request occurs anywhere in registration, and that a wrong confirmation code is rejected.'

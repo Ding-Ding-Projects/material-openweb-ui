@@ -14,6 +14,7 @@ import { h, icon, clear } from '../../../docs/assets/js/dom.js';
 import { searchField } from '../../../docs/assets/js/regex.js';
 import * as ui from '../../../docs/assets/js/ui.js';
 import * as totp from '../core/totp.js';
+import * as qr from '../core/qr.js';
 import * as state from '../state.js';
 
 /** Session-only. Never written to disk — see the note at the top of this file. */
@@ -94,6 +95,99 @@ export function render(root) {
           entries.push({ id: idFor(), issuer: issuer.value.trim(), account: account.value.trim() || 'account', secret: s, algorithm, digits, period });
           state.log('Authenticator entry added', issuer.value.trim() || account.value.trim());
           paint();
+        } }
+      ]
+    });
+    return d;
+  }
+
+
+  // ---------- pair a new factor ----------
+  //
+  // The QR is drawn in this process from local code. A third-party QR service
+  // or a remote chart API would hand the secret to a stranger's server on the
+  // way to rendering it, which is a strange price to pay for a picture.
+
+  function pairDialog() {
+    const bytes = crypto.getRandomValues(new Uint8Array(20));
+    const secret = totp.base32Encode(bytes);
+    const issuer = h('input', { type: 'text', value: 'Material Open WebUI', 'aria-label': 'Issuer' });
+    const account = h('input', { type: 'text', placeholder: 'you@example.test', 'aria-label': 'Account' });
+    const confirm = h('input', { type: 'text', class: 'mono', placeholder: 'Type the current code', 'aria-label': 'Confirmation code' });
+    const err = h('div', { style: { color: 'var(--err)', fontSize: '.8rem', minHeight: '18px' } });
+    const qrBox = h('div', { style: { background: '#FFFFFF', padding: '10px', borderRadius: '12px', width: 'fit-content' } });
+    const secretBox = h('div', { class: 'mono', style: { fontSize: '.9rem', letterSpacing: '.08em', userSelect: 'all', filter: 'blur(5px)', cursor: 'pointer' }, title: 'Click to reveal' }, totp.groupSecret(secret));
+
+    // Revealed only on an explicit action, never on the surface by default.
+    secretBox.addEventListener('click', () => { secretBox.style.filter = 'none'; secretBox.style.cursor = 'text'; });
+
+    function paintQr() {
+      const uri = totp.buildUri({ issuer: issuer.value.trim(), account: account.value.trim() || 'account', secret });
+      let matrix;
+      try {
+        matrix = qr.encode(uri);
+      } catch (e) {
+        // A long enough issuer overruns the encoder. Saying so beats throwing on
+        // every keystroke and leaving the last good code on screen, which would
+        // be a picture of a different URI than the one it claims to show.
+        clear(qrBox);
+        qrBox.append(h('div', { style: { color: '#B3261E', fontSize: '.78rem', maxWidth: '180px', padding: '20px 4px' } },
+          'Too long to draw: ' + e.message));
+        return;
+      }
+      qrBox.innerHTML = qr.toSvg(matrix, { moduleSize: 4, quiet: 4 });
+      qrBox.firstChild.setAttribute('role', 'img');
+      qrBox.firstChild.setAttribute('aria-label',
+        'A QR code pairing ' + (account.value.trim() || 'this account') + ' with ' + (issuer.value.trim() || 'this application') +
+        '. The same secret is printed beside it for anyone who cannot scan it.');
+    }
+    issuer.addEventListener('input', paintQr);
+    account.addEventListener('input', paintQr);
+    paintQr();
+
+    const d = ui.dialog({
+      title: 'Pair an authenticator',
+      emoji: '📷',
+      wide: true,
+      body: h('div', { class: 'stack', style: { gap: '14px' } },
+        h('p', { class: 'muted', style: { fontSize: '.86rem', lineHeight: '1.6' } },
+          'The secret was generated on this machine a moment ago. The code below is drawn here too — no request is made anywhere in this flow.'),
+        h('div', { class: 'grid grid--2', style: { gap: '10px' } },
+          h('div', { class: 'field' }, issuer), h('div', { class: 'field' }, account)),
+        h('div', { class: 'row', style: { gap: '20px', alignItems: 'flex-start', flexWrap: 'wrap' } },
+          qrBox,
+          h('div', { class: 'stack', style: { gap: '8px', flex: '1', minWidth: '220px' } },
+            h('strong', { style: { fontSize: '.85rem' } }, 'Or type it in'),
+            secretBox,
+            h('div', { class: 'muted', style: { fontSize: '.75rem' } }, 'Click to reveal. SHA-1, 6 digits, 30-second period.'),
+            h('button', { class: 'btn btn--outlined', onclick: () => ui.copyToClipboard(secret, 'Secret copied.') }, 'Copy the secret'))),
+        h('hr'),
+        h('div', { class: 'stack', style: { gap: '8px' } },
+          h('strong', { style: { fontSize: '.85rem' } }, 'Confirm the pairing'),
+          h('p', { class: 'muted', style: { fontSize: '.8rem', lineHeight: '1.55' } },
+            'Type one current code back. Without this step a mistyped or mis-scanned secret locks you out of something you have just set up, and the first you learn of it is when you need it.'),
+          h('div', { class: 'field' }, confirm),
+          err)),
+      actions: [
+        { label: 'Cancel' },
+        { label: 'Confirm and add', primary: true, run: () => {
+          // A code is checked against this window and the one either side, for
+          // the same reason verification does: a machine a few seconds out of
+          // step is the normal case, not an attack.
+          Promise.all([-1, 0, 1].map((w) => totp.totp(secret, { atMs: Date.now() + w * 30000 }))).then((allowed) => {
+            if (!allowed.includes(confirm.value.replace(/\s+/g, ''))) {
+              err.textContent = 'That code does not match. Give the authenticator a moment to finish adding it, then type the code it is showing now.';
+              return;
+            }
+            entries.push({ id: idFor(), issuer: issuer.value.trim(), account: account.value.trim() || 'account', secret, algorithm: 'SHA1', digits: 6, period: 30 });
+            state.log('Authenticator paired', issuer.value.trim() || account.value.trim());
+            ui.notify('Paired, and confirmed against a live code.', { kind: 'ok' });
+            paint();
+            d.close();
+          });
+          // Held open on purpose: the check is asynchronous, and a dialog that
+          // shuts before it finishes would report success it has not had yet.
+          return true;
         } }
       ]
     });
@@ -190,7 +284,9 @@ export function render(root) {
         h('div', { class: 'page__title' }, 'Authenticator'),
         h('div', { class: 'page__sub' },
           'One-time codes for whatever accounts you like, computed on this machine. No account, no sync, and no request leaves this window.')),
-      h('button', { class: 'btn btn--filled', onclick: addDialog }, icon('plus', 'icon icon--sm'), 'Add entry')),
+      h('div', { class: 'row', style: { gap: '10px' } },
+        h('button', { class: 'btn btn--outlined', onclick: pairDialog }, icon('phonelock', 'icon icon--sm'), 'Pair with a QR'),
+        h('button', { class: 'btn btn--filled', onclick: addDialog }, icon('plus', 'icon icon--sm'), 'Add entry'))),
     selfCheck,
     clock,
     h('div', { style: { height: '18px' } }),

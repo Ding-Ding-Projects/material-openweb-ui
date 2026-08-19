@@ -66,6 +66,9 @@ jobs:
         # to break by accident while making the games nicer.
         run: node scripts/test-locks.mjs
 
+      - name: The QR encoder round-trips through its own decoder
+        run: node scripts/test-qr.mjs
+
       - name: Line count
         run: |
           node scripts/count-lines.mjs --markdown >> "$GITHUB_STEP_SUMMARY"
