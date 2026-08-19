@@ -119,12 +119,23 @@ export function sniff(u8) {
  * user to wonder whether the format is unsupported or the app is broken.
  */
 export const ADAPTERS = [
-  { id: 'img-png',  cat: 'Images', from: ['image/png', 'image/jpeg', 'image/webp', 'image/gif', 'image/bmp'], to: 'PNG', available: true, kind: 'canvas', mime: 'image/png', ext: 'png', lossy: false,
-    discloses: 'Re-encodes through the renderer\'s image decoder. Animation is lost: only the first frame survives.' },
-  { id: 'img-jpeg', cat: 'Images', from: ['image/png', 'image/jpeg', 'image/webp', 'image/gif', 'image/bmp'], to: 'JPEG', available: true, kind: 'canvas', mime: 'image/jpeg', ext: 'jpg', lossy: true,
-    discloses: 'JPEG has no transparency, so any transparent area becomes black. Compression is lossy and metadata is not carried over.' },
-  { id: 'img-webp', cat: 'Images', from: ['image/png', 'image/jpeg', 'image/webp', 'image/gif', 'image/bmp'], to: 'WebP', available: true, kind: 'canvas', mime: 'image/webp', ext: 'webp', lossy: true,
-    discloses: 'Lossy by default at quality 0.92. Animation is lost: only the first frame survives.' },
+  { id: 'img-png',  cat: 'Images', from: ['image/png', 'image/jpeg', 'image/webp', 'image/gif', 'image/bmp'], to: 'PNG', available: true, kind: 'canvas', mime: 'image/png', ext: 'png',
+    discloses: 'Re-encodes through the renderer\'s image decoder.',
+    destroys: ['Animation, if the source has any: only the first frame survives.'] },
+  { id: 'img-jpeg', cat: 'Images', from: ['image/png', 'image/jpeg', 'image/webp', 'image/gif', 'image/bmp'], to: 'JPEG', available: true, kind: 'canvas', mime: 'image/jpeg', ext: 'jpg',
+    discloses: 'Re-encodes through the renderer\'s image decoder.',
+    destroys: [
+      'Transparency: JPEG has none, so any transparent area becomes black.',
+      'Detail: the compression is lossy.',
+      'Metadata: none of it is carried over.',
+      'Animation, if the source has any: only the first frame survives.'
+    ] },
+  { id: 'img-webp', cat: 'Images', from: ['image/png', 'image/jpeg', 'image/webp', 'image/gif', 'image/bmp'], to: 'WebP', available: true, kind: 'canvas', mime: 'image/webp', ext: 'webp',
+    discloses: 'Encoded at quality 0.92.',
+    destroys: [
+      'Detail: the default encoding is lossy.',
+      'Animation, if the source has any: only the first frame survives.'
+    ] },
   { id: 'img-avif', cat: 'Images', from: ['image/png', 'image/jpeg', 'image/webp'], to: 'AVIF', available: false,
     reason: 'No AVIF encoder is bundled. Chromium can decode AVIF but not encode it, so this needs a libavif build shipped inside the application.' },
 
@@ -142,22 +153,48 @@ export const ADAPTERS = [
   { id: 'zip-list', cat: 'Archives', from: ['application/zip'], to: 'File listing (text)', available: false,
     reason: 'Needs a ZIP central-directory reader. Not installed.' },
 
-  { id: 'json-csv',   cat: 'Structured Data/Spreadsheets', from: ['application/json'], to: 'CSV', available: true, kind: 'json2csv', mime: 'text/csv', ext: 'csv', lossy: true,
-    discloses: 'Nested objects and arrays are serialised as JSON text inside their cell. Column order comes from the union of every row\'s keys.' },
-  { id: 'csv-json',   cat: 'Structured Data/Spreadsheets', from: ['text/csv'], to: 'JSON', available: true, kind: 'csv2json', mime: 'application/json', ext: 'json', lossy: false,
-    discloses: 'Every value is read as a string; numbers are not inferred, because guessing types is how leading zeros and long identifiers get destroyed.' },
-  { id: 'json-pretty', cat: 'Structured Data/Spreadsheets', from: ['application/json'], to: 'Pretty-printed JSON', available: true, kind: 'jsonpretty', mime: 'application/json', ext: 'json', lossy: false,
-    discloses: 'Key order is preserved. Duplicate keys, which JSON permits but no parser keeps, collapse to the last one.' },
+  { id: 'json-csv',   cat: 'Structured Data/Spreadsheets', from: ['application/json'], to: 'CSV', available: true, kind: 'json2csv', mime: 'text/csv', ext: 'csv',
+    discloses: 'Column order comes from the union of every row\'s keys.',
+    destroys: ['Structure: nested objects and arrays become JSON text inside a single cell.'] },
+  { id: 'csv-json',   cat: 'Structured Data/Spreadsheets', from: ['text/csv'], to: 'JSON', available: true, kind: 'csv2json', mime: 'application/json', ext: 'json',
+    discloses: 'Every value is read as a string; numbers are not inferred, because guessing types is how leading zeros and long identifiers get destroyed.',
+    destroys: [] },
+  { id: 'json-pretty', cat: 'Structured Data/Spreadsheets', from: ['application/json'], to: 'Pretty-printed JSON', available: true, kind: 'jsonpretty', mime: 'application/json', ext: 'json',
+    discloses: 'Key order is preserved.',
+    destroys: ['Duplicate keys, which JSON permits but no parser keeps: they collapse to the last one.'] },
 
-  { id: 'text-lf',    cat: 'Code/Text', from: ['text/plain', 'text/html', 'application/json', 'text/csv', 'application/xml'], to: 'UTF-8 text (LF endings)', available: true, kind: 'textlf', mime: 'text/plain', ext: 'txt', lossy: false,
-    discloses: 'Line endings are normalised to LF. The output is UTF-8 without a byte-order mark.' },
-  { id: 'html-text',  cat: 'Code/Text', from: ['text/html'], to: 'Plain text (tags stripped)', available: true, kind: 'striphtml', mime: 'text/plain', ext: 'txt', lossy: true,
-    discloses: 'All markup, attributes, scripts and styles are discarded. Only text content survives.' },
+  { id: 'text-lf',    cat: 'Code/Text', from: ['text/plain', 'text/html', 'application/json', 'text/csv', 'application/xml'], to: 'UTF-8 text (LF endings)', available: true, kind: 'textlf', mime: 'text/plain', ext: 'txt',
+    discloses: 'The output is UTF-8 without a byte-order mark.',
+    destroys: ['Carriage returns: every line ending is normalised to LF.'] },
+  { id: 'html-text',  cat: 'Code/Text', from: ['text/html'], to: 'Plain text (tags stripped)', available: true, kind: 'striphtml', mime: 'text/plain', ext: 'txt',
+    discloses: 'Only the text content survives.',
+    destroys: ['All markup, attributes, scripts and styles.'] },
 
-  { id: 'to-b64',   cat: 'Binary Encodings', from: ['*'], to: 'Base64 text', available: true, kind: 'b64', mime: 'text/plain', ext: 'b64.txt', lossy: false, discloses: 'Output is about a third larger than the input.' },
-  { id: 'to-hex',   cat: 'Binary Encodings', from: ['*'], to: 'Hex dump', available: true, kind: 'hex', mime: 'text/plain', ext: 'hex.txt', lossy: true, discloses: 'Only the first megabyte is dumped, so a larger file is truncated. The dump is for reading, not for converting back.' },
-  { id: 'from-b64', cat: 'Binary Encodings', from: ['text/plain'], to: 'Bytes from Base64', available: true, kind: 'unb64', mime: 'application/octet-stream', ext: 'bin', lossy: false, discloses: 'Fails rather than guessing if the text is not valid Base64.' }
+  { id: 'to-b64',   cat: 'Binary Encodings', from: ['*'], to: 'Base64 text', available: true, kind: 'b64', mime: 'text/plain', ext: 'b64.txt',
+    discloses: 'Output is about a third larger than the input.', destroys: [] },
+  { id: 'to-hex',   cat: 'Binary Encodings', from: ['*'], to: 'Hex dump', available: true, kind: 'hex', mime: 'text/plain', ext: 'hex.txt',
+    discloses: 'The dump is for reading, not for converting back.',
+    destroys: ['Everything past the first megabyte: a larger file is truncated.'] },
+  { id: 'from-b64', cat: 'Binary Encodings', from: ['text/plain'], to: 'Bytes from Base64', available: true, kind: 'unb64', mime: 'application/octet-stream', ext: 'bin',
+    discloses: 'Fails rather than guessing if the text is not valid Base64.', destroys: [] }
 ];
+
+/**
+ * Whether a conversion destroys anything.
+ *
+ * Derived from the list rather than stored beside it, which is the whole point.
+ * The two were separate fields, and two of them disagreed: `img-png` and
+ * `json-pretty` were both flagged lossless while their own disclosure text said
+ * animation was lost and duplicate keys collapsed. The pre-run disclosure was
+ * gated on the flag, so those two conversions ran with no warning at all —
+ * while the sentence explaining the loss sat right there in the same object.
+ *
+ * A boolean that can contradict the prose beside it will eventually contradict
+ * the prose beside it. Now the prose IS the flag.
+ */
+export function isLossy(adapter) {
+  return Boolean(adapter && adapter.destroys && adapter.destroys.length);
+}
 
 export function adaptersFor(mime) {
   return ADAPTERS.filter((a) => a.from.includes('*') || a.from.includes(mime));

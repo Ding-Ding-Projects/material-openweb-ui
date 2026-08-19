@@ -83,14 +83,14 @@ export const FEATURES = [
   },
   {
     id: 'converter', name: 'Universal file converter', group: 'Tools',
-    icon: 'swap', site: 'na', app: 'partial',
+    icon: 'swap', site: 'na', app: 'shipped',
     blurb: 'Type detected from the actual bytes, eight adapter categories, and every unavailable format listed with the exact dependency it is missing.',
     detail: 'Documents/PDF, Images, Audio, Video, Archives, Structured Data, Code/Text and Binary Encodings each have their own searchable catalogue. A format is only enabled when its adapter is bundled inside the installed application and works offline — a tool that happens to be on the developer\'s PATH never makes a format appear available. Lossy conversions disclose what will change before they run.',
     verify: 'Rename a PNG to .txt and confirm it is still detected as an image; check that a disabled row names its missing dependency rather than simply being greyed out.'
   },
   {
     id: 'authenticator', name: 'Built-in authenticator', group: 'Tools',
-    icon: 'phonelock', site: 'na', app: 'partial',
+    icon: 'phonelock', site: 'na', app: 'shipped',
     blurb: 'Standards-correct one-time codes for whatever accounts you like, computed locally and checked against the published test vectors.',
     detail: 'RFC 6238 over RFC 4226, SHA-1/256/512, six to eight digits and an arbitrary period, defaulting to SHA-1/6/30 because that is what the rest of the world issues. The current code is shown large and grouped with a copy action, a countdown that is never colour-only, and a peek at the next code so nobody starts typing one with two seconds left. A skewed system clock is reported in plain words rather than producing confidently wrong digits.',
     verify: 'Run the RFC 6238 published test vectors; every one must match. Set the system clock forward and confirm the surface says so.'

@@ -60,6 +60,16 @@ export function render(root) {
 
     const algoSel = ui.select({ value: algorithm, options: [{ value: 'SHA1', label: 'SHA-1 (usual)' }, { value: 'SHA256', label: 'SHA-256' }, { value: 'SHA512', label: 'SHA-512' }], label: 'Algorithm', width: 190, onChange: (v) => { algorithm = v; } });
     const digitSel = ui.select({ value: digits, options: [{ value: 6, label: '6 digits (usual)' }, { value: 7, label: '7 digits' }, { value: 8, label: '8 digits' }], label: 'Digits', width: 170, onChange: (v) => { digits = Number(v); } });
+    // The engine has always supported an arbitrary period and an imported URI
+    // has always carried one through; there was simply no way to type one, so a
+    // hand-entered secret was silently pinned to thirty seconds.
+    const periodInput = h('input', {
+      type: 'number', min: '1', max: '3600', step: '1', value: String(period),
+      'aria-label': 'Period in seconds',
+      oninput: (e) => { const v = Number(e.target.value); if (Number.isFinite(v) && v > 0) period = Math.round(v); }
+    });
+    const periodField = h('label', { class: 'field-labelled' },
+      h('span', {}, 'Period (seconds)'), periodInput);
 
     const d = ui.dialog({
       title: 'Add an entry',
@@ -75,7 +85,7 @@ export function render(root) {
               const p = totp.parseUri(uriInput.value);
               issuer.value = p.issuer; account.value = p.account; secret.value = p.secret;
               algorithm = p.algorithm; digits = p.digits; period = p.period;
-              algoSel.set(algorithm); digitSel.set(digits);
+              algoSel.set(algorithm); digitSel.set(digits); periodInput.value = String(period);
               err.textContent = '';
               err.style.color = 'var(--ok)';
               err.textContent = 'Read: ' + p.algorithm + ', ' + p.digits + ' digits, ' + p.period + 's period.';
@@ -89,7 +99,7 @@ export function render(root) {
           h('div', { class: 'field' }, issuer),
           h('div', { class: 'field' }, account)),
         h('div', { class: 'field' }, secret),
-        h('div', { class: 'row', style: { gap: '10px', flexWrap: 'wrap' } }, algoSel.el, digitSel.el),
+        h('div', { class: 'row', style: { gap: '10px', flexWrap: 'wrap', alignItems: 'flex-end' } }, algoSel.el, digitSel.el, periodField),
         err,
         h('div', { class: 'state state--info' }, icon('info'),
           h('div', { class: 'state__body' },
@@ -280,17 +290,75 @@ export function render(root) {
 
   // ---------- clock ----------
 
-  const clock = h('div', { class: 'muted', style: { fontSize: '.78rem', marginTop: '10px' } });
-  (async () => {
-    const skew = await totp.clockSkewSeconds();
-    if (skew === null) {
-      clock.textContent = 'System-clock accuracy is unknown: this application is offline by design and did not check. If codes are being refused everywhere, the clock is the first thing to look at.';
-    } else if (Math.abs(skew) <= 5) {
-      clock.textContent = 'The system clock is within ' + Math.abs(skew) + 's of network time, which is well inside the tolerance every verifier allows.';
-    } else {
-      clock.textContent = 'The system clock is ' + Math.abs(skew) + 's ' + (skew > 0 ? 'ahead of' : 'behind') + ' network time. Codes will be refused until it is corrected — this is the failure nobody diagnoses, because the digits look perfectly fine.';
+  const clock = h('div', { class: 'clock', role: 'status' });
+
+  /**
+   * Two different questions, reported as two different facts.
+   *
+   * "Is this clock right?" needs the network and cannot be answered offline,
+   * which is this application's normal state. "Did this clock just move?" needs
+   * nothing at all and is answered continuously. Reporting only the first meant
+   * that offline — the usual case — the surface said accuracy was unknown once
+   * and then never mentioned the clock again, however far it drifted.
+   */
+  const watch = totp.createClockWatch();
+  let networkSkew = null;
+  let networkCheckedAt = null;
+  let localJumpSeconds = 0;
+
+  function paintClock() {
+    clear(clock);
+    const lines = [];
+
+    if (localJumpSeconds) {
+      lines.push(h('div', { class: 'clock__alarm' },
+        icon('warn', 'icon icon--sm'),
+        h('span', {}, 'The system clock moved ' + Math.abs(localJumpSeconds) + ' seconds ' +
+          (localJumpSeconds > 0 ? 'forward' : 'backward') +
+          ' while this was open. Every code below changed with it, and any that were already typed elsewhere will now be refused.')));
     }
-  })();
+
+    if (networkSkew === null) {
+      lines.push(h('div', {},
+        networkCheckedAt
+          ? 'Network time could not be reached when this was last checked, so how accurate the clock IS remains unknown. Whether it has MOVED is watched continuously and reported above.'
+          : 'Checking the system clock against network time…'));
+    } else {
+      // An ageing verdict decays rather than continuing to reassure. A line
+      // saying "within 2s of network time" that was measured forty minutes ago
+      // is a claim about forty minutes ago.
+      const ageMin = networkCheckedAt ? Math.floor((Date.now() - networkCheckedAt) / 60000) : 0;
+      const when = ageMin < 1 ? 'just now' : ageMin === 1 ? '1 minute ago' : ageMin + ' minutes ago';
+      lines.push(h('div', {},
+        Math.abs(networkSkew) <= 5
+          ? 'The system clock was within ' + Math.abs(networkSkew) + 's of network time when checked ' + when + '.'
+          : 'The system clock was ' + Math.abs(networkSkew) + 's ' + (networkSkew > 0 ? 'ahead of' : 'behind') +
+            ' network time when checked ' + when + '. Codes will be refused until it is corrected — this is the failure nobody diagnoses, because the digits look perfectly fine.'));
+    }
+
+    lines.push(h('button', {
+      class: 'btn btn--outlined btn--sm',
+      onclick: () => checkNetwork(true)
+    }, 'Check against network time now'));
+
+    add(clock, ...lines);
+  }
+
+  async function checkNetwork(manual) {
+    if (manual) {
+      clock.setAttribute('aria-busy', 'true');
+    }
+    networkSkew = await totp.clockSkewSeconds();
+    networkCheckedAt = Date.now();
+    clock.removeAttribute('aria-busy');
+    paintClock();
+  }
+
+  checkNetwork(false);
+  // Re-checked on returning to the window, because that is when a clock is most
+  // likely to have been changed since anyone last looked.
+  const onFocus = () => { if (document.body.contains(page)) checkNetwork(false); };
+  window.addEventListener('focus', onFocus);
 
   page.append(
     h('div', { class: 'page__head' },
@@ -313,9 +381,30 @@ export function render(root) {
   root.append(page);
   paint();
 
-  // One tick a second keeps the codes and the countdown honest.
+  // One tick a second keeps the codes, the countdown and the clock watch honest.
   clearInterval(ticker);
-  ticker = setInterval(() => { if (document.body.contains(page)) paint(); else clearInterval(ticker); }, 1000);
+  ticker = setInterval(() => {
+    if (!document.body.contains(page)) {
+      clearInterval(ticker);
+      window.removeEventListener('focus', onFocus);
+      return;
+    }
+    paint();
+    // Checked every second, because a clock that moves has moved the codes on
+    // screen and someone reading them deserves to know within a second rather
+    // than the next time the page happens to be rebuilt.
+    const jump = watch.check();
+    if (jump) {
+      localJumpSeconds = jump;
+      paintClock();
+      state.log('System clock moved', jump + 's');
+      // The network verdict was measured against the old clock, so it is no
+      // longer a statement about this one.
+      networkSkew = null;
+      networkCheckedAt = null;
+      checkNetwork(false);
+    }
+  }, 1000);
 }
 
 export const meta = { id: 'authenticator', title: 'Authenticator', zh: '驗證器', icon: 'phonelock' };

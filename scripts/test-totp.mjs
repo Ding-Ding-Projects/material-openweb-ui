@@ -9,6 +9,7 @@
 //   node scripts/test-totp.mjs
 
 import { pathToFileURL } from 'node:url';
+import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 
 const mod = await import(pathToFileURL(join(process.cwd(), 'app', 'js', 'core', 'totp.js')).href);
@@ -124,6 +125,93 @@ check('eight digits are eight digits', /^\d{8}$/.test(eight), eight);
 
 // grouping is presentation only
 check('grouping does not change the secret', mod.base32Decode(mod.groupSecret(secret)).length === mod.base32Decode(secret).length);
+
+// ---------- the clock ----------
+//
+// A skewed clock is the failure nobody diagnoses: the digits look perfectly
+// fine and every service refuses them. The only detection used to be a network
+// fetch, which cannot answer at all offline — this application's normal state —
+// so offline the surface said "unknown" once and never mentioned the clock
+// again, however far it drifted afterwards.
+//
+// These two questions are different and are now answered separately. "Is this
+// clock right?" needs the network. "Did this clock just move?" needs nothing,
+// and is the one the contract's verification step actually asks about.
+
+console.log('');
+console.log('the clock');
+
+function fakeClock(startWall = 1_700_000_000_000, startMono = 0) {
+  let wall = startWall;
+  let mono = startMono;
+  return {
+    watch: mod.createClockWatch({ now: () => wall, monotonic: () => mono }),
+    /** Ordinary time passing: both readings advance together. */
+    pass(seconds) { wall += seconds * 1000; mono += seconds * 1000; },
+    /** Someone changes the system clock: only the wall reading moves. */
+    jump(seconds) { wall += seconds * 1000; }
+  };
+}
+
+const c1 = fakeClock();
+c1.pass(60);
+check('ordinary time passing is not a jump', c1.watch.check() === 0, String(c1.watch.check()));
+
+const c2 = fakeClock();
+c2.pass(5);
+c2.jump(3600);
+check('the clock being set an hour forward is detected', c2.watch.check() === 3600, String(c2.watch.check()));
+
+const c3 = fakeClock();
+c3.pass(5);
+c3.jump(-900);
+check('the clock being set backward is detected too', c3.watch.check() === -900, String(c3.watch.check()));
+
+const c4 = fakeClock();
+c4.pass(30);
+c4.jump(0.4);
+check('a fraction of a second is tolerated rather than reported as a jump',
+  c4.watch.check() === 0, String(c4.watch.check()));
+
+const c5 = fakeClock();
+c5.pass(10);
+c5.jump(120);
+c5.watch.check();
+c5.pass(10);
+check('after a jump is reported, ordinary time is ordinary again',
+  c5.watch.check() === 0, String(c5.watch.check()));
+
+check('it needs no network at all', (() => {
+  const before = globalThis.fetch;
+  globalThis.fetch = () => { throw new Error('the clock watch must not reach the network'); };
+  try {
+    const c = fakeClock();
+    c.pass(5);
+    c.jump(60);
+    return c.watch.check() === 60;
+  } finally {
+    globalThis.fetch = before;
+  }
+})());
+
+const surface = readFileSync(join(process.cwd(), 'app', 'js', 'pages', 'authenticator.js'), 'utf8');
+check('the surface watches for a jump on every tick, not once at render',
+  /watch\.check\(\)/.test(surface) && /setInterval/.test(surface));
+check('a network verdict ages rather than continuing to reassure',
+  /minutes ago|when checked/.test(surface),
+  'a line saying "within 2s" measured forty minutes ago is a claim about forty minutes ago');
+check('a jump invalidates the network verdict, which was measured against the old clock',
+  /networkSkew = null;/.test(surface));
+check('the clock can be re-checked on demand rather than only at startup',
+  /Check against network time now/.test(surface));
+check('the two questions are reported as two facts rather than blurred together',
+  /Whether it has MOVED is watched continuously/.test(surface));
+
+// The grouping fix lives on the page rather than in this module, so it is
+// asserted there instead of with a check here that would pass on anything.
+check('the page groups a code by a rule that covers seven and eight digits too',
+  /function groupCode/.test(surface) && /slice\(0, 4\)/.test(surface),
+  'a single non-global replace left "123 4567" for the lengths the feature offers');
 
 console.log('');
 if (failures) {

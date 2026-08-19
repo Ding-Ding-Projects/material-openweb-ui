@@ -8,6 +8,7 @@
 //   node scripts/test-convert.mjs
 
 import { pathToFileURL } from 'node:url';
+import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 
 const mod = await import(pathToFileURL(join(process.cwd(), 'app', 'js', 'core', 'convert.js')).href);
@@ -153,6 +154,52 @@ check('an unavailable adapter refuses and names what is missing', refused);
 
 check('output name never collides with its source extension',
   mod.outputName('report.json', mod.ADAPTERS.find((a) => a.id === 'json-csv')) === 'report.csv');
+
+// ---------- what a conversion destroys ----------
+//
+// Lossiness used to be a boolean stored beside the prose describing the loss,
+// and two of them disagreed: img-png and json-pretty were both flagged
+// lossless while their own text said animation was lost and duplicate keys
+// collapsed. The pre-run disclosure was gated on the flag, so those two ran
+// with no warning while the sentence explaining the loss sat in the same
+// object. A boolean that can contradict the prose beside it eventually will.
+
+console.log('');
+console.log('what a conversion destroys');
+
+const available = mod.ADAPTERS.filter((a) => a.available);
+check('every available adapter states what it destroys, even if that is nothing',
+  available.every((a) => Array.isArray(a.destroys)),
+  available.filter((a) => !Array.isArray(a.destroys)).map((a) => a.id).join(','));
+check('lossiness is derived from that list rather than stored separately',
+  typeof mod.isLossy === 'function' && available.every((a) => !('lossy' in a)),
+  available.filter((a) => 'lossy' in a).map((a) => a.id).join(','));
+check('isLossy agrees with the list, by construction',
+  available.every((a) => mod.isLossy(a) === (a.destroys.length > 0)));
+
+// The two that were wrong, named so a regression is obvious.
+const byId = Object.fromEntries(mod.ADAPTERS.map((a) => [a.id, a]));
+check('re-encoding to PNG is lossy, because animation does not survive it',
+  mod.isLossy(byId['img-png']), JSON.stringify(byId['img-png'].destroys));
+check('pretty-printing JSON is lossy, because duplicate keys collapse',
+  mod.isLossy(byId['json-pretty']), JSON.stringify(byId['json-pretty'].destroys));
+check('reading CSV into JSON really is lossless, so the check is not vacuous',
+  !mod.isLossy(byId['csv-json']));
+check('at least one available adapter is lossless and one is lossy',
+  available.some((a) => mod.isLossy(a)) && available.some((a) => !mod.isLossy(a)));
+
+// Each entry has to name a thing, not gesture at one.
+const vague = available.flatMap((a) => (a.destroys || [])
+  .filter((d) => typeof d !== 'string' || d.length < 20)
+  .map((d) => a.id + ': ' + JSON.stringify(d)));
+check('every stated loss names what is lost rather than gesturing at it',
+  vague.length === 0, vague.join(', '));
+
+const gate = readFileSync(join(process.cwd(), 'app', 'js', 'pages', 'converter.js'), 'utf8');
+check('the pre-run disclosure is gated on the derived value',
+  /convert\.isLossy\(adapter\)/.test(gate) && !/adapter\.lossy/.test(gate));
+check('and the dialog lists each loss rather than one paragraph that may omit some',
+  /adapter\.destroys\.map/.test(gate));
 
 console.log('');
 if (failures) {

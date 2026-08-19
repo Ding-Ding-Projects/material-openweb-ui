@@ -52,8 +52,8 @@ feature that will never be built on a surface says `na` rather than staying
 | chat | Chat with a local model | na | shipped | `app/js/core/ollama.js#export async function chat` | content.js |
 | ollama | Local Ollama suite manager | na | shipped | `app/js/core/ollama.js#export async function pull` | content.js |
 | fit | Evidence-backed hardware fit verdicts | na | shipped | `electron/hardware.ts#export function fit` | content.js |
-| converter | Universal file converter | na | partial | `app/js/core/convert.js#export function sniff` | content.js |
-| authenticator | Built-in authenticator | na | partial | `app/js/core/totp.js#export async function totp` | content.js |
+| converter | Universal file converter | na | shipped | `app/js/core/convert.js#export function sniff` | content.js |
+| authenticator | Built-in authenticator | na | shipped | `app/js/core/totp.js#export async function totp` | content.js |
 | qr | QR pairing for one-time-code registration | na | shipped | `app/js/core/qr.js#export function encode` | content.js |
 | locks | Toy locks on every element | na | shipped | `app/js/core/locks.js#export async function create` | content.js |
 | tickets | Support Tickets | na | shipped | `app/js/locks-ui.js#export function supportTickets` | content.js |

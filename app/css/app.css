@@ -811,3 +811,19 @@ progress {
   letter-spacing: .06em; opacity: .65; margin-bottom: 5px;
 }
 .dest input { flex: 1; min-width: 0; }
+
+.destroys { margin: 6px 0 8px; padding-left: 20px; font-size: .82rem; line-height: 1.7; }
+.destroys li { margin-bottom: 3px; }
+
+.clock {
+  display: flex; flex-direction: column; align-items: flex-start; gap: 8px;
+  font-size: .78rem; line-height: 1.6; margin-top: 10px; opacity: .9;
+}
+.clock__alarm {
+  display: flex; gap: 8px; align-items: flex-start;
+  background: var(--errc); color: var(--onerrc);
+  border-radius: 10px; padding: 9px 12px; opacity: 1;
+}
+
+.field-labelled { display: flex; flex-direction: column; gap: 3px; font-size: .74rem; }
+.field-labelled input { width: 110px; }

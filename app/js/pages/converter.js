@@ -128,7 +128,7 @@ export function render(root) {
                 h('div', { class: 'stack', style: { gap: '3px', flex: '1', minWidth: '0' } },
                   h('div', { class: 'row', style: { gap: '8px' } },
                     h('strong', { style: { fontSize: '.88rem' } }, a.to),
-                    a.lossy ? h('span', { class: 'chip chip--warn', style: { height: '20px', fontSize: '.62rem', padding: '0 8px' } }, 'lossy') : null,
+                    convert.isLossy(a) ? h('span', { class: 'chip chip--warn', style: { height: '20px', fontSize: '.62rem', padding: '0 8px' } }, 'lossy') : null,
                     !a.available ? h('span', { class: 'chip chip--tonal', style: { height: '20px', fontSize: '.62rem', padding: '0 8px' } }, 'not bundled') : null),
                   h('span', { class: 'muted', style: { fontSize: '.76rem', lineHeight: '1.55' } }, a.available ? a.discloses : a.reason)),
                 btn));
@@ -160,15 +160,16 @@ export function render(root) {
 
     // A lossy conversion discloses exactly what changes before it runs, and
     // needs an explicit action rather than happening on the first click.
-    if (adapter.lossy) {
+    if (convert.isLossy(adapter)) {
       ui.dialog({
         title: 'Convert to ' + adapter.to + '?',
         emoji: '⚠️',
         body: h('div', { class: 'stack', style: { gap: '12px' } },
-          h('div', { class: 'state state--info' }, icon('info'),
+          h('div', { class: 'state state--warn' }, icon('warn'),
             h('div', { class: 'state__body' },
-              h('div', { class: 'state__title' }, 'This conversion changes the data'),
-              h('div', { class: 'state__text' }, adapter.discloses))),
+              h('div', { class: 'state__title' }, 'This conversion destroys something'),
+              h('ul', { class: 'destroys' }, ...adapter.destroys.map((d) => h('li', {}, d))),
+              adapter.discloses ? h('div', { class: 'state__text' }, adapter.discloses) : null)),
           h('p', { class: 'muted', style: { fontSize: '.85rem' } },
             'The source file is never modified. The result is written as a new file you can save.')),
         actions: [

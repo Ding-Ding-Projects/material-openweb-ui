@@ -177,6 +177,52 @@ export async function clockSkewSeconds(fetchImpl = fetch) {
   }
 }
 
+/**
+ * Watches for the clock MOVING, without asking anyone.
+ *
+ * The network check answers a different question — "is this clock right?" — and
+ * cannot answer it at all offline, which is this application's normal state. So
+ * it was the only detection there was, and offline the surface simply said the
+ * accuracy was unknown and then never mentioned it again.
+ *
+ * This answers "did this clock just change?", locally and always. A monotonic
+ * reading and a wall-clock reading are recorded together; if the two disagree
+ * about how much time has passed, the wall clock was moved. That is exactly the
+ * contract's own verification step — set the system clock forward and confirm
+ * the surface says so — and it needs no network at all.
+ *
+ * It cannot tell you a clock that was ALREADY wrong when the application
+ * started. Only the network check can, and the surface says which of the two it
+ * is reporting rather than blurring them together.
+ */
+export function createClockWatch({ now = () => Date.now(), monotonic = () => performance.now() } = {}) {
+  let wall = now();
+  let mono = monotonic();
+
+  return {
+    /**
+     * How far the wall clock has moved beyond the time that actually elapsed,
+     * in seconds. Zero, or near it, in ordinary running.
+     */
+    check() {
+      const nextWall = now();
+      const nextMono = monotonic();
+      const wallElapsed = nextWall - wall;
+      const monoElapsed = nextMono - mono;
+      wall = nextWall;
+      mono = nextMono;
+      const jumpMs = wallElapsed - monoElapsed;
+      // A second of tolerance, because a sleeping tab and a busy machine both
+      // drift by a few hundred milliseconds without anything being wrong.
+      return Math.abs(jumpMs) < 1000 ? 0 : Math.round(jumpMs / 1000);
+    },
+    reset() {
+      wall = now();
+      mono = monotonic();
+    }
+  };
+}
+
 // ---------------------------------------------------------------- self-check
 
 /**
