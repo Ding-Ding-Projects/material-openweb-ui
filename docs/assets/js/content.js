@@ -209,7 +209,7 @@ export const FEATURES = [
   },
   {
     id: 'bulk', name: 'Bulk actions on every list', group: 'Data',
-    icon: 'grid', site: 'partial', app: 'shipped',
+    icon: 'grid', site: 'shipped', app: 'shipped',
     blurb: 'Multi-select, shift-click ranges, a select-all that states its scope, and inverse selection.',
     detail: 'Not exempt for the notification centre or a history panel — those are lists too. Actions are offered in bulk rather than a token subset, the exact count and a reviewable preview are shown first, and anything skipped is reported rather than silently dropped.',
     verify: 'Select every match of a filter, run a bulk action, and confirm the report distinguishes changed from skipped.'

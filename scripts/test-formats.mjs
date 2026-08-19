@@ -22,7 +22,7 @@
 import { pathToFileURL } from 'node:url';
 import { join } from 'node:path';
 
-const F = await import(pathToFileURL(join(process.cwd(), 'app', 'js', 'core', 'formats.js')).href);
+const F = await import(pathToFileURL(join(process.cwd(), 'docs', 'assets', 'js', 'formats.js')).href);
 
 let failures = 0;
 function check(name, ok, detail = '') {

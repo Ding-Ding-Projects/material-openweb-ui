@@ -5,6 +5,7 @@ import { searchField } from './regex.js';
 import * as ui from './ui.js';
 import * as store from './store.js';
 import * as i18n from './i18n.js';
+import { bulkBar, rowCheckbox } from './bulk.js';
 import * as settings from './settings.js';
 import { FEATURES, FEATURE_GROUPS, DOCS, CHANGELOG, STATUS, suggestedFor } from './content.js';
 
@@ -460,18 +461,17 @@ function status(root) {
   const countEl = h('div', { class: 'muted', style: { fontSize: '.8rem' } });
   const field = searchField({ placeholder: 'Search the event log…', label: 'Search event log', sampleFrom: () => store.history().map((e) => e.label) });
 
-  const selected = new Set();
   let actionFilter = null;
 
   const actionBtn = h('button', { class: 'btn btn--outlined' }, 'All actions', icon('arrow', 'icon icon--sm'));
   actionBtn.addEventListener('click', () => {
     const acts = store.historyActions();
     ui.menu(actionBtn, [
-      { label: 'All actions (' + store.history().length + ')', icon: actionFilter === null ? 'check' : undefined, run: () => { actionFilter = null; actionBtn.firstChild.textContent = 'All actions'; render(); } },
+      { label: 'All actions (' + store.history().length + ')', icon: actionFilter === null ? 'check' : undefined, run: () => { actionFilter = null; actionBtn.firstChild.textContent = 'All actions'; render(); bar.repaint(); } },
       ...acts.map((a) => ({
         label: a.action + ' (' + a.count + ')',
         icon: actionFilter === a.action ? 'check' : undefined,
-        run: () => { actionFilter = a.action; actionBtn.firstChild.textContent = a.action; render(); }
+        run: () => { actionFilter = a.action; actionBtn.firstChild.textContent = a.action; render(); bar.repaint(); }
       }))
     ], { label: 'Filter by action', filterPlaceholder: 'Filter actions…' });
   });
@@ -497,11 +497,7 @@ function status(root) {
       return;
     }
     for (const e of rows) {
-      const cb = h('input', {
-        type: 'checkbox', 'aria-label': 'Select ' + e.label, style: { accentColor: 'var(--p)' },
-        checked: selected.has(e.id),
-        onchange: (ev) => { ev.target.checked ? selected.add(e.id) : selected.delete(e.id); sync(); }
-      });
+      const cb = rowCheckbox(bar, e.id, e.label);
       log.appendChild(h('div', { class: 'card', style: { display: 'flex', gap: '12px', alignItems: 'center', padding: '12px 16px' } },
         cb,
         h('span', { class: 'chip chip--tonal', style: { height: '24px', fontSize: '.66rem' } }, e.action),
@@ -512,27 +508,30 @@ function status(root) {
     }
   }
 
-  const bulkBar = h('div', { class: 'row', style: { gap: '10px', flexWrap: 'wrap' } });
-  function sync() {
-    clear(bulkBar);
-    const rows = view();
-    add(bulkBar, 
-      h('button', { class: 'btn btn--text', onclick: () => { rows.forEach((r) => selected.add(r.id)); render(); sync(); } }, 'Select all ' + rows.length + ' matching'),
-      h('button', { class: 'btn btn--text', onclick: () => { rows.forEach((r) => selected.has(r.id) ? selected.delete(r.id) : selected.add(r.id)); render(); sync(); } }, 'Invert'),
-      h('button', { class: 'btn btn--text', onclick: () => { selected.clear(); render(); sync(); } }, 'Clear'),
-      selected.size ? h('span', { class: 'chip' }, selected.size + ' selected') : null,
-      selected.size ? h('button', {
-        class: 'btn btn--outlined',
-        onclick: () => {
-          const rows2 = store.history().filter((e) => selected.has(e.id));
-          ui.downloadFile('event-log.json', JSON.stringify({ schema: 'material-open-webui.event-log', version: 1, exported: rows2.length, entries: rows2 }, null, 2), 'application/json');
-          ui.notify('Exported ' + rows2.length + ' selected entries, honouring the current filter.', { kind: 'ok' });
-        }
-      }, icon('download', 'icon icon--sm'), 'Export selected') : null
-    );
-  }
+  // The shared bar rather than a fourth hand-rolled one.
+  //
+  // The version this replaced had exactly the defect that bar exists to
+  // prevent: "Select all N matching", then change the filter, and the export
+  // acted on everything still selected while announcing that it was "honouring
+  // the current filter". It was not, and nothing on the surface said so.
+  const bar = bulkBar({
+    getScopeIds: () => view().map((e) => e.id),
+    getAllIds: () => store.history().map((e) => e.id),
+    noun: 'entry',
+    actions: [],
+    exportRows: (ids) => {
+      const want = new Set(ids);
+      return store.history().filter((e) => want.has(e.id)).map((e) => ({
+        at: new Date(e.t).toISOString(),
+        action: e.action,
+        label: e.label,
+        detail: e.detail ? JSON.stringify(e.detail) : ''
+      }));
+    },
+    onChange: () => render()
+  });
 
-  field.onChange(() => { render(); sync(); });
+  field.onChange(() => { render(); bar.repaint(); });
 
   const session = h('div', { class: 'card', style: { display: 'flex', flexDirection: 'column', gap: '12px', marginBottom: '24px' } },
     h('div', { class: 'row', style: { gap: '10px' } }, icon('pulse'), h('strong', {}, 'This session')),
@@ -555,7 +554,7 @@ function status(root) {
     sectionHead('Status', 'A live session card and the real event log. Every feature on this site writes to it, so what you read here is what happened rather than what was meant to.',
       h('div', { class: 'row', style: { gap: '10px', flexWrap: 'wrap' } }, actionBtn)),
     session,
-    h('div', { class: 'stack', style: { gap: '10px', marginBottom: '16px' } }, field.el, countEl, bulkBar),
+    h('div', { class: 'stack', style: { gap: '10px', marginBottom: '16px' } }, field.el, countEl, bar.el),
     log
   );
   root.appendChild(wrap);

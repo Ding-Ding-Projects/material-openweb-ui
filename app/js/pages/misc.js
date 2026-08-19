@@ -9,7 +9,7 @@ import * as ui from '../../../docs/assets/js/ui.js';
 import * as state from '../state.js';
 import * as desktop from '../desktop.js';
 import * as ollama from '../core/ollama.js';
-import { bulkBar, rowCheckbox } from '../bulk.js';
+import { bulkBar, rowCheckbox } from '../../../docs/assets/js/bulk.js';
 
 // ---------------------------------------------------------------- status
 

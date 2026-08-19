@@ -11,8 +11,8 @@ import { searchField } from '../../../docs/assets/js/regex.js';
 import * as ui from '../../../docs/assets/js/ui.js';
 import * as state from '../state.js';
 import * as historyCore from '../core/history.js';
-import * as formats from '../core/formats.js';
-import { bulkBar, rowCheckbox } from '../bulk.js';
+import * as formats from '../../../docs/assets/js/formats.js';
+import { bulkBar, rowCheckbox } from '../../../docs/assets/js/bulk.js';
 
 export const meta = { title: 'History', icon: 'history', zh: '版本記錄' };
 

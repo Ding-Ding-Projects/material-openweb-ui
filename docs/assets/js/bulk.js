@@ -6,10 +6,10 @@
 // not currently visible. Written per-list, three lists have it and the fourth
 // does not, and the fourth is where somebody loses something.
 
-import { h, add as append, clear, icon } from '../../docs/assets/js/dom.js';
-import * as ui from '../../docs/assets/js/ui.js';
-import * as sel from './core/selection.js';
-import * as formats from './core/formats.js';
+import { h, add as append, clear, icon } from './dom.js';
+import * as ui from './ui.js';
+import * as sel from './selection.js';
+import * as formats from './formats.js';
 
 /**
  * @param getScopeIds  the identifiers currently VISIBLE, in view order
@@ -124,6 +124,7 @@ export function bulkBar({ getScopeIds, getAllIds, noun = 'item', nounPlural, act
   }
 
   function exportDialog() {
+    const sum = state();
     const rows = exportRows([...selection]);
     let format = 'json';
     const preview = h('pre', { class: 'bulk__preview mono' });
@@ -149,6 +150,17 @@ export function bulkBar({ getScopeIds, getAllIds, noun = 'item', nounPlural, act
       emoji: '⬇️',
       wide: true,
       body: h('div', { class: 'stack', style: { gap: '12px' } },
+        // The same sentence an action gets. An export is not destructive, but
+        // the specific bug this bar replaced was an export that included rows
+        // the filter was hiding while announcing that it honoured the filter —
+        // so it says what it is about to write, in the same words.
+        h('p', {}, sel.describeScope(sum, { verb: 'export', noun, nounPlural })),
+        sum.hidden
+          ? h('div', { class: 'state state--warn' }, icon('warn'),
+              h('div', { class: 'state__body' },
+                h('div', { class: 'state__text' },
+                  'They were selected before the current filter was applied, and they will be in the file.')))
+          : null,
         h('p', { class: 'muted', style: { fontSize: '.8rem', lineHeight: '1.6' } },
           'Written on this machine and saved straight to disk. Nothing is uploaded, and the file is complete on its own — no stylesheet or script is fetched from anywhere when you open it.'),
         chooser.el,

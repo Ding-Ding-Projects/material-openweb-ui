@@ -17,7 +17,7 @@ import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 
 const ROOT = process.cwd();
-const S = await import(pathToFileURL(join(ROOT, 'app', 'js', 'core', 'selection.js')).href);
+const S = await import(pathToFileURL(join(ROOT, 'docs', 'assets', 'js', 'selection.js')).href);
 
 let failures = 0;
 function check(name, ok, detail = '') {
@@ -176,7 +176,7 @@ check('the scope sentence uses it', (() => {
 console.log('');
 console.log('the shared bar');
 
-const barSource = readFileSync(join(ROOT, 'app', 'js', 'bulk.js'), 'utf8');
+const barSource = readFileSync(join(ROOT, 'docs', 'assets', 'js', 'bulk.js'), 'utf8');
 check('one bar is shared rather than a select-all per list',
   /export function bulkBar/.test(barSource));
 check('the bar renders the hidden-count warning itself, so no list can omit it',
@@ -207,6 +207,23 @@ check('stale selections are reported in the confirmation rather than silently sk
   /sum\.stale/.test(barSource));
 check('every list gets export in every format, not a JSON-only shortcut',
   /formats\.FORMATS\.map/.test(barSource));
+// Export bypassed the confirmation entirely at first, which meant it bypassed
+// the out-of-view warning too — and an export that includes rows the filter is
+// hiding, while saying it honours the filter, is the exact bug this bar was
+// written to replace on the documentation site.
+// Scoped to the function body rather than a character window: a fixed window
+// is a guess about how long the function is, and it goes wrong the moment
+// anything is added above the line being looked for.
+const exportBody = barSource.slice(
+  barSource.indexOf('function exportDialog()'),
+  barSource.indexOf('  paint();', barSource.indexOf('function exportDialog()'))
+);
+check('the export dialog body was found', exportBody.length > 200, String(exportBody.length));
+check('the export dialog states its scope in the same words an action does',
+  /describeScope\(sum/.test(exportBody),
+  'export is not destructive, but it is the path where the original defect lived');
+check('and it warns when the file will contain rows that are not on screen',
+  /sum\.hidden/.test(exportBody));
 
 console.log('');
 if (failures) {

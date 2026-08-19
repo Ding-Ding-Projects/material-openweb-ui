@@ -70,8 +70,8 @@ feature that will never be built on a surface says `na` rather than staying
 | rename | Rename the product | shipped | shipped | `app/js/core/logo.js#export const IDENTITY` | content.js |
 | confirm | Destructive-action super confirmation | shipped | shipped | `docs/assets/js/ui.js#export function superConfirm` | content.js |
 | notify | Non-blocking notifications with a reviewable centre | shipped | shipped | `docs/assets/js/ui.js#export function notify` | content.js |
-| bulk | Bulk actions on every list | partial | shipped | `app/js/core/selection.js#export function describeScope` | content.js |
-| export | Export everything, in every format that fits | shipped | shipped | `app/js/core/formats.js#export function serialise` | content.js |
+| bulk | Bulk actions on every list | shipped | shipped | `docs/assets/js/selection.js#export function describeScope` | content.js |
+| export | Export everything, in every format that fits | shipped | shipped | `docs/assets/js/formats.js#export function serialise` | content.js |
 | history | Local version history | shipped | shipped | `app/js/core/history.js#export async function verify` | content.js |
 | changelog | Changelog viewer | shipped | shipped | `app/js/pages/changelog.js#export function render` | content.js |
 | status | Status Hub | shipped | shipped | `app/js/pages/misc.js#export function renderStatus` | content.js |

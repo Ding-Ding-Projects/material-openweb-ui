@@ -12,8 +12,8 @@ import { h, add, clear, icon } from '../../../docs/assets/js/dom.js';
 import { searchField } from '../../../docs/assets/js/regex.js';
 import * as ui from '../../../docs/assets/js/ui.js';
 import { CHANGELOG } from '../../../docs/assets/js/content.js';
-import * as formats from '../core/formats.js';
-import { bulkBar, rowCheckbox } from '../bulk.js';
+import * as formats from '../../../docs/assets/js/formats.js';
+import { bulkBar, rowCheckbox } from '../../../docs/assets/js/bulk.js';
 
 export const meta = { title: 'Changelog', icon: 'clock', zh: '更新紀錄' };
 
