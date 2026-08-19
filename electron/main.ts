@@ -26,26 +26,26 @@ const backend = new Backend(REPO_ROOT);
 // The display name is the user's to change; the identity is not. Both are read
 // from here so nothing else is tempted to derive one from the other.
 function appIdentity() {
-  let version = '0.0.0';
-  try {
-    version = JSON.parse(readFileSync(join(REPO_ROOT, 'package.json'), 'utf8')).version ?? version;
-  } catch {
-    /* keep the fallback */
-  }
-  return { id: APP_ID, name: SHIPPED_NAME, version, userData: app.getPath('userData') };
+	let version = '0.0.0';
+	try {
+		version = JSON.parse(readFileSync(join(REPO_ROOT, 'package.json'), 'utf8')).version ?? version;
+	} catch {
+		/* keep the fallback */
+	}
+	return { id: APP_ID, name: SHIPPED_NAME, version, userData: app.getPath('userData') };
 }
 
 function builtFrontend(): string | null {
-  // The Material Design 3 frontend first: it needs no build step, which is why
-  // the shell can load it straight from disk. The compiled upstream SPA is the
-  // fallback for when that is what somebody wants to run.
-  const candidates = [
-    join(REPO_ROOT, 'app', 'index.html'),
-    join(__dirname_, '..', 'app', 'index.html'),
-    join(REPO_ROOT, 'build', 'index.html'),
-    join(__dirname_, '..', 'build', 'index.html')
-  ];
-  return candidates.find((p) => existsSync(p)) ?? null;
+	// The Material Design 3 frontend first: it needs no build step, which is why
+	// the shell can load it straight from disk. The compiled upstream SPA is the
+	// fallback for when that is what somebody wants to run.
+	const candidates = [
+		join(REPO_ROOT, 'app', 'index.html'),
+		join(__dirname_, '..', 'app', 'index.html'),
+		join(REPO_ROOT, 'build', 'index.html'),
+		join(__dirname_, '..', 'build', 'index.html')
+	];
+	return candidates.find((p) => existsSync(p)) ?? null;
 }
 
 /**
@@ -54,7 +54,7 @@ function builtFrontend(): string | null {
  * away from a working app and does not know which one.
  */
 function notBuiltPage(): string {
-  const html = `<!doctype html><html><head><meta charset="utf-8"><title>${SHIPPED_NAME}</title>
+	const html = `<!doctype html><html><head><meta charset="utf-8"><title>${SHIPPED_NAME}</title>
 <style>
   :root { color-scheme: dark; }
   body { margin:0; font-family:"Segoe UI Variable Text","Segoe UI",system-ui,sans-serif;
@@ -77,131 +77,135 @@ function notBuiltPage(): string {
      meant to load is not implemented yet — <code>INVENTORY.md</code> marks it
      planned rather than shipped.</p>
 </main></body></html>`;
-  return 'data:text/html;charset=utf-8,' + encodeURIComponent(html);
+	return 'data:text/html;charset=utf-8,' + encodeURIComponent(html);
 }
 
 function createWindow() {
-  win = new BrowserWindow({
-    width: 1280,
-    height: 820,
-    minWidth: 420,
-    minHeight: 520,
-    show: false,
-    frame: false,
-    titleBarStyle: 'hidden',
-    backgroundColor: nativeTheme.shouldUseDarkColors ? '#141218' : '#FEF7FF',
-    title: SHIPPED_NAME,
-    webPreferences: {
-      // Electron detects an ESM preload by extension, so the compiled file is
-      // copied to .mjs after tsc; a .js preload here loads as CommonJS and the
-      // import statements inside it throw before contextBridge is ever reached.
-      preload: join(__dirname_, 'preload.mjs'),
-      contextIsolation: true,
-      nodeIntegration: false,
-      sandbox: false
-    }
-  });
+	win = new BrowserWindow({
+		width: 1280,
+		height: 820,
+		minWidth: 420,
+		minHeight: 520,
+		show: false,
+		frame: false,
+		titleBarStyle: 'hidden',
+		backgroundColor: nativeTheme.shouldUseDarkColors ? '#141218' : '#FEF7FF',
+		title: SHIPPED_NAME,
+		webPreferences: {
+			// Electron detects an ESM preload by extension, so the compiled file is
+			// copied to .mjs after tsc; a .js preload here loads as CommonJS and the
+			// import statements inside it throw before contextBridge is ever reached.
+			preload: join(__dirname_, 'preload.mjs'),
+			contextIsolation: true,
+			nodeIntegration: false,
+			sandbox: false
+		}
+	});
 
-  // Nothing in this application opens a third-party page in-window. External
-  // links go to the real browser, where the address bar is visible.
-  win.webContents.setWindowOpenHandler(({ url }) => {
-    if (/^https?:/.test(url)) shell.openExternal(url);
-    return { action: 'deny' };
-  });
+	// Nothing in this application opens a third-party page in-window. External
+	// links go to the real browser, where the address bar is visible.
+	win.webContents.setWindowOpenHandler(({ url }) => {
+		if (/^https?:/.test(url)) shell.openExternal(url);
+		return { action: 'deny' };
+	});
 
-  const devUrl = process.env.MOWUI_DEV_URL;
-  const built = builtFrontend();
+	const devUrl = process.env.MOWUI_DEV_URL;
+	const built = builtFrontend();
 
-  if (devUrl) win.loadURL(devUrl);
-  else if (built) win.loadFile(built);
-  else win.loadURL(notBuiltPage());
+	if (devUrl) win.loadURL(devUrl);
+	else if (built) win.loadFile(built);
+	else win.loadURL(notBuiltPage());
 
-  win.once('ready-to-show', () => win?.show());
-  win.on('closed', () => { win = null; });
+	win.once('ready-to-show', () => win?.show());
+	win.on('closed', () => {
+		win = null;
+	});
 
-  // Attached individually rather than looped: BrowserWindow.on is heavily
-  // overloaded, and a union of event names does not resolve against it.
-  const report = (name: string) => () =>
-    pushEvent({ type: 'window:' + name, isMaximized: win?.isMaximized() ?? false });
-  win.on('maximize', report('maximize'));
-  win.on('unmaximize', report('unmaximize'));
-  win.on('focus', report('focus'));
-  win.on('blur', report('blur'));
+	// Attached individually rather than looped: BrowserWindow.on is heavily
+	// overloaded, and a union of event names does not resolve against it.
+	const report = (name: string) => () =>
+		pushEvent({ type: 'window:' + name, isMaximized: win?.isMaximized() ?? false });
+	win.on('maximize', report('maximize'));
+	win.on('unmaximize', report('unmaximize'));
+	win.on('focus', report('focus'));
+	win.on('blur', report('blur'));
 }
 
 function pushEvent(payload: unknown) {
-  win?.webContents.send('desktop:event', payload);
+	win?.webContents.send('desktop:event', payload);
 }
 
 ipcMain.handle('desktop:send', async (_e, message: { type: string; [k: string]: unknown }) => {
-  switch (message?.type) {
-    case 'app:info':
-      return appIdentity();
+	switch (message?.type) {
+		case 'app:info':
+			return appIdentity();
 
-    case 'app:data':
-      return { backend: backend.current(), platform: process.platform, arch: process.arch };
+		case 'app:data':
+			return { backend: backend.current(), platform: process.platform, arch: process.arch };
 
-    case 'window:isFocused':
-      return { isFocused: win?.isFocused() ?? false };
+		case 'window:isFocused':
+			return { isFocused: win?.isFocused() ?? false };
 
-    case 'window:minimize':
-      win?.minimize();
-      return { ok: true };
+		case 'window:minimize':
+			win?.minimize();
+			return { ok: true };
 
-    case 'window:maximize':
-      if (win?.isMaximized()) win.unmaximize();
-      else win?.maximize();
-      return { ok: true, isMaximized: win?.isMaximized() ?? false };
+		case 'window:maximize':
+			if (win?.isMaximized()) win.unmaximize();
+			else win?.maximize();
+			return { ok: true, isMaximized: win?.isMaximized() ?? false };
 
-    case 'window:close':
-      win?.close();
-      return { ok: true };
+		case 'window:close':
+			win?.close();
+			return { ok: true };
 
-    case 'window:state':
-      return { isMaximized: win?.isMaximized() ?? false, isFocused: win?.isFocused() ?? false };
+		case 'window:state':
+			return { isMaximized: win?.isMaximized() ?? false, isFocused: win?.isFocused() ?? false };
 
-    case 'backend:state':
-      return backend.current();
+		case 'backend:state':
+			return backend.current();
 
-    case 'backend:start':
-      return backend.start();
+		case 'backend:start':
+			return backend.start();
 
-    case 'hardware:probe':
-      return probe(typeof message.destination === 'string' ? message.destination : undefined);
+		case 'hardware:probe':
+			return probe(typeof message.destination === 'string' ? message.destination : undefined);
 
-    // Batched on purpose. A catalogue row is one of hundreds, and a probe per
-    // row would measure the same machine hundreds of times to produce hundreds
-    // of identical hardware readings.
-    case 'hardware:fit': {
-      const hw = await probe(typeof message.destination === 'string' ? message.destination : undefined);
-      const models = Array.isArray(message.models) ? message.models.slice(0, 500) : [];
-      return {
-        hardware: hw,
-        verdicts: models.map((m) => ({ id: String(m.id), ...fit(hw, m) }))
-      };
-    }
+		// Batched on purpose. A catalogue row is one of hundreds, and a probe per
+		// row would measure the same machine hundreds of times to produce hundreds
+		// of identical hardware readings.
+		case 'hardware:fit': {
+			const hw = await probe(
+				typeof message.destination === 'string' ? message.destination : undefined
+			);
+			const models = Array.isArray(message.models) ? message.models.slice(0, 500) : [];
+			return {
+				hardware: hw,
+				verdicts: models.map((m) => ({ id: String(m.id), ...fit(hw, m) }))
+			};
+		}
 
-    case 'token:update':
-      // Deliberately not stored, not logged and not written anywhere. The token
-      // belongs to the renderer's session; the shell has no use for a copy, and
-      // a copy is a thing that can leak.
-      return { ok: true };
+		case 'token:update':
+			// Deliberately not stored, not logged and not written anywhere. The token
+			// belongs to the renderer's session; the shell has no use for a copy, and
+			// a copy is a thing that can leak.
+			return { ok: true };
 
-    case 'shell:openPath':
-      // The recovery route opens the folder and stands back. It never deletes.
-      if (typeof message.path === 'string') await shell.openPath(message.path);
-      return { ok: true };
+		case 'shell:openPath':
+			// The recovery route opens the folder and stands back. It never deletes.
+			if (typeof message.path === 'string') await shell.openPath(message.path);
+			return { ok: true };
 
-    case 'shell:showItemInFolder':
-      if (typeof message.path === 'string') shell.showItemInFolder(message.path);
-      return { ok: true };
+		case 'shell:showItemInFolder':
+			if (typeof message.path === 'string') shell.showItemInFolder(message.path);
+			return { ok: true };
 
-    case 'shell:load':
-      return { ok: false, reason: 'Named views are not implemented yet in this shell.' };
+		case 'shell:load':
+			return { ok: false, reason: 'Named views are not implemented yet in this shell.' };
 
-    default:
-      return { ok: false, reason: 'Unknown message type: ' + String(message?.type) };
-  }
+		default:
+			return { ok: false, reason: 'Unknown message type: ' + String(message?.type) };
+	}
 });
 
 /**
@@ -219,33 +223,33 @@ ipcMain.handle('desktop:send', async (_e, message: { type: string; [k: string]: 
  * back-pressure badly. The renderer already streams correctly.
  */
 const ALLOWED_ORIGINS = new Set<string>([
-  'http://127.0.0.1:11434',
-  'http://localhost:11434',
-  'https://registry.ollama.ai',
-  'https://ollama.com'
+	'http://127.0.0.1:11434',
+	'http://localhost:11434',
+	'https://registry.ollama.ai',
+	'https://ollama.com'
 ]);
 
 function installCorsAllowlist() {
-  session.defaultSession.webRequest.onHeadersReceived((details, callback) => {
-    let origin: string | null = null;
-    try {
-      origin = new URL(details.url).origin;
-    } catch {
-      /* not a URL we can reason about */
-    }
-    if (!origin || !ALLOWED_ORIGINS.has(origin)) {
-      callback({ responseHeaders: details.responseHeaders });
-      return;
-    }
-    callback({
-      responseHeaders: {
-        ...details.responseHeaders,
-        'Access-Control-Allow-Origin': ['*'],
-        'Access-Control-Allow-Headers': ['content-type'],
-        'Access-Control-Allow-Methods': ['GET, POST, DELETE, OPTIONS']
-      }
-    });
-  });
+	session.defaultSession.webRequest.onHeadersReceived((details, callback) => {
+		let origin: string | null = null;
+		try {
+			origin = new URL(details.url).origin;
+		} catch {
+			/* not a URL we can reason about */
+		}
+		if (!origin || !ALLOWED_ORIGINS.has(origin)) {
+			callback({ responseHeaders: details.responseHeaders });
+			return;
+		}
+		callback({
+			responseHeaders: {
+				...details.responseHeaders,
+				'Access-Control-Allow-Origin': ['*'],
+				'Access-Control-Allow-Headers': ['content-type'],
+				'Access-Control-Allow-Methods': ['GET, POST, DELETE, OPTIONS']
+			}
+		});
+	});
 }
 
 app.setAppUserModelId(APP_ID);
@@ -253,31 +257,31 @@ app.setAppUserModelId(APP_ID);
 // One window, one instance. A second launch focuses the first rather than
 // starting a rival copy pointed at the same data directory.
 if (!app.requestSingleInstanceLock()) {
-  app.quit();
+	app.quit();
 } else {
-  app.on('second-instance', () => {
-    if (win) {
-      if (win.isMinimized()) win.restore();
-      win.focus();
-    }
-  });
+	app.on('second-instance', () => {
+		if (win) {
+			if (win.isMinimized()) win.restore();
+			win.focus();
+		}
+	});
 
-  app.whenReady().then(async () => {
-    installCorsAllowlist();
-    createWindow();
-    backend.onChange((state) => pushEvent({ type: 'backend:state', state }));
-    // Not awaited: a slow or absent backend must never delay the window.
-    backend.start().catch((e) => console.error('backend start failed', e));
+	app.whenReady().then(async () => {
+		installCorsAllowlist();
+		createWindow();
+		backend.onChange((state) => pushEvent({ type: 'backend:state', state }));
+		// Not awaited: a slow or absent backend must never delay the window.
+		backend.start().catch((e) => console.error('backend start failed', e));
 
-    app.on('activate', () => {
-      if (BrowserWindow.getAllWindows().length === 0) createWindow();
-    });
-  });
+		app.on('activate', () => {
+			if (BrowserWindow.getAllWindows().length === 0) createWindow();
+		});
+	});
 
-  app.on('window-all-closed', () => {
-    backend.stop();
-    if (process.platform !== 'darwin') app.quit();
-  });
+	app.on('window-all-closed', () => {
+		backend.stop();
+		if (process.platform !== 'darwin') app.quit();
+	});
 
-  app.on('before-quit', () => backend.stop());
+	app.on('before-quit', () => backend.stop());
 }

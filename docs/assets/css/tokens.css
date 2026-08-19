@@ -3,63 +3,133 @@
    Changing one here without changing it there is how a site and its app drift apart. */
 
 :root {
-  --p: #6750A4;   --onp: #FFFFFF;  --pc: #EADDFF;   --onpc: #21005D;
-  --sec: #625B71; --onsec: #FFFFFF; --secc: #E8DEF8; --onsecc: #1D192B;
-  --ter: #7D5260; --onter: #FFFFFF; --terc: #FFD8E4; --onterc: #31111D;
-  --err: #B3261E; --onerr: #FFFFFF; --errc: #F9DEDC; --onerrc: #410E0B;
+	--p: #6750a4;
+	--onp: #ffffff;
+	--pc: #eaddff;
+	--onpc: #21005d;
+	--sec: #625b71;
+	--onsec: #ffffff;
+	--secc: #e8def8;
+	--onsecc: #1d192b;
+	--ter: #7d5260;
+	--onter: #ffffff;
+	--terc: #ffd8e4;
+	--onterc: #31111d;
+	--err: #b3261e;
+	--onerr: #ffffff;
+	--errc: #f9dedc;
+	--onerrc: #410e0b;
 
-  --sur: #FEF7FF; --surdim: #DED8E1;
-  --sclowest: #FFFFFF; --sclow: #F7F2FA; --sc: #F3EDF7; --schigh: #ECE6F0; --schighest: #E6E0E9;
-  --ons: #1D1B20; --onsv: #49454F;
-  --out: #79747E; --outv: #CAC4D0;
-  --invs: #322F35; --invons: #F5EFF7; --invp: #D0BCFF;
-  --scrim: rgba(0, 0, 0, .4);
+	--sur: #fef7ff;
+	--surdim: #ded8e1;
+	--sclowest: #ffffff;
+	--sclow: #f7f2fa;
+	--sc: #f3edf7;
+	--schigh: #ece6f0;
+	--schighest: #e6e0e9;
+	--ons: #1d1b20;
+	--onsv: #49454f;
+	--out: #79747e;
+	--outv: #cac4d0;
+	--invs: #322f35;
+	--invons: #f5eff7;
+	--invp: #d0bcff;
+	--scrim: rgba(0, 0, 0, 0.4);
 
-  --elev1: 0 1px 2px rgba(0,0,0,.3), 0 1px 3px 1px rgba(0,0,0,.15);
-  --elev2: 0 1px 2px rgba(0,0,0,.3), 0 2px 6px 2px rgba(0,0,0,.15);
-  --elev3: 0 4px 8px 3px rgba(0,0,0,.15), 0 1px 3px rgba(0,0,0,.3);
+	--elev1: 0 1px 2px rgba(0, 0, 0, 0.3), 0 1px 3px 1px rgba(0, 0, 0, 0.15);
+	--elev2: 0 1px 2px rgba(0, 0, 0, 0.3), 0 2px 6px 2px rgba(0, 0, 0, 0.15);
+	--elev3: 0 4px 8px 3px rgba(0, 0, 0, 0.15), 0 1px 3px rgba(0, 0, 0, 0.3);
 
-  --ok: #2E6B4F; --okc: #C8E6D4; --onokc: #08281A;
+	--ok: #2e6b4f;
+	--okc: #c8e6d4;
+	--onokc: #08281a;
 
-  --font-ui: "Roboto Flex", "Segoe UI Variable Text", "Segoe UI", system-ui, sans-serif;
-  --font-cjk: "Microsoft JhengHei UI", "PingFang HK", "Noto Sans HK", "Noto Sans CJK TC", sans-serif;
-  --font-mono: "Roboto Mono", ui-monospace, "Cascadia Mono", Consolas, monospace;
+	--font-ui: 'Roboto Flex', 'Segoe UI Variable Text', 'Segoe UI', system-ui, sans-serif;
+	--font-cjk:
+		'Microsoft JhengHei UI', 'PingFang HK', 'Noto Sans HK', 'Noto Sans CJK TC', sans-serif;
+	--font-mono: 'Roboto Mono', ui-monospace, 'Cascadia Mono', Consolas, monospace;
 
-  --scale: 1;
-  --density: 0;
-  --radius-scale: 1;
+	--scale: 1;
+	--density: 0;
+	--radius-scale: 1;
 }
 
-[data-theme="dark"] {
-  --p: #D0BCFF;   --onp: #381E72;  --pc: #4F378B;   --onpc: #EADDFF;
-  --sec: #CCC2DC; --onsec: #332D41; --secc: #4A4458; --onsecc: #E8DEF8;
-  --ter: #EFB8C8; --onter: #492532; --terc: #633B48; --onterc: #FFD8E4;
-  --err: #F2B8B5; --onerr: #601410; --errc: #8C1D18; --onerrc: #F9DEDC;
+[data-theme='dark'] {
+	--p: #d0bcff;
+	--onp: #381e72;
+	--pc: #4f378b;
+	--onpc: #eaddff;
+	--sec: #ccc2dc;
+	--onsec: #332d41;
+	--secc: #4a4458;
+	--onsecc: #e8def8;
+	--ter: #efb8c8;
+	--onter: #492532;
+	--terc: #633b48;
+	--onterc: #ffd8e4;
+	--err: #f2b8b5;
+	--onerr: #601410;
+	--errc: #8c1d18;
+	--onerrc: #f9dedc;
 
-  --sur: #141218; --surdim: #141218;
-  --sclowest: #0F0D13; --sclow: #1D1B20; --sc: #211F26; --schigh: #2B2930; --schighest: #36343B;
-  --ons: #E6E0E9; --onsv: #CAC4D0;
-  --out: #938F99; --outv: #49454F;
-  --invs: #E6E0E9; --invons: #322F35; --invp: #6750A4;
-  --scrim: rgba(0, 0, 0, .6);
+	--sur: #141218;
+	--surdim: #141218;
+	--sclowest: #0f0d13;
+	--sclow: #1d1b20;
+	--sc: #211f26;
+	--schigh: #2b2930;
+	--schighest: #36343b;
+	--ons: #e6e0e9;
+	--onsv: #cac4d0;
+	--out: #938f99;
+	--outv: #49454f;
+	--invs: #e6e0e9;
+	--invons: #322f35;
+	--invp: #6750a4;
+	--scrim: rgba(0, 0, 0, 0.6);
 
-  --ok: #86D6AC; --okc: #123D2A; --onokc: #C8E6D4;
+	--ok: #86d6ac;
+	--okc: #123d2a;
+	--onokc: #c8e6d4;
 }
 
 /* The reader's own choice wins over the system preference; the system preference
    only decides when they have not made one. */
 @media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) {
-    --p: #D0BCFF;   --onp: #381E72;  --pc: #4F378B;   --onpc: #EADDFF;
-    --sec: #CCC2DC; --onsec: #332D41; --secc: #4A4458; --onsecc: #E8DEF8;
-    --ter: #EFB8C8; --onter: #492532; --terc: #633B48; --onterc: #FFD8E4;
-    --err: #F2B8B5; --onerr: #601410; --errc: #8C1D18; --onerrc: #F9DEDC;
-    --sur: #141218; --surdim: #141218;
-    --sclowest: #0F0D13; --sclow: #1D1B20; --sc: #211F26; --schigh: #2B2930; --schighest: #36343B;
-    --ons: #E6E0E9; --onsv: #CAC4D0;
-    --out: #938F99; --outv: #49454F;
-    --invs: #E6E0E9; --invons: #322F35; --invp: #6750A4;
-    --scrim: rgba(0, 0, 0, .6);
-    --ok: #86D6AC; --okc: #123D2A; --onokc: #C8E6D4;
-  }
+	:root:not([data-theme='light']) {
+		--p: #d0bcff;
+		--onp: #381e72;
+		--pc: #4f378b;
+		--onpc: #eaddff;
+		--sec: #ccc2dc;
+		--onsec: #332d41;
+		--secc: #4a4458;
+		--onsecc: #e8def8;
+		--ter: #efb8c8;
+		--onter: #492532;
+		--terc: #633b48;
+		--onterc: #ffd8e4;
+		--err: #f2b8b5;
+		--onerr: #601410;
+		--errc: #8c1d18;
+		--onerrc: #f9dedc;
+		--sur: #141218;
+		--surdim: #141218;
+		--sclowest: #0f0d13;
+		--sclow: #1d1b20;
+		--sc: #211f26;
+		--schigh: #2b2930;
+		--schighest: #36343b;
+		--ons: #e6e0e9;
+		--onsv: #cac4d0;
+		--out: #938f99;
+		--outv: #49454f;
+		--invs: #e6e0e9;
+		--invons: #322f35;
+		--invp: #6750a4;
+		--scrim: rgba(0, 0, 0, 0.6);
+		--ok: #86d6ac;
+		--okc: #123d2a;
+		--onokc: #c8e6d4;
+	}
 }

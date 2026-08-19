@@ -88,12 +88,12 @@ are. A warning nobody can act on is a broken warning, not a funny one.
 
 <br>
 
-| Surface | State |
-| --- | --- |
-| **Documentation site** | **Live** at [ding-ding-projects.github.io/material-openweb-ui](https://ding-ding-projects.github.io/material-openweb-ui/). Six tabbed destinations, a command palette, regex builders, three language modes, both themes, append-only local history, export. |
-| **Desktop application** | **Runs from a checkout** via `npm run electron:dev`. Frameless Material 3 window with real IPC window controls; Ollama manager, chat, file converter and authenticator all working against real data. Several surfaces are still `planned` and say so. |
-| **Design** | Landing page designed against the application's own token sheet — desktop, bilingual and phone views. Sources in [`design/landing/`](design/landing/). |
-| **Installer** | **None.** Nothing is packaged, so there is nothing to download. |
+| Surface                 | State                                                                                                                                                                                                                                                        |
+| ----------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| **Documentation site**  | **Live** at [ding-ding-projects.github.io/material-openweb-ui](https://ding-ding-projects.github.io/material-openweb-ui/). Six tabbed destinations, a command palette, regex builders, three language modes, both themes, append-only local history, export. |
+| **Desktop application** | **Runs from a checkout** via `npm run electron:dev`. Frameless Material 3 window with real IPC window controls; Ollama manager, chat, file converter and authenticator all working against real data. Several surfaces are still `planned` and say so.       |
+| **Design**              | Landing page designed against the application's own token sheet — desktop, bilingual and phone views. Sources in [`design/landing/`](design/landing/).                                                                                                       |
+| **Installer**           | **None.** Nothing is packaged, so there is nothing to download.                                                                                                                                                                                              |
 
 The prototype in `design/` was not a mockup either: its one-time codes were real
 and its converter really converted. What it simulated was the Ollama runtime and
@@ -196,19 +196,19 @@ changelog viewer where every entry links to the commit that made the change.
 
 <br>
 
-| Path | What it is |
-| --- | --- |
-| `app/` | The Material Design 3 desktop frontend the shell loads. Vanilla ES modules, no build step, sharing the design-system primitives in `docs/assets/js/` so the two surfaces cannot drift apart. |
-| `electron/` | The desktop shell: frameless window, IPC window controls, backend supervisor, hardware probe. |
-| `docs/` | The documentation site, published to GitHub Pages. Vanilla ES modules, no build step, and no third-party request of any kind. |
-| `docs/assets/fonts/` | Vendored Roboto Flex and Roboto Mono, latin subsets, 208 KB. Chinese uses the reader's platform face rather than shipping megabytes of CJK. |
-| `design/` | The Material 3 prototype, verbatim from the design tool. Reference only — never built, never linted, never edited in place. |
-| `design/landing/` | The landing-page design sources. |
-| `src/`, `backend/` | Upstream Open WebUI, unmodified so far. |
-| `scripts/` | The completeness guard, its negative regression, and the line counter CI runs at release. |
-| `INVENTORY.md` | The hand-written completeness inventory the guard checks the tree against. |
-| `AGENTS.md` | The full working agreement. |
-| `README.upstream.md` | Upstream Open WebUI's own README, preserved unchanged. |
+| Path                 | What it is                                                                                                                                                                                   |
+| -------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `app/`               | The Material Design 3 desktop frontend the shell loads. Vanilla ES modules, no build step, sharing the design-system primitives in `docs/assets/js/` so the two surfaces cannot drift apart. |
+| `electron/`          | The desktop shell: frameless window, IPC window controls, backend supervisor, hardware probe.                                                                                                |
+| `docs/`              | The documentation site, published to GitHub Pages. Vanilla ES modules, no build step, and no third-party request of any kind.                                                                |
+| `docs/assets/fonts/` | Vendored Roboto Flex and Roboto Mono, latin subsets, 208 KB. Chinese uses the reader's platform face rather than shipping megabytes of CJK.                                                  |
+| `design/`            | The Material 3 prototype, verbatim from the design tool. Reference only — never built, never linted, never edited in place.                                                                  |
+| `design/landing/`    | The landing-page design sources.                                                                                                                                                             |
+| `src/`, `backend/`   | Upstream Open WebUI, unmodified so far.                                                                                                                                                      |
+| `scripts/`           | The completeness guard, its negative regression, and the line counter CI runs at release.                                                                                                    |
+| `INVENTORY.md`       | The hand-written completeness inventory the guard checks the tree against.                                                                                                                   |
+| `AGENTS.md`          | The full working agreement.                                                                                                                                                                  |
+| `README.upstream.md` | Upstream Open WebUI's own README, preserved unchanged.                                                                                                                                       |
 
 </details>
 

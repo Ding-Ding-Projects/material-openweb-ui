@@ -9,20 +9,20 @@ const api = typeof window !== 'undefined' ? window.electronAPI : undefined;
 export const isDesktop = !!api;
 
 async function send(message) {
-  if (!api) return null;
-  try {
-    return await api.send(message);
-  } catch (e) {
-    console.error('desktop bridge failed for ' + message.type, e);
-    return null;
-  }
+	if (!api) return null;
+	try {
+		return await api.send(message);
+	} catch (e) {
+		console.error('desktop bridge failed for ' + message.type, e);
+		return null;
+	}
 }
 
 export const windowControls = {
-  minimize: () => send({ type: 'window:minimize' }),
-  toggleMaximize: () => send({ type: 'window:maximize' }),
-  close: () => send({ type: 'window:close' }),
-  state: () => send({ type: 'window:state' })
+	minimize: () => send({ type: 'window:minimize' }),
+	toggleMaximize: () => send({ type: 'window:maximize' }),
+	close: () => send({ type: 'window:close' }),
+	state: () => send({ type: 'window:state' })
 };
 
 export const appInfo = () => send({ type: 'app:info' });
@@ -38,11 +38,12 @@ export const probeHardware = (destination) => send({ type: 'hardware:probe', des
  * probe travels back with the verdicts so the surface can show what each one
  * was measured against and when.
  */
-export const fitModels = (models, destination) => send({ type: 'hardware:fit', models, destination });
+export const fitModels = (models, destination) =>
+	send({ type: 'hardware:fit', models, destination });
 export const openPath = (path) => send({ type: 'shell:openPath', path });
 
 /** Subscribe to lifecycle events pushed by the main process. */
 export function onEvent(handler) {
-  if (!api?.onEvent) return () => {};
-  return api.onEvent(handler) ?? (() => {});
+	if (!api?.onEvent) return () => {};
+	return api.onEvent(handler) ?? (() => {});
 }

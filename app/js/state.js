@@ -12,77 +12,81 @@
 const PREFIX = 'owmd3.';
 
 const DEFAULTS = {
-  settings: {
-    theme: 'system',
-    language: 'English',
-    funnyEn: 2,
-    funnyZh: 2,
-    ollamaHost: 'http://127.0.0.1:11434',
-    lastModel: '',
-    modelDestination: '',
-    paletteSize: 'card',
-    emojiDialogs: false,
-    narrator: { on: false, voiceEn: '', voiceZh: '', rate: 1, pitch: 1 },
-    school: { on: false, name: 'School mode', pin: '' },
-    displayName: 'Material Open WebUI'
-  },
-  settingsWritten: [],
-  appearance: {},
-  schedule: null,
-  history: null,
-  vocabulary: null,
-  locks: {},
-  tickets: [],
-  tabModel: null,
-  chats: [],
-  totpEntries: [],
-  convResults: [],
-  statusLog: []
+	settings: {
+		theme: 'system',
+		language: 'English',
+		funnyEn: 2,
+		funnyZh: 2,
+		ollamaHost: 'http://127.0.0.1:11434',
+		lastModel: '',
+		modelDestination: '',
+		paletteSize: 'card',
+		emojiDialogs: false,
+		narrator: { on: false, voiceEn: '', voiceZh: '', rate: 1, pitch: 1 },
+		school: { on: false, name: 'School mode', pin: '' },
+		displayName: 'Material Open WebUI'
+	},
+	settingsWritten: [],
+	appearance: {},
+	schedule: null,
+	history: null,
+	vocabulary: null,
+	locks: {},
+	tickets: [],
+	tabModel: null,
+	chats: [],
+	totpEntries: [],
+	convResults: [],
+	statusLog: []
 };
 
 const listeners = new Set();
 
 function read(key) {
-  try {
-    const raw = localStorage.getItem(PREFIX + key);
-    return raw === null ? undefined : JSON.parse(raw);
-  } catch {
-    return undefined;
-  }
+	try {
+		const raw = localStorage.getItem(PREFIX + key);
+		return raw === null ? undefined : JSON.parse(raw);
+	} catch {
+		return undefined;
+	}
 }
 
 function write(key, value) {
-  try {
-    localStorage.setItem(PREFIX + key, JSON.stringify(value));
-    return true;
-  } catch (e) {
-    console.warn('could not persist ' + key, e);
-    return false;
-  }
+	try {
+		localStorage.setItem(PREFIX + key, JSON.stringify(value));
+		return true;
+	} catch (e) {
+		console.warn('could not persist ' + key, e);
+		return false;
+	}
 }
 
 const state = {};
 for (const key of Object.keys(DEFAULTS)) {
-  const stored = read(key);
-  state[key] =
-    stored === undefined
-      ? structuredClone(DEFAULTS[key])
-      : key === 'settings'
-        ? { ...structuredClone(DEFAULTS.settings), ...stored }
-        : stored;
+	const stored = read(key);
+	state[key] =
+		stored === undefined
+			? structuredClone(DEFAULTS[key])
+			: key === 'settings'
+				? { ...structuredClone(DEFAULTS.settings), ...stored }
+				: stored;
 }
 
 export function get(key) {
-  return state[key];
+	return state[key];
 }
 
 export function set(key, value) {
-  state[key] = value;
-  write(key, value);
-  for (const fn of listeners) {
-    try { fn(key, value); } catch (e) { console.error(e); }
-  }
-  return value;
+	state[key] = value;
+	write(key, value);
+	for (const fn of listeners) {
+		try {
+			fn(key, value);
+		} catch (e) {
+			console.error(e);
+		}
+	}
+	return value;
 }
 
 /**
@@ -91,15 +95,15 @@ export function set(key, value) {
  * is the one that does not.
  */
 export function patchSettings(patch) {
-  const before = {};
-  const after = {};
-  for (const key of Object.keys(patch)) {
-    before[key] = state.settings[key];
-    after[key] = patch[key];
-  }
-  const result = set('settings', { ...state.settings, ...patch });
-  recordChange('setting', Object.keys(patch).join(', '), before, after);
-  return result;
+	const before = {};
+	const after = {};
+	for (const key of Object.keys(patch)) {
+		before[key] = state.settings[key];
+		after[key] = patch[key];
+	}
+	const result = set('settings', { ...state.settings, ...patch });
+	recordChange('setting', Object.keys(patch).join(', '), before, after);
+	return result;
 }
 
 /**
@@ -111,33 +115,38 @@ export function patchSettings(patch) {
  * change is bad, and losing the change is worse.
  */
 export function recordChange(action, target, before, after) {
-  import('./core/history.js').then(async (h) => {
-    try {
-      const current = get('history') || h.empty();
-      const { log } = await h.record(current, { action, target, before, after });
-      set('history', log);
-    } catch (e) {
-      console.error('The change was applied but could not be recorded in history:', e);
-    }
-  });
+	import('./core/history.js').then(async (h) => {
+		try {
+			const current = get('history') || h.empty();
+			const { log } = await h.record(current, { action, target, before, after });
+			set('history', log);
+		} catch (e) {
+			console.error('The change was applied but could not be recorded in history:', e);
+		}
+	});
 }
 
 export function subscribe(fn) {
-  listeners.add(fn);
-  return () => listeners.delete(fn);
+	listeners.add(fn);
+	return () => listeners.delete(fn);
 }
 
 /** The event log every feature writes to, so the Status page reflects reality. */
 let logCounter = 0;
 
 export function log(event, detail = '') {
-  // A timestamp is not an identifier: two events in the same millisecond would
-  // share one, and a bulk action asked to remove one would remove both.
-  logCounter += 1;
-  const entry = { id: 'ev-' + Date.now().toString(36) + '-' + logCounter.toString(36), t: Date.now(), event, detail };
-  const next = [entry, ...(state.statusLog || [])].slice(0, 300);
-  set('statusLog', next);
-  return entry;
+	// A timestamp is not an identifier: two events in the same millisecond would
+	// share one, and a bulk action asked to remove one would remove both.
+	logCounter += 1;
+	const entry = {
+		id: 'ev-' + Date.now().toString(36) + '-' + logCounter.toString(36),
+		t: Date.now(),
+		event,
+		detail
+	};
+	const next = [entry, ...(state.statusLog || [])].slice(0, 300);
+	set('statusLog', next);
+	return entry;
 }
 
 export const STORAGE_PREFIX = PREFIX;

@@ -19,32 +19,36 @@ let cached = [];
 let subscribed = false;
 
 export function supported() {
-  return typeof window !== 'undefined' && 'speechSynthesis' in window;
+	return typeof window !== 'undefined' && 'speechSynthesis' in window;
 }
 
 function refresh() {
-  if (!supported()) return [];
-  cached = window.speechSynthesis.getVoices() || [];
-  return cached;
+	if (!supported()) return [];
+	cached = window.speechSynthesis.getVoices() || [];
+	return cached;
 }
 
 function ensureSubscribed() {
-  if (subscribed || !supported()) return;
-  subscribed = true;
-  refresh();
-  window.speechSynthesis.addEventListener('voiceschanged', () => {
-    refresh();
-    for (const fn of listeners) {
-      try { fn(cached); } catch (e) { console.error(e); }
-    }
-  });
+	if (subscribed || !supported()) return;
+	subscribed = true;
+	refresh();
+	window.speechSynthesis.addEventListener('voiceschanged', () => {
+		refresh();
+		for (const fn of listeners) {
+			try {
+				fn(cached);
+			} catch (e) {
+				console.error(e);
+			}
+		}
+	});
 }
 
 /** Every voice the platform reports right now. */
 export function voices() {
-  ensureSubscribed();
-  if (!cached.length) refresh();
-  return cached;
+	ensureSubscribed();
+	if (!cached.length) refresh();
+	return cached;
 }
 
 /**
@@ -55,19 +59,21 @@ export function voices() {
  * hides voices that would have worked.
  */
 export function voicesFor(tag) {
-  const all = voices();
-  if (tag === 'zh') return all.filter((v) => /^(zh|yue)/i.test(v.lang));
-  return all.filter((v) => /^en/i.test(v.lang));
+	const all = voices();
+	if (tag === 'zh') return all.filter((v) => /^(zh|yue)/i.test(v.lang));
+	return all.filter((v) => /^en/i.test(v.lang));
 }
 
 export function onVoicesChanged(fn) {
-  ensureSubscribed();
-  listeners.add(fn);
-  return () => listeners.delete(fn);
+	ensureSubscribed();
+	listeners.add(fn);
+	return () => listeners.delete(fn);
 }
 
 function settings() {
-  return state.get('settings').narrator || { on: false, voiceEn: '', voiceZh: '', rate: 1, pitch: 1 };
+	return (
+		state.get('settings').narrator || { on: false, voiceEn: '', voiceZh: '', rate: 1, pitch: 1 }
+	);
 }
 
 /**
@@ -80,15 +86,15 @@ function settings() {
  * the moment somebody unplugs a language pack.
  */
 export function resolve(tag) {
-  const s = settings();
-  const key = tag === 'zh' ? 'voiceZh' : 'voiceEn';
-  const list = voicesFor(tag);
-  const chosen = s[key] ? list.find((v) => v.voiceURI === s[key]) : null;
-  return {
-    voice: chosen || list[0] || null,
-    chosenMissing: !!s[key] && !chosen,
-    available: list.length
-  };
+	const s = settings();
+	const key = tag === 'zh' ? 'voiceZh' : 'voiceEn';
+	const list = voicesFor(tag);
+	const chosen = s[key] ? list.find((v) => v.voiceURI === s[key]) : null;
+	return {
+		voice: chosen || list[0] || null,
+		chosenMissing: !!s[key] && !chosen,
+		available: list.length
+	};
 }
 
 let queue = [];
@@ -100,60 +106,71 @@ let speaking = false;
  * reads a backlog aloud is worse than one that says nothing.
  */
 export function say(text, tag = 'en') {
-  if (!supported()) return false;
-  const s = settings();
-  if (!s.on) return false;
+	if (!supported()) return false;
+	const s = settings();
+	if (!s.on) return false;
 
-  const { voice } = resolve(tag);
-  const u = new SpeechSynthesisUtterance(String(text));
-  if (voice) u.voice = voice;
-  u.rate = Number(s.rate ?? 1);
-  u.pitch = Number(s.pitch ?? 1);
-  u.onend = () => { speaking = false; drain(); };
-  u.onerror = () => { speaking = false; drain(); };
+	const { voice } = resolve(tag);
+	const u = new SpeechSynthesisUtterance(String(text));
+	if (voice) u.voice = voice;
+	u.rate = Number(s.rate ?? 1);
+	u.pitch = Number(s.pitch ?? 1);
+	u.onend = () => {
+		speaking = false;
+		drain();
+	};
+	u.onerror = () => {
+		speaking = false;
+		drain();
+	};
 
-  queue = queue.slice(-2);
-  queue.push(u);
-  drain();
-  return true;
+	queue = queue.slice(-2);
+	queue.push(u);
+	drain();
+	return true;
 }
 
 function drain() {
-  if (speaking || !queue.length) return;
-  const u = queue.shift();
-  speaking = true;
-  try {
-    window.speechSynthesis.speak(u);
-  } catch {
-    speaking = false;
-  }
+	if (speaking || !queue.length) return;
+	const u = queue.shift();
+	speaking = true;
+	try {
+		window.speechSynthesis.speak(u);
+	} catch {
+		speaking = false;
+	}
 }
 
 /** Reads a sample line so a chosen voice can be judged before it is relied on. */
 export function test(tag = 'en') {
-  const line = tag === 'zh'
-    ? '呢個係旁白試音。事實唔會變，變嘅淨係語氣。'
-    : 'This is the narrator, reading a test line. The facts never change; only the voice does.';
-  if (!supported()) return false;
-  const { voice } = resolve(tag);
-  const s = settings();
-  const u = new SpeechSynthesisUtterance(line);
-  if (voice) u.voice = voice;
-  u.rate = Number(s.rate ?? 1);
-  u.pitch = Number(s.pitch ?? 1);
-  try {
-    window.speechSynthesis.cancel();
-    window.speechSynthesis.speak(u);
-    return true;
-  } catch {
-    return false;
-  }
+	const line =
+		tag === 'zh'
+			? '呢個係旁白試音。事實唔會變，變嘅淨係語氣。'
+			: 'This is the narrator, reading a test line. The facts never change; only the voice does.';
+	if (!supported()) return false;
+	const { voice } = resolve(tag);
+	const s = settings();
+	const u = new SpeechSynthesisUtterance(line);
+	if (voice) u.voice = voice;
+	u.rate = Number(s.rate ?? 1);
+	u.pitch = Number(s.pitch ?? 1);
+	try {
+		window.speechSynthesis.cancel();
+		window.speechSynthesis.speak(u);
+		return true;
+	} catch {
+		return false;
+	}
 }
 
 export function stop() {
-  queue = [];
-  speaking = false;
-  if (supported()) {
-    try { window.speechSynthesis.cancel(); } catch { /* nothing to cancel */ }
-  }
+	queue = [];
+	speaking = false;
+	if (supported()) {
+		try {
+			window.speechSynthesis.cancel();
+		} catch {
+			/* nothing to cancel */
+		}
+	}
 }

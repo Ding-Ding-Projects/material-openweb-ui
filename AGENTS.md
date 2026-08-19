@@ -173,7 +173,7 @@ removes it, and the product says so rather than implying protection.
   the data folder so the user can clear it themselves, with the exact path shown.
   One plain, unstyled line states that nothing is sent anywhere and nobody is
   reading it.
-- **An unlock ladder** wherever a user can be locked out. It clears the *waiting*,
+- **An unlock ladder** wherever a user can be locked out. It clears the _waiting_,
   never the credential; never refunds the attempt budget; is capped per rolling
   hour; never slows the escalation it skips; and is graded against a single-use
   nonce rather than in the browser.
