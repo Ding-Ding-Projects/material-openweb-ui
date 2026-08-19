@@ -81,6 +81,9 @@ jobs:
       - name: The mark is decided by its bytes and never moves the identity
         run: node scripts/test-logo.mjs
 
+      - name: Schedules behave as documented at midnight and both DST boundaries
+        run: node scripts/test-schedule.mjs
+
       - name: Line count
         run: |
           node scripts/count-lines.mjs --markdown >> "$GITHUB_STEP_SUMMARY"

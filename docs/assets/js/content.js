@@ -156,7 +156,7 @@ export const FEATURES = [
   },
   {
     id: 'schedule', name: 'Scheduled settings', group: 'Settings',
-    icon: 'clock', site: 'planned', app: 'planned',
+    icon: 'clock', site: 'na', app: 'shipped',
     blurb: 'Schedule the theme, language, narrator and appearance by time of day and day of week.',
     detail: 'A rule takes an optional start and end date, a start and end time, and either every day or an explicit set of weekdays. Values are interpreted in your configured local timezone, and the surface states the timezone and what happens across a daylight-saving boundary. Rules are stored in a versioned, bounded schema with stable identifiers and a documented precedence, and every edit is recorded in local history.',
     verify: 'Create a rule that crosses midnight and confirm the documented semantics hold.'

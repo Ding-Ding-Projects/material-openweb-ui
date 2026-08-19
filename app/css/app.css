@@ -449,3 +449,64 @@ progress {
 }
 .logo__idlist dt { opacity: .65; }
 .logo__idlist dd { margin: 0; word-break: break-all; }
+
+/* ---------------------------------------------------------------- scheduled settings */
+
+.sched__zone {
+  display: flex; gap: 10px; align-items: flex-start;
+  background: var(--sc); border-radius: 12px;
+  padding: 10px 12px; margin-bottom: 14px; font-size: .8rem;
+}
+.sched__list { display: flex; flex-direction: column; gap: 10px; }
+
+.sched__rule {
+  border: 1px solid var(--outv); border-radius: 12px;
+  padding: 10px 12px;
+}
+.sched__rule--live { border-color: var(--p); background: color-mix(in srgb, var(--p) 7%, transparent); }
+.sched__rulehead { display: flex; align-items: center; gap: 8px; font-size: .88rem; }
+.sched__ruleline { font-size: .76rem; opacity: .8; line-height: 1.55; margin-top: 4px; }
+.sched__rulepatch { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 8px; }
+
+.sched__badge {
+  font-size: .66rem; text-transform: uppercase; letter-spacing: .06em;
+  background: var(--p); color: var(--onp);
+  border-radius: 999px; padding: 1px 8px;
+}
+.sched__badge--off { background: var(--outv); color: var(--ons); }
+
+.sched__chip {
+  font-size: .72rem; border-radius: 999px; padding: 2px 9px;
+  background: var(--schigh);
+}
+.sched__chip--winning { background: var(--secc); color: var(--onsecc); font-weight: 600; }
+
+.sched__actions { display: flex; gap: 10px; margin-top: 14px; flex-wrap: wrap; }
+
+.sched__days { display: flex; gap: 5px; flex-wrap: wrap; }
+.sched__day {
+  background: none; border: 1px solid var(--outv); border-radius: 999px;
+  padding: 5px 12px; cursor: pointer; color: inherit; font: inherit; font-size: .76rem;
+}
+.sched__day:hover { background: var(--schigh); }
+.sched__day--on { background: var(--secc); color: var(--onsecc); border-color: transparent; font-weight: 600; }
+.sched__day:focus-visible { outline: 3px solid var(--p); outline-offset: 2px; }
+
+.sched__times { display: flex; gap: 14px; flex-wrap: wrap; }
+.sched__times label { display: flex; flex-direction: column; gap: 3px; font-size: .76rem; }
+
+.sched__grouplabel {
+  font-size: .68rem; text-transform: uppercase; letter-spacing: .09em; opacity: .6;
+}
+.sched__patch { display: flex; flex-direction: column; gap: 6px; }
+.sched__patchrow { display: flex; align-items: center; gap: 10px; }
+.sched__patchlabel { flex: 1; font-size: .8rem; }
+
+.sched__preview {
+  background: var(--sc); border-radius: 10px; padding: 9px 12px; font-size: .78rem; line-height: 1.6;
+}
+.sched__previewline { line-height: 1.6; }
+
+.sched__dst { margin-top: 16px; font-size: .78rem; }
+.sched__dst > summary { cursor: pointer; padding: 4px 0; }
+.sched__dstline { font-size: .76rem; line-height: 1.7; margin: 8px 0 0; opacity: .85; }

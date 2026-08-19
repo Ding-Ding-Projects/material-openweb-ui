@@ -53,7 +53,7 @@ nobody should trust.
 | vocab | Personal vocabulary upload | shipped | shipped | `app/js/core/vocabulary.js#export function validate` | content.js |
 | narrator | Spoken narrator | planned | shipped | `app/js/core/narrator.js#export function resolve` | content.js |
 | school | School mode | planned | shipped | `app/js/i18n.js#PLAYFUL_SETTINGS` | content.js |
-| schedule | Scheduled settings | planned | planned | — | content.js |
+| schedule | Scheduled settings | na | shipped | `app/js/core/schedule.js#export function resolve` | content.js |
 | appearance | Per-element appearance editor | na | shipped | `app/js/appearance.js#export function editor` | content.js |
 | colour | Infinite colour picker with translator | na | shipped | `app/js/colour-picker.js#export function colourPicker` | content.js |
 | logo | App logo customisation | na | shipped | `app/js/core/logo.js#export function inspect` | content.js |

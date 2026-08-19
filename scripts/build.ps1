@@ -234,6 +234,12 @@ if ($LASTEXITCODE -ne 0) {
 }
 Step 'The mark is decided by its bytes and never moves the identity.'
 
+& $nodeExe (Join-Path $Root 'scripts/test-schedule.mjs') | Out-Null
+if ($LASTEXITCODE -ne 0) {
+  Fail 'a scheduled rule no longer behaves as documented at midnight or a daylight-saving boundary. That kind of error is wrong twice a year and silent both times. Run: node scripts/test-schedule.mjs'
+}
+Step 'Schedules behave as documented at midnight and both daylight-saving boundaries.'
+
 & $nodeExe (Join-Path $Root 'scripts/test-locks.mjs') | Out-Null
 if ($LASTEXITCODE -ne 0) {
   Fail 'a lock or unlock-ladder safety rule no longer holds. Run: node scripts/test-locks.mjs'

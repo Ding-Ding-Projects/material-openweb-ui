@@ -27,6 +27,7 @@ const DEFAULTS = {
   },
   settingsWritten: [],
   appearance: {},
+  schedule: null,
   vocabulary: null,
   locks: {},
   tickets: [],

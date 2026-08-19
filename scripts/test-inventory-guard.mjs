@@ -133,11 +133,59 @@ function findRow(dir, predicate) {
 
 const hasAnchor = (r) => r.anchor && r.anchor !== '—' && r.anchor !== '-';
 
-/** A row that is not built on either surface, so an anchor on it is fiction. */
+/**
+ * A row that is not built on either surface, so an anchor on it is fiction.
+ *
+ * If the project has none left, one is ADDED to the scratch copy rather than
+ * the case giving up. Three cases used to require a real unbuilt row and began
+ * failing the moment the last planned feature shipped — the suite breaking
+ * because the project finished, which is the worst possible time to lose it.
+ *
+ * The synthetic row is added to the catalogue as well as the inventory, so the
+ * baseline stays green and each case still measures its own mutation rather
+ * than the inconsistency the fixture introduced.
+ */
+const SYNTHETIC_ID = 'guard-fixture-unbuilt';
+
 function unbuiltRow(dir) {
-  const r = findRow(dir, (x) => x.site === 'planned' && x.app === 'planned' && !hasAnchor(x));
-  if (!r) throw new Error('no unbuilt row left in the inventory to test with');
-  return r;
+  const found = findRow(dir, (x) => x.site === 'planned' && x.app === 'planned' && !hasAnchor(x));
+  if (found) return found;
+
+  const catalogue = join(dir, 'docs', 'assets', 'js', 'content.js');
+  const text = readFileSync(catalogue, 'utf8');
+  const entry = [
+    '  {',
+    "    id: '" + SYNTHETIC_ID + "', name: 'A feature that is not built', group: 'Tools',",
+    "    icon: 'info', site: 'planned', app: 'planned',",
+    "    blurb: 'Added by the negative regression when the project has no unbuilt feature left.',",
+    "    detail: 'This exists only inside a scratch copy of the tree, so that the cases which need an unbuilt row keep working once everything real has shipped.',",
+    "    verify: 'It is never present in the repository itself.'",
+    '  },'
+  ].join(NL);
+  const marker = 'export const FEATURES = [' + NL;
+  if (!text.includes(marker)) throw new Error('the catalogue no longer starts the way this fixture expects');
+  writeFileSync(catalogue, text.replace(marker, marker + entry + NL));
+
+  const inventoryPath = join(dir, 'INVENTORY.md');
+  const inventory = readFileSync(inventoryPath, 'utf8');
+  const lines = inventory.split(NL);
+  const lastRow = lines.map((l, i) => ({ l, i })).filter((x) => /^\|\s*[a-z0-9-]+\s*\|/.test(x.l.trim())).pop();
+  if (!lastRow) throw new Error('no inventory rows to insert alongside');
+  lines.splice(lastRow.i + 1, 0,
+    '| ' + SYNTHETIC_ID + ' | A feature that is not built | planned | planned | — | content.js |');
+  writeFileSync(inventoryPath, lines.join(NL));
+
+  const added = findRow(dir, (x) => x.id === SYNTHETIC_ID);
+  if (!added) throw new Error('the synthetic unbuilt row did not take');
+
+  // The scratch copy must still be green with the row added, or every case
+  // built on it would go red for the fixture rather than for its mutation.
+  const still = runGuard(dir);
+  if (still.red) {
+    throw new Error('adding a synthetic unbuilt row turned the guard red by itself: ' +
+      still.output.split(NL).slice(0, 2).join(' '));
+  }
+  return added;
 }
 
 /** A row that IS built, so its anchor must resolve. */
