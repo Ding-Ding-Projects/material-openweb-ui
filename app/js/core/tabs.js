@@ -12,6 +12,15 @@
 
 export const DOCKS = Object.freeze(['left', 'right', 'top', 'bottom']);
 
+/**
+ * Left, and the reason is in the contract rather than in taste: a screen is
+ * wider than it is tall, so a vertical strip shows more labels legibly than a
+ * horizontal one of the same area. Defaulting to the title bar looks tidier and
+ * shows fewer tabs, which is the wrong trade for the surface whose whole job is
+ * to reveal what is open.
+ */
+export const DEFAULT_DOCK = 'left';
+
 export const GROUP_COLOURS = Object.freeze([
   { id: 'grape', label: 'Grape', token: '--p' },
   { id: 'sage', label: 'Sage', token: '--ok' },
@@ -34,7 +43,7 @@ export function empty(firstPage = 'ollama') {
     tabs: [{ id, page: firstPage, pinned: false, group: null }],
     groups: [],
     activeTab: id,
-    dock: 'top'
+    dock: DEFAULT_DOCK
   };
 }
 
@@ -87,7 +96,7 @@ export function normalise(model, knownPages, defaultPage) {
     const first = defaultPage && (!knownPages || knownPages.includes(defaultPage))
       ? defaultPage
       : (knownPages && knownPages[0]) || 'ollama';
-    return { ...empty(first), dock: DOCKS.includes(source.dock) ? source.dock : 'top' };
+    return { ...empty(first), dock: DOCKS.includes(source.dock) ? source.dock : DEFAULT_DOCK };
   }
 
   // Identifiers must be unique or selection becomes ambiguous.
@@ -99,7 +108,7 @@ export function normalise(model, knownPages, defaultPage) {
   });
 
   const activeTab = tabs.some((t) => t.id === source.activeTab) ? source.activeTab : tabs[0].id;
-  const dock = DOCKS.includes(source.dock) ? source.dock : 'top';
+  const dock = DOCKS.includes(source.dock) ? source.dock : DEFAULT_DOCK;
 
   return { tabs: ordered(tabs, groups), groups: groups.sort((a, b) => a.order - b.order), activeTab, dock };
 }

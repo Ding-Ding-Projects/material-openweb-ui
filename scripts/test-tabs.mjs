@@ -33,7 +33,7 @@ const labelFor = (page) => LABELS[page] || page;
 const PAGES = Object.keys(LABELS);
 
 function build(pages) {
-  let m = T.normalise({ tabs: pages.map((p, i) => ({ id: 't' + i, page: p })), groups: [], activeTab: 't0', dock: 'top' }, PAGES);
+  let m = T.normalise({ tabs: pages.map((p, i) => ({ id: 't' + i, page: p })), groups: [], activeTab: 't0', dock: 'left' }, PAGES);
   return m;
 }
 const ids = (m) => m.tabs.map((t) => t.id).join(',');
@@ -61,8 +61,15 @@ check('an active tab that does not exist falls back to a real one', (() => {
   const m = T.normalise({ tabs: [{ id: 'a', page: 'chat' }], activeTab: 'nowhere' }, PAGES);
   return m.activeTab === 'a';
 })());
-check('an invented dock edge falls back to a real one',
-  T.normalise({ tabs: [{ id: 'a', page: 'chat' }], dock: 'diagonally' }, PAGES).dock === 'top');
+check('an invented dock edge falls back to the default',
+  T.normalise({ tabs: [{ id: 'a', page: 'chat' }], dock: 'diagonally' }, PAGES).dock === T.DEFAULT_DOCK,
+  T.normalise({ tabs: [{ id: 'a', page: 'chat' }], dock: 'diagonally' }, PAGES).dock);
+// The contract names the default and gives the reason: a screen is wider than
+// it is tall, so a vertical strip shows more labels. Defaulting to the title
+// bar is tidier and shows fewer tabs, which is the wrong trade for the surface
+// whose entire job is to reveal what is open. It was 'top' until this check.
+check('the default edge is the one the contract names', T.DEFAULT_DOCK === 'left', T.DEFAULT_DOCK);
+check('a fresh model starts on the default edge', T.empty('chat').dock === 'left', T.empty('chat').dock);
 
 // The landing page is the caller's decision, not an accident of list order. An
 // earlier version used knownPages[0], which quietly moved the page the
@@ -303,7 +310,7 @@ for (const dock of T.DOCKS) {
     axis.clientSize === (vertical ? 'clientHeight' : 'clientWidth'));
 }
 check('an invented edge is refused rather than half-applied',
-  T.setDock(build(['chat']), 'inside-out').model.dock === 'top');
+  T.setDock(build(['chat']), 'inside-out').model.dock === T.DEFAULT_DOCK);
 check('every offered edge is settable',
   T.DOCKS.every((d) => T.setDock(build(['chat']), d).model.dock === d));
 
