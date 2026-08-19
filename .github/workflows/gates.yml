@@ -108,6 +108,9 @@ jobs:
       - name: The surprise fires at most once and is absent under School mode
         run: node scripts/test-dimsum.mjs
 
+      - name: Every regex builder opens beside its own field
+        run: node scripts/test-regex.mjs
+
       - name: Line count
         run: |
           node scripts/count-lines.mjs --markdown >> "$GITHUB_STEP_SUMMARY"

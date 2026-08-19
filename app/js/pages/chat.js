@@ -100,6 +100,16 @@ export function render(root) {
       state.log('Chat reply', model + (result.tokensPerSecond ? ' · ' + result.tokensPerSecond.toFixed(1) + ' tok/s' : ''));
     } catch (e) {
       reply.streaming = false;
+      // Stopping before the first token arrives reaches here rather than the
+      // cancelled path, because the fetch itself rejects. It is still a stop:
+      // treating it as a failure discarded the message and raised an error for
+      // something the person did deliberately.
+      if (e.kind === 'aborted' || (controller && controller.signal.aborted)) {
+        const BREAK = String.fromCharCode(10, 10);
+        reply.content = (reply.content || '') + BREAK + '[stopped before the model answered]';
+        state.log('Chat stopped', model + ' · before the first token');
+        return;
+      }
       reply.content = '';
       messages.pop();
       ui.notify('The model did not answer: ' + e.message, { kind: 'error' });

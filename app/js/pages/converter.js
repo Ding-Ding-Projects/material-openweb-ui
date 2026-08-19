@@ -173,7 +173,12 @@ export function render(root) {
             'The source file is never modified. The result is written as a new file you can save.')),
         actions: [
           { label: 'Cancel' },
-          { label: 'Convert', primary: true, run: go }
+          // Not `run: go`. `go` is async, so it returns a Promise, and a
+          // dialog action's truthy return means "keep the dialog open" — so
+          // confirming a lossy conversion started it and then left the modal
+          // sitting there forever. The conversion worked; the dialog was the
+          // part that did not.
+          { label: 'Convert', primary: true, run: () => { go(); } }
         ]
       });
     } else {

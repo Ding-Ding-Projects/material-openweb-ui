@@ -7,6 +7,7 @@
 import { createPalette } from '../../docs/assets/js/palette-core.js';
 import * as state from './state.js';
 import * as tabsCore from './core/tabs.js';
+import { isPlayfulHidden } from './i18n.js';
 
 let getPages = () => ({});
 let getOrder = () => [];
@@ -51,11 +52,14 @@ function entries() {
       label: 'Ollama host — ' + s.ollamaHost, hint: 'setting',
       run: () => openPage('settings')
     },
-    {
+    // Omitted rather than disabled under School mode. A palette result naming
+    // a hidden setting is the leak the mode exists to prevent, and the settings
+    // page already omits this row — the palette was the surface that forgot.
+    ...(isPlayfulHidden('language') ? [] : [{
       kind: 'action', id: 'act-lang', icon: 'language',
       label: 'Language mode — ' + s.language, hint: 'setting',
       run: () => openPage('settings')
-    },
+    }]),
     {
       kind: 'action', id: 'act-log', icon: 'pulse',
       label: 'Event log', hint: 'action · ' + (state.get('statusLog') || []).length + ' entries',

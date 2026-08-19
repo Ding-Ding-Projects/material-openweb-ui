@@ -240,7 +240,15 @@ export function searchField(opts = {}) {
       )
     );
 
-    handle = popover(rxBtn, body, { width: 380, label: i18n.t('rx.title') });
+    // Anchored to whichever button the caller actually put on the page.
+    //
+    // The command palette builds a searchField purely for its builder and never
+    // mounts it, then anchored the popover to that detached button. A detached
+    // element's bounding rect is all zeros, so the panel clamped to the top-left
+    // corner of the viewport instead of appearing beside the field — the exact
+    // "detached dialog somewhere else" the contract rules out.
+    const anchor = (opts.anchor && opts.anchor.isConnected) ? opts.anchor : rxBtn;
+    handle = popover(anchor, body, { width: 380, label: i18n.t('rx.title') });
     live();
     setTimeout(() => pat.focus(), 0);
   }
@@ -251,6 +259,8 @@ export function searchField(opts = {}) {
     el,
     state,
     matcher: () => makeMatcher(state),
+    /** Opens the builder directly, for a caller that has its own trigger. */
+    openBuilder,
     onChange(fn) { subs.add(fn); return () => subs.delete(fn); },
     focus() { input.focus(); },
     setSampleSource(fn) { opts.sampleFrom = fn; }

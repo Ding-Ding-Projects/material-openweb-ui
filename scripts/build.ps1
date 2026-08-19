@@ -288,6 +288,12 @@ if ($LASTEXITCODE -ne 0) {
 }
 Step 'The surprise fires at most once a load and is absent under School mode.'
 
+& $nodeExe (Join-Path $Root 'scripts/test-regex.mjs') | Out-Null
+if ($LASTEXITCODE -ne 0) {
+  Fail 'a regex builder has become a detached dialog, or a search field has been hand-rolled without one beside it. Run: node scripts/test-regex.mjs'
+}
+Step 'Every regex builder opens beside the field it belongs to.'
+
 & $nodeExe (Join-Path $Root 'scripts/test-locks.mjs') | Out-Null
 if ($LASTEXITCODE -ne 0) {
   Fail 'a lock or unlock-ladder safety rule no longer holds. Run: node scripts/test-locks.mjs'

@@ -59,7 +59,12 @@ export function createPalette({ entries, getSize, setSize, placeholder = 'Search
       // has, bound to this field's state and nothing else.
       const f = searchField({
         query: state.query, pattern: state.pattern, flags: state.flags,
-        sampleFrom: () => entries().slice(0, 8).map((e) => e.label)
+        sampleFrom: () => entries().slice(0, 8).map((e) => e.label),
+        // The palette's own button, which is on the page. Without this the
+        // builder anchored to a button that was never mounted, and a detached
+        // element measures zero — so the panel landed in the corner of the
+        // window rather than beside the field it belongs to.
+        anchor: rxBtn
       });
       f.state.useRegex = state.useRegex;
       f.onChange((s) => {
@@ -69,7 +74,7 @@ export function createPalette({ entries, getSize, setSize, placeholder = 'Search
         rxBtn.setAttribute('aria-pressed', String(s.useRegex));
         render();
       });
-      f.el.querySelector('.rx-btn').click();
+      f.openBuilder();
     }
 
     function render() {

@@ -21,6 +21,20 @@ import * as state from '../state.js';
 const entries = [];
 let ticker = null;
 
+/**
+ * A code, broken into groups small enough to read across.
+ *
+ * Six splits as 3+3 and seven or eight as 4+3 and 4+4, which is how a person
+ * transcribing one actually chunks it. The first version used a single
+ * non-global replace, which grouped six correctly and left "123 4567" and
+ * "123 45678" for the lengths the feature explicitly offers.
+ */
+export function groupCode(code) {
+  const text = String(code);
+  if (text.length <= 6) return text.replace(/(\d{3})(?=\d)/g, '$1 ');
+  return text.slice(0, 4) + ' ' + text.slice(4);
+}
+
 function idFor() {
   return 'e' + Math.random().toString(36).slice(2, 9);
 }
@@ -225,7 +239,7 @@ export function render(root) {
             h('strong', { style: { fontSize: '.9rem' } }, e.issuer || e.account),
             h('span', { class: 'muted', style: { fontSize: '.76rem' } }, (e.issuer ? e.account + ' · ' : '') + e.algorithm + ' · ' + e.digits + ' digits · ' + e.period + 's')),
           h('div', { class: 'stack', style: { gap: '2px', alignItems: 'flex-end' } },
-            h('div', { class: 'code-lg', 'aria-live': 'polite', 'aria-label': 'Current code' }, code.replace(/(\d{3})(?=\d)/, '$1 ')),
+            h('div', { class: 'code-lg', 'aria-live': 'polite', 'aria-label': 'Current code' }, groupCode(code)),
             // Never colour-only and never motion-only: the seconds are readable.
             h('div', { class: 'countdown' }, left + 's left · next ' + next)),
           h('div', { class: 'row', style: { gap: '6px' } },

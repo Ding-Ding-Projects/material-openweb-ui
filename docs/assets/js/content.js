@@ -55,7 +55,7 @@ export const FEATURES = [
   },
   {
     id: 'regex', name: 'A regex builder beside every search field', group: 'Search',
-    icon: 'search', site: 'shipped', app: 'partial',
+    icon: 'search', site: 'shipped', app: 'shipped',
     blurb: 'Every search field, every dropdown filter and every right-click menu filter carries its own anchored pattern builder.',
     detail: 'Plain text stays the default and regex is an explicit opt-in. The builder offers guided tokens for classes, anchors, groups, alternation and quantifiers, a raw editor, flags, sample text, live validity, a match count and the first match\'s capture groups. It is anchored to the field you were already typing in rather than opening as a detached dialog somewhere else. Patterns are evaluated in this browser and never transmitted.',
     verify: 'Open any menu on this site, press the .* button in its filter, build a pattern, apply it, and confirm only that menu filters.'

@@ -103,14 +103,27 @@ export function get(key) {
 export function set(key, value, meta = {}) {
   const before = clone(state[key]);
   state[key] = value;
-  writeRaw(key, value);
+  // The result is read rather than discarded. writeRaw's own comment says a
+  // quota failure must never silently look like a save — and discarding this
+  // made it do exactly that: the log gained an entry asserting a change that
+  // had not persisted, which is the log recording what was EXPECTED to happen.
+  // That is the one thing it exists not to do.
+  const persisted = writeRaw(key, value);
   written.add(key);
   if (meta.path) {
     writtenPaths.add(meta.path);
     writeRaw('__written', [...writtenPaths]);
   }
   if (meta.record !== false) {
-    record(meta.action || 'settings changed', meta.label || key, { key, before, after: clone(value) });
+    if (persisted) {
+      record(meta.action || 'settings changed', meta.label || key, { key, before, after: clone(value) });
+    } else {
+      // Recorded as what it is. The value IS live in memory, so the change is
+      // real for this session — it simply will not survive a reload, and the
+      // log has to say which of those two things happened.
+      record('not saved', 'Could not save ' + key + ': this browser refused the write, so the change applies now but will be lost on reload',
+        { key, before, after: clone(value), persisted: false });
+    }
   }
   emit(key, value);
   return value;
@@ -207,8 +220,12 @@ export function restore(entryId) {
   const { key, before } = entry.detail;
   if (before === undefined) return null;
   state[key] = before;
-  writeRaw(key, before);
-  record('restored', 'Restored ' + key + ' to its state before "' + entry.label + '"', { key });
+  const persisted = writeRaw(key, before);
+  record(persisted ? 'restored' : 'not saved',
+    persisted
+      ? 'Restored ' + key + ' to its state before "' + entry.label + '"'
+      : 'Restored ' + key + ' in this session only: the browser refused the write, so it will be lost on reload',
+    { key, persisted });
   emit(key, before);
   return entry;
 }
