@@ -9,6 +9,12 @@ on:
 jobs:
   release:
     runs-on: ubuntu-latest
+    # Upstream's publishing workflow, kept in the fork because this repository
+    # tracks upstream and deleting it would be a merge conflict every time.
+    # It must never RUN here: a fork that publishes upstream's package, image or
+    # release is impersonating it, whether or not the credentials happen to be
+    # missing. Guarding on the repository is the smallest change that says so.
+    if: github.repository == 'open-webui/open-webui'
     environment:
       name: pypi
       url: https://pypi.org/p/open-webui

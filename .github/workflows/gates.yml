@@ -120,6 +120,9 @@ jobs:
       - name: Fit verdicts are evidenced and reach the screen
         run: node scripts/test-fit.mjs
 
+      - name: No inherited workflow can publish upstream's packages from a fork
+        run: node scripts/test-workflows.mjs
+
       - name: Line count
         run: |
           node scripts/count-lines.mjs --markdown >> "$GITHUB_STEP_SUMMARY"

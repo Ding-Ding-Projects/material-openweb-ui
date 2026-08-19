@@ -19,6 +19,12 @@ env:
 jobs:
   build:
     runs-on: ${{ matrix.platform.runner }}
+    # Upstream's publishing workflow, kept in the fork because this repository
+    # tracks upstream and deleting it would be a merge conflict every time.
+    # It must never RUN here: a fork that publishes upstream's package, image or
+    # release is impersonating it, whether or not the credentials happen to be
+    # missing. Guarding on the repository is the smallest change that says so.
+    if: github.repository == 'open-webui/open-webui'
     permissions:
       contents: read
       packages: write
@@ -154,8 +160,13 @@ jobs:
 
   merge:
     runs-on: ubuntu-latest
+    # Upstream's publishing workflow, kept in the fork because this repository
+    # tracks upstream and deleting it would be a merge conflict every time.
+    # It must never RUN here: a fork that publishes upstream's package, image or
+    # release is impersonating it, whether or not the credentials happen to be
+    # missing. Guarding on the repository is the smallest change that says so.
+    if: ${{ github.repository == 'open-webui/open-webui' && (!cancelled()) }}
     needs: [build]
-    if: ${{ !cancelled() }}
     permissions:
       contents: read
       packages: write
@@ -245,8 +256,13 @@ jobs:
 
   notify-helm-charts:
     runs-on: ubuntu-latest
+    # Upstream's publishing workflow, kept in the fork because this repository
+    # tracks upstream and deleting it would be a merge conflict every time.
+    # It must never RUN here: a fork that publishes upstream's package, image or
+    # release is impersonating it, whether or not the credentials happen to be
+    # missing. Guarding on the repository is the smallest change that says so.
+    if: ${{ github.repository == 'open-webui/open-webui' && (!cancelled() && needs.merge.result == 'success' && (github.ref == 'refs/heads/dev' || startsWith(github.ref, 'refs/tags/v'))) }}
     needs: [merge]
-    if: ${{ !cancelled() && needs.merge.result == 'success' && (github.ref == 'refs/heads/dev' || startsWith(github.ref, 'refs/tags/v')) }}
     steps:
       - name: Create Helm charts app token
         id: helm-app-token
@@ -309,7 +325,12 @@ jobs:
 
   copy-to-dockerhub:
     runs-on: ubuntu-latest
-    if: ${{ !cancelled() && (github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/v')) }}
+    # Upstream's publishing workflow, kept in the fork because this repository
+    # tracks upstream and deleting it would be a merge conflict every time.
+    # It must never RUN here: a fork that publishes upstream's package, image or
+    # release is impersonating it, whether or not the credentials happen to be
+    # missing. Guarding on the repository is the smallest change that says so.
+    if: ${{ github.repository == 'open-webui/open-webui' && (!cancelled() && (github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/v'))) }}
     needs: [merge]
     continue-on-error: true
     strategy:

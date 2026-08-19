@@ -306,6 +306,12 @@ if ($LASTEXITCODE -ne 0) {
 }
 Ok 'fit verdicts are evidenced and reach the screen'
 
+& $nodeExe (Join-Path $Root 'scripts/test-workflows.mjs') | Out-Null
+if ($LASTEXITCODE -ne 0) {
+  Fail 'an inherited publishing workflow could run from this fork. A fork that publishes upstream package is impersonating it. Run: node scripts/test-workflows.mjs'
+}
+Ok 'no inherited workflow can publish upstream packages from a fork'
+
 & $nodeExe (Join-Path $Root 'scripts/test-locks.mjs') | Out-Null
 if ($LASTEXITCODE -ne 0) {
   Fail 'a lock or unlock-ladder safety rule no longer holds. Run: node scripts/test-locks.mjs'
