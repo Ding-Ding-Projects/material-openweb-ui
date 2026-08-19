@@ -20,6 +20,7 @@ const S = {
   'nav.docs':      { en: 'Docs', zh: '說明' },
   'nav.changelog': { en: 'Changelog', zh: '更新紀錄' },
   'nav.settings':  { en: 'Settings', zh: '設定' },
+  'nav.download': { en: 'Download', zh: '下載' },
   'nav.status':    { en: 'Status', zh: '狀態' },
   'nav.history':   { en: 'History', zh: '歷史' },
   'nav.tickets':   { en: 'Support Tickets', zh: '客戶支援' },

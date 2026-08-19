@@ -565,14 +565,17 @@ function status(root) {
 
 // ---------------------------------------------------------------- registry
 
+import * as download from './download.js';
+
 export const PAGES = {
   home:      { title: () => i18n.t('nav.home'),      zh: '主頁',     icon: 'chat',    render: home },
   features:  { title: () => i18n.t('nav.features'),  zh: '功能',     icon: 'grid',    render: features },
   docs:      { title: () => i18n.t('nav.docs'),      zh: '說明',     icon: 'book',    render: docs },
   changelog: { title: () => i18n.t('nav.changelog'), zh: '更新紀錄', icon: 'clock',   render: changelog },
   settings:  { title: () => i18n.t('nav.settings'),  zh: '設定',     icon: 'gear',    render: settingsPage },
-  status:    { title: () => i18n.t('nav.status'),    zh: '狀態',     icon: 'pulse',   render: status }
+  status:    { title: () => i18n.t('nav.status'),    zh: '狀態',     icon: 'pulse',   render: status },
+  download:  { title: () => i18n.t('nav.download'),  zh: '下載',     icon: 'download', render: download.render }
 };
 
-export const PAGE_ORDER = ['home', 'features', 'docs', 'changelog', 'settings', 'status'];
+export const PAGE_ORDER = ['home', 'features', 'docs', 'download', 'changelog', 'settings', 'status'];
 export { REPO, UPSTREAM };

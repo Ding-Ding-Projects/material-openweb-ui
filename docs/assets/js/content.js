@@ -261,7 +261,7 @@ export const FEATURES = [
   },
   {
     id: 'nosign', name: 'Permanently unsigned releases', group: 'Quality',
-    icon: 'warn', site: 'na', app: 'planned',
+    icon: 'warn', site: 'shipped', app: 'na',
     blurb: 'Installers are never code-signed, and the product says so before you download one.',
     detail: 'The operating system will warn you about an unsigned installer. That warning is accurate and is not something to work around or dress up — it is stated plainly on the download surface rather than discovered afterwards.',
     verify: 'Confirm the warning text appears on the download surface before any release link.'

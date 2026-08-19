@@ -388,3 +388,32 @@ hr { border: 0; border-top: 1px solid var(--outv); margin: 24px 0; }
 @media (max-width: 900px) {
   .footlink { height: 44px; min-height: 44px; }
 }
+
+/* ---------------------------------------------------------------- download */
+
+/* The warning comes first on the page and first in the source, so it is read
+   before any link is reached — including by a screen reader. */
+.dl__warning {
+  display: flex; gap: 14px; align-items: flex-start;
+  background: var(--errc); color: var(--onerrc);
+  border-radius: 16px; padding: 18px 20px; margin-bottom: 24px;
+}
+.dl__warntitle { font-size: 1.05rem; margin: 0 0 8px; }
+.dl__warntext { font-size: .86rem; line-height: 1.7; margin: 0 0 10px; }
+.dl__warntext:last-child { margin-bottom: 0; }
+.dl__warntext--zh { font-size: .82rem; opacity: .92; }
+
+.dl__list { display: flex; flex-direction: column; gap: 14px; }
+.dl__release { display: flex; flex-direction: column; gap: 12px; }
+.dl__relhead { display: flex; align-items: baseline; gap: 10px; }
+.dl__relversion { font-size: 1.05rem; font-weight: 700; }
+.dl__file { display: flex; gap: 14px; align-items: center; flex-wrap: wrap; }
+.dl__meta { display: flex; gap: 12px; flex-wrap: wrap; font-size: .74rem; opacity: .75; }
+.dl__sha { word-break: break-all; }
+
+.dl__code {
+  background: var(--sclow); border: 1px solid var(--outv); border-radius: 10px;
+  padding: 12px 14px; font-size: .78rem; line-height: 1.65;
+  overflow-x: auto; margin: 10px 0;
+}
+.dl__note { font-size: .76rem; line-height: 1.65; opacity: .78; margin: 8px 0 0; }

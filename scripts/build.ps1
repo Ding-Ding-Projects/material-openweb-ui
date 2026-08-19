@@ -270,6 +270,12 @@ if ($LASTEXITCODE -ne 0) {
 }
 Step 'Every changelog entry names a commit that resolves.'
 
+& $nodeExe (Join-Path $Root 'scripts/test-download.mjs') | Out-Null
+if ($LASTEXITCODE -ne 0) {
+  Fail 'the download surface no longer states the unsigned warning before it offers a file, or it has started softening it. Run: node scripts/test-download.mjs'
+}
+Step 'The unsigned warning comes before any download link.'
+
 & $nodeExe (Join-Path $Root 'scripts/test-locks.mjs') | Out-Null
 if ($LASTEXITCODE -ne 0) {
   Fail 'a lock or unlock-ladder safety rule no longer holds. Run: node scripts/test-locks.mjs'

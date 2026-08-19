@@ -78,7 +78,7 @@ feature that will never be built on a surface says `na` rather than staying
 | dimsum | Dim sum surprise | partial | partial | `app/js/app.js#function maybeDimSum` | content.js |
 | a11y | Accessibility and responsive layout | shipped | partial | `docs/assets/css/site.css#skip-link` | content.js |
 | buildscript | One-click build script | shipped | shipped | `scripts/build.ps1#Get-EngineRange` | content.js |
-| nosign | Permanently unsigned releases | na | planned | — | content.js |
+| nosign | Permanently unsigned releases | shipped | na | `docs/assets/js/download.js#These builds are unsigned` | content.js |
 | free | Nothing is ever for sale | shipped | shipped | `docs/assets/js/i18n.js#foot.free` | content.js |
 
 ## What the guard checks
