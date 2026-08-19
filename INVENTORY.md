@@ -60,9 +60,9 @@ nobody should trust.
 | rename | Rename the product | shipped | planned | `docs/assets/js/settings.js#set-app-name` | content.js |
 | confirm | Destructive-action super confirmation | shipped | shipped | `docs/assets/js/ui.js#export function superConfirm` | content.js |
 | notify | Non-blocking notifications with a reviewable centre | shipped | shipped | `docs/assets/js/ui.js#export function notify` | content.js |
-| bulk | Bulk actions on every list | partial | planned | `docs/assets/js/pages.js#Select all` | content.js |
-| export | Export everything, in every format that fits | shipped | partial | `app/js/app.js#function exportAll` | content.js |
-| history | Local version history | shipped | planned | `docs/assets/js/store.js#export function record` | content.js |
+| bulk | Bulk actions on every list | partial | shipped | `app/js/core/selection.js#export function describeScope` | content.js |
+| export | Export everything, in every format that fits | shipped | shipped | `app/js/core/formats.js#export function serialise` | content.js |
+| history | Local version history | shipped | shipped | `app/js/core/history.js#export async function verify` | content.js |
 | changelog | Changelog viewer | shipped | planned | `docs/assets/js/pages.js#function changelog` | content.js |
 | status | Status Hub | shipped | partial | `app/js/pages/misc.js#export function renderStatus` | content.js |
 | dimsum | Dim sum surprise | partial | partial | `app/js/app.js#function maybeDimSum` | content.js |

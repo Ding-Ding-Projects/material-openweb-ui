@@ -87,6 +87,15 @@ jobs:
       - name: Pinned tabs survive bulk closes and groups outlive deletion
         run: node scripts/test-tabs.mjs
 
+      - name: Every export format survives the values that break naive writers
+        run: node scripts/test-formats.mjs
+
+      - name: History only grows, and never records a secret
+        run: node scripts/test-history.mjs
+
+      - name: No bulk action runs without saying what it cannot show you
+        run: node scripts/test-selection.mjs
+
       - name: Line count
         run: |
           node scripts/count-lines.mjs --markdown >> "$GITHUB_STEP_SUMMARY"

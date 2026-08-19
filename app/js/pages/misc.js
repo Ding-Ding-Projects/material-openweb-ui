@@ -9,6 +9,7 @@ import * as ui from '../../../docs/assets/js/ui.js';
 import * as state from '../state.js';
 import * as desktop from '../desktop.js';
 import * as ollama from '../core/ollama.js';
+import { bulkBar, rowCheckbox } from '../bulk.js';
 
 // ---------------------------------------------------------------- status
 
@@ -18,11 +19,36 @@ export function renderStatus(root) {
   const count = h('div', { class: 'muted', style: { fontSize: '.78rem' } });
   const field = searchField({ placeholder: 'Search the event log…', label: 'Search the event log' });
 
+  const entries = () => (state.get('statusLog') || []).map((e, i) => (e.id ? e : { ...e, id: 'legacy-' + i }));
+  const shown = () => {
+    const m = field.matcher();
+    return entries().filter((e) => m.test(e.event + ' ' + (e.detail || '')));
+  };
+
+  const bar = bulkBar({
+    getScopeIds: () => shown().map((e) => e.id),
+    getAllIds: () => entries().map((e) => e.id),
+    noun: 'event',
+    actions: [
+      { id: 'delete', label: 'Delete', icon: 'trash', danger: true, run: (ids) => {
+        const drop = new Set(ids);
+        state.set('statusLog', entries().filter((e) => !drop.has(e.id)));
+        paint();
+      } }
+    ],
+    exportRows: (ids) => {
+      const want = new Set(ids);
+      return entries().filter((e) => want.has(e.id))
+        .map((e) => ({ at: new Date(e.t).toISOString(), event: e.event, detail: e.detail || '' }));
+    }
+  });
+
   function paint() {
     const m = field.matcher();
     clear(log);
-    const all = state.get('statusLog') || [];
-    const rows = all.filter((e) => m.test(e.event + ' ' + (e.detail || '')));
+    const all = entries();
+    const rows = shown();
+    bar.refresh();
     count.textContent = rows.length + ' of ' + all.length + ' events shown';
     if (!rows.length) {
       log.append(h('div', { class: 'pending' },
@@ -33,6 +59,7 @@ export function renderStatus(root) {
     }
     for (const e of rows) {
       log.append(h('div', { class: 'card', style: { display: 'flex', gap: '12px', alignItems: 'center', padding: '10px 16px' } },
+        rowCheckbox(bar, e.id, e.event + ' ' + (e.detail || '')),
         h('span', { class: 'chip chip--tonal', style: { height: '22px', fontSize: '.66rem' } }, e.event),
         h('span', { style: { flex: '1', fontSize: '.84rem' } }, e.detail || ''),
         h('span', { class: 'mono muted', style: { fontSize: '.7rem' } }, fmtTime(e.t))));
@@ -71,7 +98,7 @@ export function renderStatus(root) {
     h('div', { class: 'page__head' }, h('div', { style: { flex: '1' } },
       h('div', { class: 'page__title' }, 'Status'),
       h('div', { class: 'page__sub' }, 'A live session card and the real event log. Every feature writes to it as it acts.'))),
-    session, field.el, count, h('div', { style: { height: '10px' } }), log);
+    session, field.el, count, bar.el, log);
   root.append(page);
   paint();
 }

@@ -18,6 +18,21 @@ export function h(tag, props = {}, ...children) {
     else if (k.startsWith('on') && typeof v === 'function') el.addEventListener(k.slice(2).toLowerCase(), v);
     else if (k === 'html') el.innerHTML = v;
     else if (k === 'text') el.textContent = v;
+    // `ref` hands back the element once it exists. It is the only way to reach
+    // a DOM PROPERTY that has no attribute behind it — `indeterminate` on a
+    // checkbox being the one this project needs. Setting it as an attribute
+    // does nothing at all, silently.
+    else if (k === 'ref' && typeof v === 'function') v(el);
+    // `props` assigns real DOM properties rather than attributes, for the same
+    // reason: `checked`, `value` and `indeterminate` do not round-trip through
+    // setAttribute the way they appear to.
+    else if (k === 'props' && typeof v === 'object') Object.assign(el, v);
+    else if (typeof v === 'function') {
+      // A function anywhere else would be stringified into an attribute — the
+      // whole body of it, as text, doing nothing. That is always a mistake, and
+      // it is completely invisible until someone reads the markup.
+      throw new Error('h(): "' + k + '" was given a function. Handlers are on* names; use ref or props for anything else.');
+    }
     else el.setAttribute(k, v === true ? '' : String(v));
   }
   for (const c of children.flat(Infinity)) {

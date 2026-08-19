@@ -14,6 +14,7 @@ import * as converterPage from './pages/converter.js';
 import * as authPage from './pages/authenticator.js';
 import * as misc from './pages/misc.js';
 import * as locksPage from './pages/locks.js';
+import * as historyPage from './pages/history.js';
 import * as locksUi from './locks-ui.js';
 import * as locksCore from './core/locks.js';
 import { palette, wire as wirePalette } from './palette.js';
@@ -33,10 +34,11 @@ const PAGES = {
   admin:         { id: 'admin', title: 'Admin', zh: '管理', icon: 'shield', render: misc.renderAdmin },
   settings:      { id: 'settings', title: 'Settings', zh: '設定', icon: 'gear', render: misc.renderSettings },
   status:        { id: 'status', title: 'Status', zh: '狀態', icon: 'pulse', render: misc.renderStatus },
-  changelog:     { id: 'changelog', title: 'Changelog', zh: '更新紀錄', icon: 'clock', render: misc.renderChangelog }
+  changelog:     { id: 'changelog', title: 'Changelog', zh: '更新紀錄', icon: 'clock', render: misc.renderChangelog },
+  history:       { ...historyPage.meta, id: 'history', render: historyPage.render }
 };
 
-const ORDER = ['chat', 'ollama', 'converter', 'authenticator', 'locks', 'workspace', 'admin', 'settings', 'status', 'changelog'];
+const ORDER = ['chat', 'ollama', 'converter', 'authenticator', 'locks', 'workspace', 'admin', 'settings', 'status', 'history', 'changelog'];
 
 const titlebar = document.getElementById('titlebar');
 const rail = document.getElementById('rail');

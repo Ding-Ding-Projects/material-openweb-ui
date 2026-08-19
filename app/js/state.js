@@ -28,6 +28,7 @@ const DEFAULTS = {
   settingsWritten: [],
   appearance: {},
   schedule: null,
+  history: null,
   vocabulary: null,
   locks: {},
   tickets: [],
@@ -83,8 +84,41 @@ export function set(key, value) {
   return value;
 }
 
+/**
+ * The one place settings change, and therefore the one place that has to record
+ * it. Recording at each call site instead means the call site added next week
+ * is the one that does not.
+ */
 export function patchSettings(patch) {
-  return set('settings', { ...state.settings, ...patch });
+  const before = {};
+  const after = {};
+  for (const key of Object.keys(patch)) {
+    before[key] = state.settings[key];
+    after[key] = patch[key];
+  }
+  const result = set('settings', { ...state.settings, ...patch });
+  recordChange('setting', Object.keys(patch).join(', '), before, after);
+  return result;
+}
+
+/**
+ * Appends to the local history.
+ *
+ * Deliberately fire-and-forget: hashing is asynchronous, and a settings write
+ * that waited on it would make every toggle feel slow. A failure here must
+ * never prevent the setting itself from being applied — losing the record of a
+ * change is bad, and losing the change is worse.
+ */
+export function recordChange(action, target, before, after) {
+  import('./core/history.js').then(async (h) => {
+    try {
+      const current = get('history') || h.empty();
+      const { log } = await h.record(current, { action, target, before, after });
+      set('history', log);
+    } catch (e) {
+      console.error('The change was applied but could not be recorded in history:', e);
+    }
+  });
 }
 
 export function subscribe(fn) {
@@ -93,8 +127,13 @@ export function subscribe(fn) {
 }
 
 /** The event log every feature writes to, so the Status page reflects reality. */
+let logCounter = 0;
+
 export function log(event, detail = '') {
-  const entry = { t: Date.now(), event, detail };
+  // A timestamp is not an identifier: two events in the same millisecond would
+  // share one, and a bulk action asked to remove one would remove both.
+  logCounter += 1;
+  const entry = { id: 'ev-' + Date.now().toString(36) + '-' + logCounter.toString(36), t: Date.now(), event, detail };
   const next = [entry, ...(state.statusLog || [])].slice(0, 300);
   set('statusLog', next);
   return entry;

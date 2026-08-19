@@ -246,6 +246,24 @@ if ($LASTEXITCODE -ne 0) {
 }
 Step 'Pinned tabs survive bulk closes and all four searches read the same text.'
 
+& $nodeExe (Join-Path $Root 'scripts/test-formats.mjs') | Out-Null
+if ($LASTEXITCODE -ne 0) {
+  Fail 'an export format no longer survives a comma, a quote or an ampersand. The file will open without complaint and be wrong. Run: node scripts/test-formats.mjs'
+}
+Step 'Every export format survives the values that break naive writers.'
+
+& $nodeExe (Join-Path $Root 'scripts/test-history.mjs') | Out-Null
+if ($LASTEXITCODE -ne 0) {
+  Fail 'the history is no longer append-only, or a secret can reach it. Run: node scripts/test-history.mjs'
+}
+Step 'History only ever grows, and no secret is written into it.'
+
+& $nodeExe (Join-Path $Root 'scripts/test-selection.mjs') | Out-Null
+if ($LASTEXITCODE -ne 0) {
+  Fail 'a bulk action can now run without stating how much of the selection it cannot show. That is the path that deletes something. Run: node scripts/test-selection.mjs'
+}
+Step 'No bulk action runs without saying what it cannot show you.'
+
 & $nodeExe (Join-Path $Root 'scripts/test-locks.mjs') | Out-Null
 if ($LASTEXITCODE -ne 0) {
   Fail 'a lock or unlock-ladder safety rule no longer holds. Run: node scripts/test-locks.mjs'

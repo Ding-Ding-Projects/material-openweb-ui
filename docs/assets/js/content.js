@@ -205,21 +205,21 @@ export const FEATURES = [
   },
   {
     id: 'bulk', name: 'Bulk actions on every list', group: 'Data',
-    icon: 'grid', site: 'partial', app: 'planned',
+    icon: 'grid', site: 'partial', app: 'shipped',
     blurb: 'Multi-select, shift-click ranges, a select-all that states its scope, and inverse selection.',
     detail: 'Not exempt for the notification centre or a history panel — those are lists too. Actions are offered in bulk rather than a token subset, the exact count and a reviewable preview are shown first, and anything skipped is reported rather than silently dropped.',
     verify: 'Select every match of a filter, run a bulk action, and confirm the report distinguishes changed from skipped.'
   },
   {
     id: 'export', name: 'Export everything, in every format that fits', group: 'Data',
-    icon: 'download', site: 'shipped', app: 'partial',
+    icon: 'download', site: 'shipped', app: 'shipped',
     blurb: 'If a surface can show it, you can take it away.',
     detail: 'JSON, JSONL, YAML, TOML, XML, CSV, TSV, Markdown and HTML, chosen per datum rather than per product — tabular data gets CSV, structured records get JSON, prose gets Markdown. A format that would silently drop a field is never offered; where something cannot be carried, it is named before the export runs. Exports state their encoding, line endings and schema version.',
     verify: 'Export the same data twice in two formats and confirm neither loses a field without saying so.'
   },
   {
     id: 'history', name: 'Local version history', group: 'Data',
-    icon: 'history', site: 'shipped', app: 'planned',
+    icon: 'history', site: 'shipped', app: 'shipped',
     blurb: 'Every settings change, record edit and deletion is recorded so it can be undone.',
     detail: 'Append-only: restoring is itself recorded as a new entry, so an undo can be undone and that undo undone in turn. The panel filters by date and by the real actions the log actually contains, with counts beside each, composed with a regex-wired text search. Entries are labelled with what changed rather than that something did. Credentials never enter a snapshot.',
     verify: 'Change a setting, restore it, then restore the restore, and confirm all three appear as separate entries.'
