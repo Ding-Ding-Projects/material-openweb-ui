@@ -32,7 +32,7 @@ function entries() {
     });
   }
 
-  for (const f of FEATURES) {
+  for (const f of settingsDef.withoutHidden(FEATURES)) {
     out.push({
       kind: 'feature', id: 'feature-' + f.id, icon: f.icon,
       label: f.name, hint: 'feature · ' + f.group,
@@ -40,7 +40,7 @@ function entries() {
     });
   }
 
-  for (const d of DOCS) {
+  for (const d of settingsDef.withoutHidden(DOCS)) {
     out.push({
       kind: 'doc', id: 'doc-' + d.id, icon: 'book',
       label: d.title + ' — article', hint: 'documentation',

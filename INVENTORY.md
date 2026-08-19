@@ -62,7 +62,7 @@ feature that will never be built on a surface says `na` rather than staying
 | funny | A funny level for each language | shipped | shipped | `app/js/i18n.js#export function levelLabel` | content.js |
 | vocab | Personal vocabulary upload | shipped | shipped | `app/js/core/vocabulary.js#export function validate` | content.js |
 | narrator | Spoken narrator | na | shipped | `app/js/core/narrator.js#export function resolve` | content.js |
-| school | School mode | partial | shipped | `app/js/i18n.js#PLAYFUL_SETTINGS` | content.js |
+| school | School mode | shipped | shipped | `app/js/i18n.js#PLAYFUL_SETTINGS` | content.js |
 | schedule | Scheduled settings | na | shipped | `app/js/core/schedule.js#export function resolve` | content.js |
 | appearance | Per-element appearance editor | na | shipped | `app/js/appearance.js#export function editor` | content.js |
 | colour | Infinite colour picker with translator | na | shipped | `app/js/colour-picker.js#export function colourPicker` | content.js |

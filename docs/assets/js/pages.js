@@ -147,7 +147,7 @@ function features(root) {
   function render() {
     const m = field.matcher();
     clear(list);
-    const matched = FEATURES.filter((f) =>
+    const matched = settings.withoutHidden(FEATURES).filter((f) =>
       (group === 'All' || f.group === group) &&
       m.test(f.name + ' ' + f.blurb + ' ' + f.group)
     );
@@ -243,8 +243,9 @@ function docs(root, articleId) {
   function render() {
     const m = field.matcher();
     clear(list);
-    const matched = DOCS.filter((d) => m.test(d.title + ' ' + d.blurb + ' ' + d.detail + ' ' + d.group));
-    countEl.textContent = matched.length + ' of ' + DOCS.length + ' articles shown';
+    const available = settings.withoutHidden(DOCS);
+    const matched = available.filter((d) => m.test(d.title + ' ' + d.blurb + ' ' + d.detail + ' ' + d.group));
+    countEl.textContent = matched.length + ' of ' + available.length + ' articles shown';
     if (!matched.length) {
       list.appendChild(h('div', { class: 'pending' }, h('strong', {}, i18n.t('empty.noMatch')), h('span', { class: 'muted', style: { fontSize: '.85rem' } }, i18n.t('empty.noMatchHint'))));
       return;
@@ -419,6 +420,56 @@ function settingsPage(root) {
     )
   );
 
+  // ---------- School mode ----------
+  //
+  // The site honoured this setting from the day it was written and had no way
+  // to turn it on. Every reader was one line of storage away from a mode
+  // nothing on the page mentioned, and the disclaimer explaining it sat in the
+  // string table unreachable by any surface.
+
+  const schoolCard = h('div', { class: 'card', style: { marginTop: '28px', display: 'flex', flexDirection: 'column', gap: '12px' } });
+
+  function renderSchool() {
+    clear(schoolCard);
+    const school = store.get('settings').school || { on: false, name: 'School mode', pin: '' };
+    const pin = h('input', {
+      type: 'text', inputmode: 'numeric', class: 'mono', maxlength: '12',
+      placeholder: '4 to 12 digits', 'aria-label': 'PIN'
+    });
+    const err = h('div', { style: { color: 'var(--err)', fontSize: '.8rem', minHeight: '0' } });
+
+    add(schoolCard,
+      h('div', { class: 'row', style: { gap: '10px', alignItems: 'center' } },
+        icon('shield'),
+        h('strong', { style: { flex: '1' } }, i18n.t('set.school')),
+        h('span', { class: 'chip ' + (school.on ? 'chip--warn' : 'chip--tonal') }, school.on ? 'on' : 'off')),
+      h('p', { class: 'muted', style: { fontSize: '.85rem', lineHeight: '1.7' } }, i18n.t('set.schoolWhy')),
+      h('div', { class: 'field' }, pin),
+      err,
+      h('div', { class: 'row', style: { gap: '10px' } },
+        h('button', {
+          class: school.on ? 'btn btn--outlined' : 'btn btn--filled',
+          onclick: () => {
+            const value = pin.value.replace(/[^0-9]/g, '');
+            if (!school.on) {
+              if (value.length < 4) { err.textContent = 'A PIN of at least four digits is needed, because it is what turns the mode off again.'; return; }
+              store.patchSettings({ school: { on: true, name: 'School mode', pin: value } },
+                { path: 'school', label: 'School mode on' });
+              ui.notify('School mode is on. The playful features are absent from every list and search on this site, not greyed out.', { kind: 'ok' });
+            } else {
+              if (value !== school.pin) { err.textContent = 'That is not the PIN this mode was turned on with.'; return; }
+              store.patchSettings({ school: { on: false, name: 'School mode', pin: '' } },
+                { path: 'school', label: 'School mode off' });
+              ui.notify('School mode is off.', { kind: 'ok' });
+            }
+            window.mowui.refresh();
+          }
+        }, school.on ? 'Turn it off' : 'Turn it on'),
+        h('span', { class: 'muted', style: { fontSize: '.78rem', alignSelf: 'center' } },
+          school.on ? 'The PIN it was turned on with.' : 'Choose a PIN. You will need it to turn this off.')));
+  }
+  renderSchool();
+
   const dangerZone = h('div', { class: 'card card--outlined', style: { marginTop: '36px', display: 'flex', flexDirection: 'column', gap: '14px' } },
     h('strong', {}, i18n.t('set.reset')),
     h('p', { class: 'muted', style: { fontSize: '.86rem', lineHeight: '1.6' } }, i18n.t('set.resetWhy')),
@@ -447,6 +498,7 @@ function settingsPage(root) {
     disclosure,
     h('div', { class: 'stack', style: { gap: '10px', marginBottom: '10px' } }, field.el, countEl),
     list,
+    schoolCard,
     dangerZone
   );
   root.appendChild(wrap);

@@ -148,6 +148,26 @@ export const ROWS = [
   }
 ];
 
+/** Whether School mode is on right now. */
+export function schoolIsOn() {
+  const school = store.get('settings').school;
+  return Boolean(school && school.on);
+}
+
+/**
+ * A list of features with the playful ones REMOVED under School mode.
+ *
+ * Every surface that lists features calls this. The settings page had its own
+ * filter and the other three surfaces had none, so turning School mode on hid
+ * the controls while the features page, the documentation list and the command
+ * palette all went on naming the same features in their search results — which
+ * is the leak the mode exists to prevent, arrived at from three directions.
+ */
+export function withoutHidden(items) {
+  if (!schoolIsOn()) return items;
+  return items.filter((x) => !x.playful);
+}
+
 export function visibleRows() {
   const school = store.get('settings').school;
   // Under School mode the playful settings are OMITTED, not disabled — a

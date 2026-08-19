@@ -110,42 +110,42 @@ export const FEATURES = [
     verify: 'Lock two elements with different credentials and confirm unlocking one leaves the other locked.'
   },
   {
-    id: 'tickets', name: 'Support Tickets', group: 'Locks',
+    id: 'tickets', playful: true, name: 'Support Tickets', group: 'Locks',
     icon: 'file', site: 'na', app: 'shipped',
     blurb: 'The recovery route for a forgotten lock, dressed as a service desk, whose resolution is the only thing that actually works.',
     detail: 'A ticket form, a locally generated number, a severity nobody will honour and a canned first response — and then the resolution opens the folder you need to clear, with the exact path shown beside the button. One plain unstyled line states that nothing is sent anywhere, no ticket exists outside this machine and nobody is reading it, so nobody waits for a reply that was never coming.',
     verify: 'Confirm the disclosure line is present and unstyled at every funny level, and that no network request is made.'
   },
   {
-    id: 'ladder', name: 'The unlock ladder', group: 'Locks',
+    id: 'ladder', playful: true, name: 'The unlock ladder', group: 'Locks',
     icon: 'unlock', site: 'na', app: 'shipped',
     blurb: 'Locked out? Play your way through dim sum, then sums, then whack-a-mole — or serve the clock.',
     detail: 'It clears the waiting and never the credential: winning returns you to the ordinary sign-in form still needing to know your password. It never refunds the attempt budget, it is capped at three skips per rolling hour, and it never slows the exponential escalation it skips. Under School mode the ladder starts at the sums, because the dim-sum rung must be absent rather than skipped with a message naming it.',
     verify: 'Confirm a cleared ladder sets no session and leaves the surface exactly as closed as it was.'
   },
   {
-    id: 'language', name: 'Three language modes', group: 'Language',
+    id: 'language', playful: true, name: 'Three language modes', group: 'Language',
     icon: 'language', site: 'shipped', app: 'shipped',
     blurb: 'English, playful Hong Kong Cantonese, and a bilingual mode that keeps both readable.',
     detail: 'Bilingual holds English as the prominent primary and places Cantonese underneath as a compact secondary, rule-marked on long paragraphs so the two never read as one run-on. Localisation resources are kept separate from logic, and every mode is exercised at the longest strings and narrowest widths.',
     verify: 'Switch to Bilingual and check the longest labels at 320px width for clipping.'
   },
   {
-    id: 'funny', name: 'A funny level for each language', group: 'Language',
+    id: 'funny', playful: true, name: 'A funny level for each language', group: 'Language',
     icon: 'language', site: 'shipped', app: 'shipped',
     blurb: 'Two independent sliders from 1, fully serious, to 5, maximum playfulness — one for English and one for Cantonese.',
     detail: 'It applies to every category of message with no exemptions, errors and warnings included, and you are told that before you opt in. What changes is voice, never facts: at any level the message still names what happened, what is affected and what your options are. A warning nobody can act on is a broken warning, not a funny one.',
     verify: 'Set English to 1 and to 5 and confirm the same facts survive both readings.'
   },
   {
-    id: 'vocab', name: 'Personal vocabulary upload', group: 'Language',
+    id: 'vocab', playful: true, name: 'Personal vocabulary upload', group: 'Language',
     icon: 'file', site: 'shipped', app: 'shipped',
     blurb: 'A local JSON file of word replacements, applied to this product\'s own copy.',
     detail: 'The control is always visible, even before a file exists. The whole payload is validated before anything is displayed or cached — size, schema version, nesting depth, entry count, key and value lengths, string-only replacements, duplicate keys — and a rejected file never applies partially. Nothing about it reaches the network, an export, a log or a history entry.',
     verify: 'Upload a malformed file and confirm nothing changes and the reason is named. Confirm an export states that vocabulary contents were omitted.'
   },
   {
-    id: 'narrator', name: 'Spoken narrator', group: 'Language',
+    id: 'narrator', playful: true, name: 'Spoken narrator', group: 'Language',
     icon: 'bell', site: 'na', app: 'shipped',
     blurb: 'Off by default, with a separate voice picker for each narrated language, plus rate and pitch.',
     detail: 'One picker per language, because choosing an English voice says nothing about which Cantonese voice should read the other half of a bilingual line. Each lists the voices this machine actually has, resolved at runtime, with Choose automatically as the shipped default — nothing ships naming a voice most installs do not have. It says beneath the picker what will actually be heard, including when a chosen voice is not installed here and the choice is being kept rather than reset.',
@@ -153,7 +153,7 @@ export const FEATURES = [
   },
   {
     id: 'school', name: 'School mode', group: 'Settings',
-    icon: 'shield', site: 'partial', app: 'shipped',
+    icon: 'shield', site: 'shipped', app: 'shipped',
     blurb: 'A renameable mode that omits the playful surfaces entirely and needs a PIN to leave.',
     detail: 'While on, the playful capabilities behave as though they are not installed — omitted from controls, copy, labels, search results and notifications rather than merely disabled, because a greyed-out control still names the thing it is hiding. Prior choices stay stored and return when it is turned off. It is a user-experience lock, not a security boundary, and the product says so rather than implying protection.',
     verify: 'Turn it on and confirm the hidden features produce no search results at all, not disabled ones.'
@@ -243,7 +243,7 @@ export const FEATURES = [
     verify: 'Perform an action and confirm the entry that appears describes what actually occurred.'
   },
   {
-    id: 'dimsum', name: 'Dim sum surprise', group: 'Delight',
+    id: 'dimsum', playful: true, name: 'Dim sum surprise', group: 'Delight',
     icon: 'image', site: 'shipped', app: 'shipped',
     blurb: 'A one-in-ten chance at startup of being shown a dish, named in both languages.',
     detail: 'Non-blocking and auto-dismissing: it never gates startup, never steals focus and never appears mid-task. There is no setting to switch it off. Photographs come from the public dim-sum catalogue rather than being copied into this repository, and where the catalogue has no published image the surface says so instead of filling the gap locally. School mode suppresses it entirely.',
@@ -344,8 +344,23 @@ export const CHANGELOG = [
   }
 ];
 
+/**
+ * Whether School mode makes a feature absent.
+ *
+ * Marked on the feature itself rather than kept as a list somewhere else,
+ * because a separate list is maintained in one place and forgotten in the three
+ * that read it — which is exactly what happened: the settings page omitted the
+ * playful rows while the features page, the documentation list and the command
+ * palette all went on offering them by name.
+ */
+export function isPlayful(id) {
+  const f = FEATURES.find((x) => x.id === id);
+  return Boolean(f && f.playful);
+}
+
 export const DOCS = FEATURES.map((f) => ({
   id: f.id,
+  playful: Boolean(f.playful),
   title: f.name,
   group: f.group,
   blurb: f.blurb,
