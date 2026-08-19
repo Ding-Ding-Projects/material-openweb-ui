@@ -26,6 +26,7 @@ const DEFAULTS = {
     school: { on: false, name: 'School mode', pin: '' }
   },
   settingsWritten: [],
+  appearance: {},
   vocabulary: null,
   locks: {},
   tickets: [],

@@ -69,6 +69,15 @@ jobs:
       - name: The QR encoder round-trips through its own decoder
         run: node scripts/test-qr.mjs
 
+      - name: Every custom property read is one that is defined
+        run: node scripts/test-tokens.mjs
+
+      - name: The colour translator matches published values
+        run: node scripts/test-colour.mjs
+
+      - name: Appearance keys are stable and imports are screened
+        run: node scripts/test-appearance.mjs
+
       - name: Line count
         run: |
           node scripts/count-lines.mjs --markdown >> "$GITHUB_STEP_SUMMARY"

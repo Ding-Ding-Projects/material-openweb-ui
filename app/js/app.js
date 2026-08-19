@@ -19,6 +19,7 @@ import * as locksCore from './core/locks.js';
 import { palette, wire as wirePalette } from './palette.js';
 import * as i18n from './i18n.js';
 import * as narrator from './core/narrator.js';
+import * as appearance from './appearance.js';
 
 const PAGES = {
   chat:          { ...chatPage.meta, render: chatPage.render },
@@ -130,6 +131,8 @@ function buildTitlebar() {
             : { label: 'Lock this tab…', icon: 'lock',
                 run: () => locksUi.wizard(lockId, pageLabel(t.page)) },
           { label: 'Manage every lock', icon: 'unlock', run: () => open('locks') },
+          { separator: true },
+          appearance.menuItem(btn),
           { separator: true },
           { label: 'Close this tab', icon: 'x', danger: true, run: () => close(t.id) },
           { label: 'Close other tabs', icon: 'x', run: () => {
@@ -294,11 +297,17 @@ function maybeDimSum() {
   state.log('Dim sum', d.en + ' · ' + d.zh);
 }
 
-window.mowuiApp = { open, refresh: render, exportAll, toggleTheme, palette };
+window.mowuiApp = { open, refresh: render, exportAll, toggleTheme, palette, appearance };
 
 // ---------------------------------------------------------------- start
 
 misc.applyTheme();
+
+// Appearance overrides are applied before the first paint, so a customised
+// element never flashes its default on the way in.
+appearance.apply();
+appearance.installShortcut();
+
 render();
 
 // The narrator reads what the event log records, so it describes what actually

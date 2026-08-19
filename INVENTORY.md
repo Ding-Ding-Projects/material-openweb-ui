@@ -54,8 +54,8 @@ nobody should trust.
 | narrator | Spoken narrator | planned | shipped | `app/js/core/narrator.js#export function resolve` | content.js |
 | school | School mode | planned | shipped | `app/js/i18n.js#PLAYFUL_SETTINGS` | content.js |
 | schedule | Scheduled settings | planned | planned | — | content.js |
-| appearance | Per-element appearance editor | planned | planned | — | content.js |
-| colour | Infinite colour picker with translator | planned | planned | — | content.js |
+| appearance | Per-element appearance editor | na | shipped | `app/js/appearance.js#export function editor` | content.js |
+| colour | Infinite colour picker with translator | na | shipped | `app/js/colour-picker.js#export function colourPicker` | content.js |
 | logo | App logo customisation | planned | planned | — | content.js |
 | rename | Rename the product | shipped | planned | `docs/assets/js/settings.js#set-app-name` | content.js |
 | confirm | Destructive-action super confirmation | shipped | shipped | `docs/assets/js/ui.js#export function superConfirm` | content.js |

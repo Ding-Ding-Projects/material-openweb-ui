@@ -163,14 +163,14 @@ export const FEATURES = [
   },
   {
     id: 'appearance', name: 'Per-element appearance editor', group: 'Appearance',
-    icon: 'palette', site: 'planned', app: 'planned',
+    icon: 'palette', site: 'na', app: 'shipped',
     blurb: 'Every rendered element exposes Edit appearance… from its own context menu.',
     detail: 'Word-depth typography — every installed and bundled face with a live preview, variable axes, weight, style, underline variants, spacing, line height, baseline offset — plus shape, radius, elevation and every state and pseudo-state. The editor opens anchored beside the element being edited, tracks that anchor, and returns focus to it on close. It themes its own dialog too: a theming feature that cannot theme itself is incomplete.',
     verify: 'Edit one element\'s appearance, reset that single property, and confirm neighbouring elements are untouched.'
   },
   {
     id: 'colour', name: 'Infinite colour picker with translator', group: 'Appearance',
-    icon: 'palette', site: 'planned', app: 'planned',
+    icon: 'palette', site: 'na', app: 'shipped',
     blurb: 'A continuous spectrum and numeric entry, never a swatch-only chooser.',
     detail: 'Converts bidirectionally among named colours, HEX/HEX8, RGB/RGBA, HSL/HSLA, HSV, HWB, CIELAB/LCH, OKLab/OKLCH and CMYK, preserves alpha, identifies the active colour space and gamut, warns before clipping, and shows accessible contrast against the relevant background. Swatches and recent colours are conveniences layered on top rather than replacements for it.',
     verify: 'Enter an OKLCH value outside sRGB and confirm the clipping warning appears before it is applied.'

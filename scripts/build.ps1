@@ -210,6 +210,24 @@ if ($LASTEXITCODE -ne 0) {
 }
 Step 'The QR encoder round-trips through its own decoder.'
 
+& $nodeExe (Join-Path $Root 'scripts/test-tokens.mjs') | Out-Null
+if ($LASTEXITCODE -ne 0) {
+  Fail 'a stylesheet reads a custom property nothing defines. CSS drops that rule in silence. Run: node scripts/test-tokens.mjs'
+}
+Step 'Every custom property read by a stylesheet is defined by one.'
+
+& $nodeExe (Join-Path $Root 'scripts/test-colour.mjs') | Out-Null
+if ($LASTEXITCODE -ne 0) {
+  Fail 'the colour translator no longer matches published values. Every colour through it would be quietly wrong. Run: node scripts/test-colour.mjs'
+}
+Step 'The colour translator matches published values in every space.'
+
+& $nodeExe (Join-Path $Root 'scripts/test-appearance.mjs') | Out-Null
+if ($LASTEXITCODE -ne 0) {
+  Fail 'an appearance key is unstable or an imported override is unscreened. Run: node scripts/test-appearance.mjs'
+}
+Step 'Appearance keys are stable and imported overrides are screened.'
+
 & $nodeExe (Join-Path $Root 'scripts/test-locks.mjs') | Out-Null
 if ($LASTEXITCODE -ne 0) {
   Fail 'a lock or unlock-ladder safety rule no longer holds. Run: node scripts/test-locks.mjs'

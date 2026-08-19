@@ -60,6 +60,7 @@ const PATHS = {
   shield: '<path d="M12 3.5 5 6.5v5c0 4.2 2.9 7.6 7 9 4.1-1.4 7-4.8 7-9v-5z"/><path d="m9.3 12 1.9 1.9 3.6-3.7"/>',
   server: '<rect x="3" y="4" width="18" height="7" rx="2.2"/><rect x="3" y="13" width="18" height="7" rx="2.2"/><path d="M7 7.5h.01M7 16.5h.01"/>',
   swap: '<path d="M4 8.5h11l-3-3"/><path d="M20 15.5H9l3 3"/>',
+  undo: '<path d="M4 10h10a5 5 0 0 1 0 10H9"/><path d="M4 10l4-4M4 10l4 4"/>',
   phonelock: '<rect x="6.5" y="2.5" width="11" height="19" rx="2.6"/><path d="M10.5 17.5h3"/><path d="M9.5 7.5h5M9.5 11h5"/>',
   gear: '<circle cx="12" cy="12" r="3.2"/><path d="M12 2.8v2.4M12 18.8v2.4M2.8 12h2.4M18.8 12h2.4M5.5 5.5l1.7 1.7M16.8 16.8l1.7 1.7M18.5 5.5l-1.7 1.7M7.2 16.8l-1.7 1.7"/>',
   pulse: '<path d="M3.5 12h4l2-5 3.5 10 2.5-5h5"/>',
