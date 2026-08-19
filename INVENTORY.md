@@ -33,21 +33,22 @@ nobody should trust.
 
 | id | Feature | site | app | Implementation anchor | Docs |
 | --- | --- | --- | --- | --- | --- |
-| md3 | Material Design 3 throughout | shipped | planned | `docs/assets/css/tokens.css#--sclowest` | content.js |
-| frameless | Frameless window and custom title bar | na | partial | `electron/main.ts#titleBarStyle` | content.js |
-| tabs | Browser-style tabs | partial | planned | `docs/assets/js/app.js#renderStrip` | content.js |
+| md3 | Material Design 3 throughout | shipped | shipped | `app/css/app.css#titlebar` | content.js |
+| frameless | Frameless window and custom title bar | na | shipped | `electron/main.ts#titleBarStyle` | content.js |
+| tabs | Browser-style tabs | partial | partial | `app/js/app.js#function buildTitlebar` | content.js |
 | tabsearch | Four tab-discovery searches | planned | planned | — | content.js |
 | palette | Command palette on Ctrl+Shift+F | shipped | planned | `docs/assets/js/palette.js#export function show` | content.js |
-| regex | A regex builder beside every search field | shipped | planned | `docs/assets/js/regex.js#export function searchField` | content.js |
-| ollama | Local Ollama suite manager | na | planned | — | content.js |
+| regex | A regex builder beside every search field | shipped | partial | `docs/assets/js/regex.js#export function searchField` | content.js |
+| chat | Chat with a local model | na | partial | `app/js/core/ollama.js#export async function chat` | content.js |
+| ollama | Local Ollama suite manager | na | partial | `app/js/core/ollama.js#export async function pull` | content.js |
 | fit | Evidence-backed hardware fit verdicts | na | partial | `electron/hardware.ts#export function fit` | content.js |
-| converter | Universal file converter | na | planned | — | content.js |
-| authenticator | Built-in authenticator | planned | planned | — | content.js |
+| converter | Universal file converter | na | partial | `app/js/core/convert.js#export function sniff` | content.js |
+| authenticator | Built-in authenticator | planned | partial | `app/js/core/totp.js#export async function totp` | content.js |
 | qr | QR pairing for one-time-code registration | planned | planned | — | content.js |
 | locks | Toy locks on every element | planned | planned | — | content.js |
 | tickets | Support Tickets | planned | planned | — | content.js |
 | ladder | The unlock ladder | planned | planned | — | content.js |
-| language | Three language modes | shipped | planned | `docs/assets/js/i18n.js#export const LANGUAGES` | content.js |
+| language | Three language modes | shipped | partial | `docs/assets/js/i18n.js#export const LANGUAGES` | content.js |
 | funny | A funny level for each language | shipped | planned | `docs/assets/js/i18n.js#FUNNY_DISCLOSURE` | content.js |
 | vocab | Personal vocabulary upload | shipped | planned | `docs/assets/js/i18n.js#function applyVocab` | content.js |
 | narrator | Spoken narrator | planned | planned | — | content.js |
@@ -57,13 +58,13 @@ nobody should trust.
 | colour | Infinite colour picker with translator | planned | planned | — | content.js |
 | logo | App logo customisation | planned | planned | — | content.js |
 | rename | Rename the product | shipped | planned | `docs/assets/js/settings.js#set-app-name` | content.js |
-| confirm | Destructive-action super confirmation | shipped | planned | `docs/assets/js/ui.js#export function superConfirm` | content.js |
-| notify | Non-blocking notifications with a reviewable centre | shipped | planned | `docs/assets/js/ui.js#export function notify` | content.js |
+| confirm | Destructive-action super confirmation | shipped | shipped | `docs/assets/js/ui.js#export function superConfirm` | content.js |
+| notify | Non-blocking notifications with a reviewable centre | shipped | shipped | `docs/assets/js/ui.js#export function notify` | content.js |
 | bulk | Bulk actions on every list | partial | planned | `docs/assets/js/pages.js#Select all` | content.js |
 | export | Export everything, in every format that fits | shipped | planned | `docs/assets/js/store.js#export function exportBundle` | content.js |
 | history | Local version history | shipped | planned | `docs/assets/js/store.js#export function record` | content.js |
 | changelog | Changelog viewer | shipped | planned | `docs/assets/js/pages.js#function changelog` | content.js |
-| status | Status Hub | shipped | planned | `docs/assets/js/pages.js#function status` | content.js |
+| status | Status Hub | shipped | partial | `app/js/pages/misc.js#export function renderStatus` | content.js |
 | dimsum | Dim sum surprise | shipped | planned | `docs/assets/js/app.js#function maybeDimSum` | content.js |
 | a11y | Accessibility and responsive layout | shipped | planned | `docs/assets/css/site.css#skip-link` | content.js |
 | buildscript | One-click build script | planned | planned | — | content.js |

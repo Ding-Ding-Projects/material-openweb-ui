@@ -11,19 +11,28 @@ is retaken rather than left to age.
 
 | File | Shows | Commit | Taken |
 | --- | --- | --- | --- |
-| `desktop-shell-not-built.png` | The Electron shell running with no compiled frontend present. Frameless, on the Material 3 dark surface token, showing the honest not-built page with the exact command that would produce one. | `6173dc348` | 2026-08-19 |
+| `app-ollama.png` | The Ollama page against a real daemon: version and latency from `/api/version`, three installed models with their real sizes and quantisation from `/api/tags`, system memory and GPU measured through the shell, and the published catalogue verified complete. | `58d546e2d` | 2026-08-19 |
+| `app-authenticator.png` | The authenticator with all 18 RFC 6238 vectors passing, the system-clock check reporting a 3-second offset, and an honest empty state. | `58d546e2d` | 2026-08-19 |
+| `desktop-shell-not-built.png` | The Electron shell running with no compiled frontend present — frameless, on the Material 3 dark surface token, naming the command that would produce one. Kept because it is the state a fresh checkout is in. | `6173dc348` | 2026-08-19 |
+
+## What the numbers in these captures are
+
+The figures are not staged. The models, sizes, GPU and memory belong to the
+machine the capture was taken on, read live from Ollama's local API and from the
+operating system. That is the point of capturing a built artifact rather than
+drawing one: a screenshot of invented data proves nothing about whether the code
+can obtain real data.
 
 ## What is missing, and why
 
-There is no capture of the Material Design 3 application interface, because it is
-not implemented yet — `INVENTORY.md` marks it planned. The gap is stated here
-rather than filled with a screenshot of the prototype, which would show something
-that has never run as this product.
+There is no capture of the chat surface mid-stream, the converter with a file
+loaded, or any surface still marked `planned` in `INVENTORY.md`. Those gaps are
+left visible rather than filled with something that has never run.
 
 ## How they are taken
 
-An off-screen Win32 desktop is created, the built executable is launched onto it,
-its window handle is resolved at run time, and the window is captured directly
-via `PrintWindow`. The visible desktop, the cursor, keyboard focus and the
-foreground application are all untouched, which is what makes it safe to take a
-capture in the middle of somebody else's working session.
+An off-screen Win32 desktop is created, the built executable is launched onto
+it, its window handle is resolved at run time, and the window is captured
+directly via `PrintWindow`. The visible desktop, the cursor, keyboard focus and
+the foreground application are all untouched, which is what makes it safe to
+take a capture in the middle of somebody else's working session.

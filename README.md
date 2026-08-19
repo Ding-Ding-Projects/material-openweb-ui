@@ -17,9 +17,10 @@ offline · nothing in it is ever for sale.
 ---
 
 > [!IMPORTANT]
-> **No installer has been published, and the desktop application is not built yet.**
-> What exists today is the design and the documentation site. Every feature below
-> is marked with what is actually shipped and what is planned, and
+> **No installer has been published yet.** The desktop application runs from a
+> checkout — the screenshots below are of it, against a real Ollama daemon — but
+> nothing is packaged, so there is nothing to download. Every feature is marked
+> with what is actually shipped and what is planned, and
 > [`INVENTORY.md`](INVENTORY.md) is checked by a guard on every build so those
 > claims cannot quietly drift away from the code.
 
@@ -83,54 +84,64 @@ are. A warning nobody can act on is a broken warning, not a funny one.
 ## Status
 
 <details>
-<summary><b>Where each surface actually is</b> — one live, one designed, one not started</summary>
+<summary><b>Where each surface actually is</b> — two running, one unpackaged</summary>
 
 <br>
 
 | Surface | State |
 | --- | --- |
 | **Documentation site** | **Live** at [ding-ding-projects.github.io/material-openweb-ui](https://ding-ding-projects.github.io/material-openweb-ui/). Six tabbed destinations, a command palette, regex builders, three language modes, both themes, append-only local history, export. |
+| **Desktop application** | **Runs from a checkout** via `npm run electron:dev`. Frameless Material 3 window with real IPC window controls; Ollama manager, chat, file converter and authenticator all working against real data. Several surfaces are still `planned` and say so. |
 | **Design** | Landing page designed against the application's own token sheet — desktop, bilingual and phone views. Sources in [`design/landing/`](design/landing/). |
-| **Desktop application** | **Not started.** The Material 3 prototype it will be built from is vendored verbatim in [`design/`](design/). |
-| **Installer** | **None.** No release has been published. |
+| **Installer** | **None.** Nothing is packaged, so there is nothing to download. |
 
-The prototype in `design/` is not a mockup: its one-time codes are real, its file
-converter really converts, and its settings really persist. What it simulates is
-the Ollama runtime and the window controls, both named as explicit swap points in
-its own handoff document.
+The prototype in `design/` was not a mockup either: its one-time codes were real
+and its converter really converted. What it simulated was the Ollama runtime and
+the window controls — and those are exactly the two things this fork replaced
+first, because they were the parts that could not be checked by looking.
 
 </details>
 
 ## Screenshots
 
 <details open>
-<summary><b>Captures</b> — one real one, and an honest gap where the rest go</summary>
+<summary><b>Captures</b> — real ones, from the real application</summary>
 
 <br>
 
-**The desktop shell, running.** Frameless, on the Material 3 dark surface token,
-with no compiled frontend present — so it says exactly that and names the command
-that would produce one, rather than opening an empty white rectangle.
+**The Ollama page, against a running daemon.** Version and latency from
+`/api/version`; three installed models with their real sizes and quantisation
+from `/api/tags`; system memory and GPU measured through the desktop shell; the
+published catalogue verified complete.
 
-<img src="docs/assets/captures/desktop-shell-not-built.png" width="720" alt="The Material Open WebUI desktop shell running with no compiled frontend: a frameless dark window headed 'Nothing is built yet', explaining that the shell started but has nothing to load, and showing the command npm run build.">
+<img src="docs/assets/captures/app-ollama.png" width="820" alt="The Material Open WebUI Ollama page: a frameless dark Material 3 window with a destination rail, showing Ollama running at version 0.32.14 on 127.0.0.1:11434, this machine's 63.81 GB of memory and RTX 4070 GPU, and three installed models with their sizes.">
 
-That is a real capture of the real executable at commit `6173dc348`, taken on an
-off-screen desktop so the machine's visible session was never disturbed. Every
-capture in [`docs/assets/captures/`](docs/assets/captures/) records the commit it
-was taken at.
+**The authenticator, self-checked.** All eighteen RFC 6238 published vectors run
+at startup across SHA-1, SHA-256 and SHA-512, and the system clock is compared
+against network time — because a skewed clock is the failure nobody diagnoses:
+the digits look perfectly fine and are refused everywhere.
 
-**What is missing:** the Material Design 3 application interface, because it is
-not implemented yet. That gap is left visible rather than filled with a
-screenshot of the prototype, which would show something that has never run as
-this product. The documentation site is live and can be looked at directly in the
-meantime.
+<img src="docs/assets/captures/app-authenticator.png" width="820" alt="The authenticator page showing a green banner reading all 18 RFC 6238 test vectors pass, a note that the system clock is within 3 seconds of network time, a search field with a regex builder, and an honest empty state.">
+
+Nothing in either image is staged. The models, the memory figure and the GPU
+belong to the machine the capture was taken on, read live from Ollama's local
+API and from the operating system — which is the point of capturing a built
+artifact rather than drawing one.
+
+Both were taken on an off-screen desktop, so the machine's visible session was
+never disturbed. Every capture records the commit it came from in
+[`docs/assets/captures/`](docs/assets/captures/).
+
+**What is missing:** any surface still marked `planned` in
+[`INVENTORY.md`](INVENTORY.md). Those gaps stay visible rather than being filled
+with something that has never run.
 
 </details>
 
 ## Features
 
 <details>
-<summary><b>The full list</b> — 36 features, with what is shipped and what is not</summary>
+<summary><b>The full list</b> — 37 features, with what is shipped and what is not</summary>
 
 <br>
 
@@ -183,6 +194,8 @@ changelog viewer where every entry links to the commit that made the change.
 
 | Path | What it is |
 | --- | --- |
+| `app/` | The Material Design 3 desktop frontend the shell loads. Vanilla ES modules, no build step, sharing the design-system primitives in `docs/assets/js/` so the two surfaces cannot drift apart. |
+| `electron/` | The desktop shell: frameless window, IPC window controls, backend supervisor, hardware probe. |
 | `docs/` | The documentation site, published to GitHub Pages. Vanilla ES modules, no build step, and no third-party request of any kind. |
 | `docs/assets/fonts/` | Vendored Roboto Flex and Roboto Mono, latin subsets, 208 KB. Chinese uses the reader's platform face rather than shipping megabytes of CJK. |
 | `design/` | The Material 3 prototype, verbatim from the design tool. Reference only — never built, never linted, never edited in place. |

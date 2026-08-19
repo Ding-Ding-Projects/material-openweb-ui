@@ -46,6 +46,18 @@ jobs:
         # removes one asserted item at a time and requires red each time.
         run: node scripts/test-inventory-guard.mjs
 
+      - name: RFC 6238 vectors
+        # An authenticator that is subtly wrong emits digits every service
+        # refuses, with no error anywhere to read. These 18 vectors are the
+        # only thing standing between that and shipping.
+        run: node scripts/test-totp.mjs
+
+      - name: File detection and conversions
+        run: node scripts/test-convert.mjs
+
+      - name: No append() can render a stray "null"
+        run: node scripts/test-dom-safety.mjs
+
       - name: Line count
         run: |
           node scripts/count-lines.mjs --markdown >> "$GITHUB_STEP_SUMMARY"

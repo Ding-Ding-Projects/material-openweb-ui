@@ -48,7 +48,13 @@ function anchorFiles() {
   try {
     const text = readFileSync(join(ROOT, 'INVENTORY.md'), 'utf8');
     const found = new Set();
-    for (const m of text.matchAll(/`([^`#]+)#[^`]+`/g)) {
+    // Newlines are excluded from both halves on purpose. Without that, a match
+    // can begin at the CLOSING backtick of an inline code span further up the
+    // document and run across several lines to the next `#`, swallowing the
+    // real anchor that followed it. Two anchors went missing that way, the
+    // scratch copy came up short, and the baseline went red for a reason that
+    // had nothing to do with any of the cases below.
+    for (const m of text.matchAll(/`([^`#\n]+)#[^`\n]+`/g)) {
       found.add(m[1].split('/').join(sepOf()));
     }
     return [...found];
@@ -91,6 +97,28 @@ function edit(dir, rel, fn) {
   writeFileSync(p, after);
 }
 
+/**
+ * Rewrites one cell of one inventory row, addressed by row id and column.
+ *
+ * Cases used to match on literal row text, which meant that changing a
+ * feature's status in the normal course of work broke the case rather than the
+ * guard — the mutation silently became a no-op. Addressing cells by position
+ * survives a status change, which is the whole point of a regression suite that
+ * is supposed to outlive the tree it tests.
+ */
+const COL = { id: 0, feature: 1, site: 2, app: 3, anchor: 4, docs: 5 };
+
+function setCell(dir, rowId, column, value) {
+  edit(dir, 'INVENTORY.md', (s) => s.split(NL).map((line) => {
+    const t = line.trim();
+    if (!t.startsWith('|')) return line;
+    const cells = t.split('|').slice(1, -1).map((c) => c.trim());
+    if (cells.length < 6 || cells[COL.id] !== rowId) return line;
+    cells[COL[column]] = value;
+    return '| ' + cells.join(' | ') + ' |';
+  }).join(NL));
+}
+
 const CASES = [
   {
     name: 'a feature is removed from the inventory but stays in the catalogue',
@@ -113,13 +141,15 @@ const CASES = [
   },
   {
     name: 'a shipped claim loses its anchor',
-    apply: (dir) => edit(dir, 'INVENTORY.md', (s) =>
-      s.replace('| shipped | planned | `docs/assets/js/ui.js#export function notify` |', '| shipped | planned | — |'))
+    apply: (dir) => setCell(dir, 'notify', 'anchor', '—')
   },
   {
     name: 'a planned row quietly gains an anchor it cannot back up',
-    apply: (dir) => edit(dir, 'INVENTORY.md', (s) =>
-      s.replace('| ladder | The unlock ladder | planned | planned | — |', '| ladder | The unlock ladder | planned | planned | `docs/assets/js/ui.js#notify` |'))
+    apply: (dir) => setCell(dir, 'ladder', 'anchor', '`docs/assets/js/ui.js#notify`')
+  },
+  {
+    name: 'an inventory row overstates what the desktop application does',
+    apply: (dir) => setCell(dir, 'ladder', 'app', 'shipped')
   },
   {
     name: 'the page claims a feature is shipped while the inventory says planned',

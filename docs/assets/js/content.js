@@ -16,21 +16,21 @@ export const STATUS = {
 export const FEATURES = [
   {
     id: 'md3', name: 'Material Design 3 throughout', group: 'Interface',
-    icon: 'palette', site: 'shipped', app: 'planned',
+    icon: 'palette', site: 'shipped', app: 'shipped',
     blurb: 'Tokens, typography, shape, elevation and motion follow the Material 3 baseline scheme seeded at #6750A4, with no legacy elements left over from the original interface.',
     detail: 'The token sheet is the same file of values on both surfaces. Colour is never written literally in a rule — every one reads a custom property, so a change to the seed moves the whole product at once instead of leaving a trail of hardcoded hexes behind. Light and dark are both complete palettes rather than one being a washed-out pass over the other, and the reader\'s explicit choice always beats the system preference.',
     verify: 'Switch the theme on this page and confirm every surface, border and shadow changes together. Search the stylesheet for a literal hex value outside tokens.css; there should be none.'
   },
   {
     id: 'frameless', name: 'Frameless window and custom title bar', group: 'Interface',
-    icon: 'desktop', site: 'na', app: 'partial',
+    icon: 'desktop', site: 'na', app: 'shipped',
     blurb: 'The desktop application draws its own title bar and window controls rather than showing the operating system\'s default chrome.',
     detail: 'Minimise, maximise and close are real controls wired to the main process over IPC. A web page has no window to manage, so this row is not applicable to the site rather than quietly counted as satisfied.',
     verify: 'In the built application, each control performs its action, and the window can still be moved and resized by its edges.'
   },
   {
     id: 'tabs', name: 'Browser-style tabs', group: 'Navigation',
-    icon: 'grid', site: 'partial', app: 'planned',
+    icon: 'grid', site: 'partial', app: 'partial',
     blurb: 'Content is separated into tabs you open, pin, reorder, group and close, rather than one long scrolling page.',
     detail: 'The strip docks to any edge with left as the default, because a screen is wider than it is tall and a vertical strip shows more labels legibly. Docking is an orientation change rather than a rotation: the overflow surface measures the other axis, arrow keys follow the axis, and a label is never turned ninety degrees, because a sideways word is a word nobody reads. On a phone the strip becomes a scrolling row so it stops eating the width it exists to reveal.',
     verify: 'Open several tabs, pin one, reload the page, and confirm order and pinned state survive. Narrow the window to phone width and confirm the strip scrolls rather than wrapping.'
@@ -51,14 +51,21 @@ export const FEATURES = [
   },
   {
     id: 'regex', name: 'A regex builder beside every search field', group: 'Search',
-    icon: 'search', site: 'shipped', app: 'planned',
+    icon: 'search', site: 'shipped', app: 'partial',
     blurb: 'Every search field, every dropdown filter and every right-click menu filter carries its own anchored pattern builder.',
     detail: 'Plain text stays the default and regex is an explicit opt-in. The builder offers guided tokens for classes, anchors, groups, alternation and quantifiers, a raw editor, flags, sample text, live validity, a match count and the first match\'s capture groups. It is anchored to the field you were already typing in rather than opening as a detached dialog somewhere else. Patterns are evaluated in this browser and never transmitted.',
     verify: 'Open any menu on this site, press the .* button in its filter, build a pattern, apply it, and confirm only that menu filters.'
   },
   {
+    id: 'chat', name: 'Chat with a local model', group: 'Models',
+    icon: 'chat', site: 'na', app: 'partial',
+    blurb: 'Streamed replies from a model running on this machine, with a model picker, cancellation and honest empty states.',
+    detail: 'The design prototype faked this with a timer and three canned paragraphs. Nothing here is canned: the reply is streamed from the local daemon token by token, it can be stopped mid-flight, and when no model is installed the surface says so and points at the catalogue rather than answering with something it invented. Token throughput is reported from the daemon's own timings.',
+    verify: 'Stop the Ollama daemon and confirm the page diagnoses that rather than replying. Press Stop mid-reply and confirm the partial text is kept and marked as stopped.'
+  },
+  {
     id: 'ollama', name: 'Local Ollama suite manager', group: 'Models',
-    icon: 'server', site: 'na', app: 'planned',
+    icon: 'server', site: 'na', app: 'partial',
     blurb: 'Daemon health, installed models, the full published catalog with every tag, pulls with real progress, deletes behind the confirmation gate, and a chat surface.',
     detail: 'It speaks only Ollama\'s documented local HTTP API. The catalog is exhaustive at each verified refresh rather than a curated shortlist, and records its source revision, refresh time, page count and a completeness verdict. Offline it shows the last verified catalog plus current installed state and says which is which, instead of guessing at new entries.',
     verify: 'With the daemon stopped, the surface diagnoses that exact state and offers a retry, rather than spinning.'
@@ -72,14 +79,14 @@ export const FEATURES = [
   },
   {
     id: 'converter', name: 'Universal file converter', group: 'Tools',
-    icon: 'swap', site: 'na', app: 'planned',
+    icon: 'swap', site: 'na', app: 'partial',
     blurb: 'Type detected from the actual bytes, eight adapter categories, and every unavailable format listed with the exact dependency it is missing.',
     detail: 'Documents/PDF, Images, Audio, Video, Archives, Structured Data, Code/Text and Binary Encodings each have their own searchable catalogue. A format is only enabled when its adapter is bundled inside the installed application and works offline — a tool that happens to be on the developer\'s PATH never makes a format appear available. Lossy conversions disclose what will change before they run.',
     verify: 'Rename a PNG to .txt and confirm it is still detected as an image; check that a disabled row names its missing dependency rather than simply being greyed out.'
   },
   {
     id: 'authenticator', name: 'Built-in authenticator', group: 'Tools',
-    icon: 'phonelock', site: 'planned', app: 'planned',
+    icon: 'phonelock', site: 'planned', app: 'partial',
     blurb: 'Standards-correct one-time codes for whatever accounts you like, computed locally and checked against the published test vectors.',
     detail: 'RFC 6238 over RFC 4226, SHA-1/256/512, six to eight digits and an arbitrary period, defaulting to SHA-1/6/30 because that is what the rest of the world issues. The current code is shown large and grouped with a copy action, a countdown that is never colour-only, and a peek at the next code so nobody starts typing one with two seconds left. A skewed system clock is reported in plain words rather than producing confidently wrong digits.',
     verify: 'Run the RFC 6238 published test vectors; every one must match. Set the system clock forward and confirm the surface says so.'
@@ -114,7 +121,7 @@ export const FEATURES = [
   },
   {
     id: 'language', name: 'Three language modes', group: 'Language',
-    icon: 'language', site: 'shipped', app: 'planned',
+    icon: 'language', site: 'shipped', app: 'partial',
     blurb: 'English, playful Hong Kong Cantonese, and a bilingual mode that keeps both readable.',
     detail: 'Bilingual holds English as the prominent primary and places Cantonese underneath as a compact secondary, rule-marked on long paragraphs so the two never read as one run-on. Localisation resources are kept separate from logic, and every mode is exercised at the longest strings and narrowest widths.',
     verify: 'Switch to Bilingual and check the longest labels at 320px width for clipping.'
@@ -184,14 +191,14 @@ export const FEATURES = [
   },
   {
     id: 'confirm', name: 'Destructive-action super confirmation', group: 'Safety',
-    icon: 'shield', site: 'shipped', app: 'planned',
+    icon: 'shield', site: 'shipped', app: 'shipped',
     blurb: 'Two independently operated keys, then a full-range slider, with an emergency exit always available.',
     detail: 'The gate names the exact action and the exact data affected. Both keys must be set before the slider arms, and nothing happens until the slider completes. Escape cancels, focus returns to the control that opened it, and the safety facts stay unambiguous at every language and funny level.',
     verify: 'Try the slider with one key set and confirm it is inert.'
   },
   {
     id: 'notify', name: 'Non-blocking notifications with a reviewable centre', group: 'Safety',
-    icon: 'bell', site: 'shipped', app: 'planned',
+    icon: 'bell', site: 'shipped', app: 'shipped',
     blurb: 'Anything that only informs is a toast; a modal is reserved for a decision you must make.',
     detail: 'Toasts stack in a corner without overlapping, auto-dismiss on a sensible timeout, and persist when they are errors or warnings. Dismissed notifications stay reviewable in a centre, which is a list like any other and therefore carries multi-select, an honestly-scoped select-all, bulk dismiss and a bulk export that honours the active filter.',
     verify: 'Dismiss a toast and find it again in the notification centre.'
@@ -226,7 +233,7 @@ export const FEATURES = [
   },
   {
     id: 'status', name: 'Status Hub', group: 'Data',
-    icon: 'pulse', site: 'shipped', app: 'planned',
+    icon: 'pulse', site: 'shipped', app: 'partial',
     blurb: 'A live session card and a real event log that every feature writes to.',
     detail: 'The log records what happened rather than what was expected to happen, which is the entire reason it is worth reading. It is a list, so it carries the same search, bulk actions and export as every other list.',
     verify: 'Perform an action and confirm the entry that appears describes what actually occurred.'

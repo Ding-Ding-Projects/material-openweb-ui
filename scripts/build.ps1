@@ -173,6 +173,24 @@ if ($LASTEXITCODE -ne 0) {
   Fail 'the inventory guard negative regression did not behave. Run: node scripts/test-inventory-guard.mjs'
 }
 Ok 'inventory guard negative regression: every case turns it red'
+
+& $nodeExe (Join-Path $Root 'scripts/test-totp.mjs') | Out-Null
+if ($LASTEXITCODE -ne 0) {
+  Fail 'the authenticator disagrees with the RFC 6238 published test vectors. Run: node scripts/test-totp.mjs'
+}
+Ok 'RFC 6238 vectors: all 18 pass'
+
+& $nodeExe (Join-Path $Root 'scripts/test-convert.mjs') | Out-Null
+if ($LASTEXITCODE -ne 0) {
+  Fail 'file-type detection or a conversion adapter misbehaved. Run: node scripts/test-convert.mjs'
+}
+Ok 'converter: detection and every renderer-free conversion behave'
+
+& $nodeExe (Join-Path $Root 'scripts/test-dom-safety.mjs') | Out-Null
+if ($LASTEXITCODE -ne 0) {
+  Fail 'an append() call site can receive a conditional null, which renders the literal word "null". Run: node scripts/test-dom-safety.mjs'
+}
+Ok 'no append() call site can render a stray "null"'
 Elapsed $t
 
 # ---------------------------------------------------------------- 4. build

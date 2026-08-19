@@ -7,7 +7,7 @@
 // load, it says so on screen with the exact command that would produce one — an
 // empty white rectangle is the least diagnosable failure a desktop app has.
 
-import { app, BrowserWindow, ipcMain, shell, nativeTheme } from 'electron';
+import { app, BrowserWindow, ipcMain, shell, nativeTheme, session } from 'electron';
 import { join, dirname } from 'node:path';
 import { existsSync, readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
@@ -36,7 +36,15 @@ function appIdentity() {
 }
 
 function builtFrontend(): string | null {
-  const candidates = [join(REPO_ROOT, 'build', 'index.html'), join(__dirname_, '..', 'build', 'index.html')];
+  // The Material Design 3 frontend first: it needs no build step, which is why
+  // the shell can load it straight from disk. The compiled upstream SPA is the
+  // fallback for when that is what somebody wants to run.
+  const candidates = [
+    join(REPO_ROOT, 'app', 'index.html'),
+    join(__dirname_, '..', 'app', 'index.html'),
+    join(REPO_ROOT, 'build', 'index.html'),
+    join(__dirname_, '..', 'build', 'index.html')
+  ];
   return candidates.find((p) => existsSync(p)) ?? null;
 }
 
@@ -184,6 +192,50 @@ ipcMain.handle('desktop:send', async (_e, message: { type: string; [k: string]: 
   }
 });
 
+/**
+ * The renderer runs from a file:// origin, so every cross-origin fetch it makes
+ * is refused by the browser's CORS check — including the loopback call to the
+ * Ollama daemon, which is the whole point of the application.
+ *
+ * The privileged boundary decides which origins that applies to, and it is a
+ * short explicit list rather than a blanket relaxation: the configured local
+ * daemon, and the model registry. Nothing else gains anything.
+ *
+ * Keeping the calls in the renderer rather than proxying them is deliberate —
+ * a pull and a chat completion are NDJSON streams, and pushing them through
+ * request/response IPC would either buffer the whole thing or reinvent
+ * back-pressure badly. The renderer already streams correctly.
+ */
+const ALLOWED_ORIGINS = new Set<string>([
+  'http://127.0.0.1:11434',
+  'http://localhost:11434',
+  'https://registry.ollama.ai',
+  'https://ollama.com'
+]);
+
+function installCorsAllowlist() {
+  session.defaultSession.webRequest.onHeadersReceived((details, callback) => {
+    let origin: string | null = null;
+    try {
+      origin = new URL(details.url).origin;
+    } catch {
+      /* not a URL we can reason about */
+    }
+    if (!origin || !ALLOWED_ORIGINS.has(origin)) {
+      callback({ responseHeaders: details.responseHeaders });
+      return;
+    }
+    callback({
+      responseHeaders: {
+        ...details.responseHeaders,
+        'Access-Control-Allow-Origin': ['*'],
+        'Access-Control-Allow-Headers': ['content-type'],
+        'Access-Control-Allow-Methods': ['GET, POST, DELETE, OPTIONS']
+      }
+    });
+  });
+}
+
 app.setAppUserModelId(APP_ID);
 
 // One window, one instance. A second launch focuses the first rather than
@@ -199,6 +251,7 @@ if (!app.requestSingleInstanceLock()) {
   });
 
   app.whenReady().then(async () => {
+    installCorsAllowlist();
     createWindow();
     backend.onChange((state) => pushEvent({ type: 'backend:state', state }));
     // Not awaited: a slow or absent backend must never delay the window.

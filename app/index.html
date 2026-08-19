@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Material Open WebUI</title>
+<meta name="color-scheme" content="light dark">
+
+<!-- Loaded from disk by the desktop shell. Nothing here is fetched from a
+     network: the fonts are the same vendored files the documentation site
+     serves, and there is no script, stylesheet or image from anywhere else. -->
+
+<link rel="icon" href="../docs/assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../docs/assets/css/fonts.css">
+<link rel="stylesheet" href="../docs/assets/css/tokens.css">
+<link rel="stylesheet" href="../docs/assets/css/site.css">
+<link rel="stylesheet" href="css/app.css">
+</head>
+<body data-app="1">
+
+<a class="skip-link" href="#surface">Skip to content</a>
+
+<div id="shell" class="shell">
+  <div id="titlebar" class="titlebar"></div>
+  <div class="body">
+    <nav id="rail" class="rail" aria-label="Destinations"></nav>
+    <main id="surface" class="surface" role="main" tabindex="-1"></main>
+  </div>
+</div>
+
+<script type="module" src="js/app.js"></script>
+</body>
+</html>

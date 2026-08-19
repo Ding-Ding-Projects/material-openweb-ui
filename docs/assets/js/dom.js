@@ -32,6 +32,24 @@ export function clear(el) {
   return el;
 }
 
+/**
+ * Appends children, skipping the falsy ones.
+ *
+ * Use this instead of `parent.append(...)` anywhere a child is conditional.
+ * The DOM's own `append` STRINGIFIES whatever it is handed, so `append(null)`
+ * quietly adds a text node reading "null" — and because a text node is not an
+ * element, it does not show up in `children`, `querySelector`, or anything else
+ * you would inspect while wondering where the word came from. `h()` has always
+ * filtered these; this brings the same rule to imperative appends.
+ */
+export function add(parent, ...children) {
+  for (const c of children.flat(Infinity)) {
+    if (c === null || c === undefined || c === false) continue;
+    parent.append(typeof c === 'string' || typeof c === 'number' ? document.createTextNode(String(c)) : c);
+  }
+  return parent;
+}
+
 // ---------- icons ----------
 // Drawn as inline SVG on a 24px grid rather than pulled from an icon font, so
 // they survive an offline load and recolour with the rest of the interface.

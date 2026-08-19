@@ -1,6 +1,6 @@
 // The site's pages. Each one is a tab, and the palette indexes all of them.
 
-import { h, icon, clear, fmtTime } from './dom.js';
+import { h, icon, clear, fmtTime, add } from './dom.js';
 import { searchField } from './regex.js';
 import * as ui from './ui.js';
 import * as store from './store.js';
@@ -516,7 +516,7 @@ function status(root) {
   function sync() {
     clear(bulkBar);
     const rows = view();
-    bulkBar.append(
+    add(bulkBar, 
       h('button', { class: 'btn btn--text', onclick: () => { rows.forEach((r) => selected.add(r.id)); render(); sync(); } }, 'Select all ' + rows.length + ' matching'),
       h('button', { class: 'btn btn--text', onclick: () => { rows.forEach((r) => selected.has(r.id) ? selected.delete(r.id) : selected.add(r.id)); render(); sync(); } }, 'Invert'),
       h('button', { class: 'btn btn--text', onclick: () => { selected.clear(); render(); sync(); } }, 'Clear'),
