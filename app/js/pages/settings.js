@@ -16,6 +16,7 @@ import * as i18n from '../i18n.js';
 import * as vocab from '../core/vocabulary.js';
 import * as narrator from '../core/narrator.js';
 import * as ollama from '../core/ollama.js';
+import * as logoUi from '../logo-ui.js';
 
 const DEFAULTS = {
   theme: 'system',
@@ -140,6 +141,9 @@ export function render(root) {
   const schoolBox = h('div', { class: 'card', style: { marginTop: '20px' } });
   renderSchool(schoolBox, school);
 
+  const logoBox = h('div', { class: 'card', style: { marginTop: '20px' } });
+  logoUi.render(logoBox, () => window.mowuiApp.refresh());
+
   add(page,
     h('div', { class: 'page__head' }, h('div', { style: { flex: '1' } },
       h('div', { class: 'page__title' }, i18n.t('set.title')),
@@ -157,7 +161,7 @@ export function render(root) {
     rows,
     narratorBox
   );
-  add(page, vocabBox, schoolBox);
+  add(page, vocabBox, logoBox, schoolBox);
   root.append(page);
 }
 

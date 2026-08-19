@@ -78,6 +78,9 @@ jobs:
       - name: Appearance keys are stable and imports are screened
         run: node scripts/test-appearance.mjs
 
+      - name: The mark is decided by its bytes and never moves the identity
+        run: node scripts/test-logo.mjs
+
       - name: Line count
         run: |
           node scripts/count-lines.mjs --markdown >> "$GITHUB_STEP_SUMMARY"

@@ -53,6 +53,12 @@ check('javascript is among them, not only stylesheets',
 const defined = new Set();
 const read = new Map(); // name -> first file that reads it
 
+/** A repository-relative path with forward slashes, for readable failures. */
+function relative(file) {
+  return file.slice(ROOT.length + 1).split(SEP).join('/');
+}
+const SEP = join('a', 'b').slice(1, 2);
+
 for (const file of FILES) {
   const src = readFileSync(file, 'utf8');
   // A definition is a property name followed by a colon at the start of a
@@ -63,7 +69,7 @@ for (const file of FILES) {
     for (const m of src.matchAll(/(^|[;{\s])(--[a-zA-Z0-9-]+)\s*:/g)) defined.add(m[2]);
   }
   for (const m of src.matchAll(/var\(\s*(--[a-zA-Z0-9-]+)/g)) {
-    if (!read.has(m[1])) read.set(m[1], file.slice(ROOT.length + 1).split('\\').join('/'));
+    if (!read.has(m[1])) read.set(m[1], relative(file));
   }
 }
 
@@ -118,10 +124,86 @@ if (light && dark) {
     missing.length === 0, missing.join(', '));
 }
 
+// ---------------------------------------------------------------- icon names
+//
+// icon() falls back to the information glyph for a name it does not know, which
+// means a typo renders a perfectly convincing wrong icon and nothing anywhere
+// complains. icon('alert') did exactly that — the set calls it 'warn'.
+
+console.log('');
+
+const dom = readFileSync(join(ROOT, 'docs', 'assets', 'js', 'dom.js'), 'utf8');
+// The dotAll flag rather than a [\s\S] class: this file has been through
+// enough shell quoting that a character class with a backslash in it is a
+// liability, and the flag needs no escaping at all.
+const pathsBlock = (dom.match(new RegExp('const PATHS = \\{.*?\\n\\};', 's')) || [''])[0];
+const iconNames = new Set([...pathsBlock.matchAll(/^\s{2}([a-zA-Z][a-zA-Z0-9]*):/gm)].map((m) => m[1]));
+check('the icon set was found', iconNames.size > 10, String(iconNames.size) + ' icons');
+
+// Built from a quoted string rather than written as a regex literal.
+//
+// The first version of this line was a literal and picked up an invisible
+// BACKSPACE character where a word boundary was meant. The regex then required
+// an unprintable byte immediately before the word "icon", so it matched nothing,
+// and the check reported green while testing absolutely nothing — including on
+// a file deliberately mutated to call icon('alarum'). Reading the file back did
+// not reveal it either: a terminal renders 0x08 by eating the character before
+// it, so the line looked correct. Only od -c showed the truth.
+//
+// A quoted string survives a hex dump legibly. A regex literal dense with
+// backslashes does not, and this project writes files through several layers
+// of shell quoting.
+const ICON_CALL = "\\bicon\\(\\s*'([a-zA-Z0-9_-]+)'";
+
+// Proof the pattern itself is intact, so a future collapse cannot pass quietly.
+check('the icon-call pattern still matches an ordinary call',
+  new RegExp(ICON_CALL).test("icon('info')") && !new RegExp(ICON_CALL).test("iconography"),
+  JSON.stringify(ICON_CALL));
+
+const badIcons = [];
+for (const file of FILES.filter((f) => f.endsWith('.js'))) {
+  const src = readFileSync(file, 'utf8');
+  for (const m of src.matchAll(new RegExp(ICON_CALL, 'g'))) {
+    if (!iconNames.has(m[1])) badIcons.push(m[1] + ' in ' + relative(file));
+  }
+}
+check('every icon asked for by name exists in the set', badIcons.length === 0, badIcons.join(', '));
+
+// ---------------------------------------------------------------- modifier classes
+//
+// A modifier class exists solely to be styled — that is what the double hyphen
+// means. One that no stylesheet defines is always a mistake, and always a
+// silent one: the element renders in its unmodified form and looks fine.
+
+const styledClasses = new Set();
+for (const file of FILES.filter((f) => /\.(css|html)$/.test(f))) {
+  const src = readFileSync(file, 'utf8');
+  for (const m of src.matchAll(/\.([a-zA-Z][a-zA-Z0-9_-]*--[a-zA-Z0-9_-]+)/g)) styledClasses.add(m[1]);
+}
+
+const unstyled = new Map();
+for (const file of FILES.filter((f) => f.endsWith('.js'))) {
+  const src = readFileSync(file, 'utf8');
+  // Only class literals written as a whole attribute value or concatenated into
+  // one, so a modifier mentioned in prose or built at run time is not counted.
+  for (const m of src.matchAll(/'([a-zA-Z][a-zA-Z0-9_ -]*--[a-zA-Z0-9_-]+[a-zA-Z0-9_ -]*)'/g)) {
+    for (const cls of m[1].trim().split(/\s+/)) {
+      if (!cls.includes('--')) continue;
+      if (styledClasses.has(cls)) continue;
+      if (!unstyled.has(cls)) unstyled.set(cls, relative(file));
+    }
+  }
+}
+for (const [cls, where] of unstyled) {
+  console.error('  FAIL  .' + cls + ' is used in ' + where + ' but no stylesheet defines it');
+  failures++;
+}
+check('every modifier class used in script is one a stylesheet defines', unstyled.size === 0);
+
 console.log('');
 if (failures) {
-  console.error(failures + ' check(s) failed. A var() that names nothing is dropped in silence.');
+  console.error(failures + ' check(s) failed. Each of these fails without a symptom.');
   process.exit(1);
 }
-console.log('Every custom property read by a stylesheet is defined by one, in both schemes.');
+console.log('Properties, icon names and modifier classes all resolve to something real.');
 process.exit(0);

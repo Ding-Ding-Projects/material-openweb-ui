@@ -207,6 +207,11 @@ body[data-app="1"] { background: var(--sur); }
     #f00 0%, #ff0 16.66%, #0f0 33.33%, #0ff 50%, #00f 66.66%, #f0f 83.33%, #f00 100%);
 }
 
+/* The resting state of the opacity track. The script layers the current colour
+   over this; without the rule here the track was a bare box until the first
+   paint, and the modifier class did nothing at all. */
+.cp__track--alpha { background: var(--checker); }
+
 .cp__thumb {
   position: absolute; top: 50%;
   width: 18px; height: 18px;
@@ -367,3 +372,80 @@ input[type="radio"],
 progress {
   accent-color: var(--p);
 }
+
+/* ---------------------------------------------------------------- application mark */
+
+.state--warn {
+  background: color-mix(in srgb, #B8860B 20%, var(--sc));
+  border-color: color-mix(in srgb, #B8860B 45%, transparent);
+}
+
+.card__title { font-size: 1rem; font-weight: 600; margin: 0 0 4px; }
+.card__sub { font-size: .82rem; line-height: 1.65; opacity: .78; margin: 0 0 16px; }
+
+.logo__row { display: flex; gap: 20px; align-items: flex-start; flex-wrap: wrap; }
+
+.logo__preview {
+  position: relative; flex: none;
+  width: 112px; height: 112px;
+  display: grid; place-items: center;
+  background: var(--sc); border-radius: 16px;
+}
+.logo__mark { width: 96px; height: 96px; display: block; }
+.logo__mark svg { display: block; }
+
+/* The maskable safe area, drawn over the mark. A platform crops to its own
+   shape and the corners go first; showing the boundary beats discovering it
+   after installing. */
+.logo__safe {
+  position: absolute; inset: 10%;
+  border: 1px dashed color-mix(in srgb, var(--ons) 45%, transparent);
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+.logo__choices { flex: 1; min-width: 240px; display: flex; flex-direction: column; gap: 8px; }
+.logo__grouplabel {
+  font-size: .68rem; text-transform: uppercase; letter-spacing: .09em;
+  opacity: .6; margin-top: 6px;
+}
+.logo__presets { display: flex; gap: 8px; flex-wrap: wrap; }
+.logo__preset {
+  padding: 4px; cursor: pointer; line-height: 0;
+  background: none; border: 2px solid transparent; border-radius: 14px;
+}
+.logo__preset:hover { border-color: var(--outv); }
+.logo__preset--on { border-color: var(--p); }
+.logo__preset:focus-visible { outline: 3px solid var(--p); outline-offset: 2px; }
+
+.logo__hint { font-size: .74rem; line-height: 1.6; opacity: .75; margin: 4px 0 0; }
+.logo__status { margin-top: 14px; display: flex; flex-direction: column; gap: 10px; }
+.logo__read { display: flex; gap: 12px; align-items: baseline; flex-wrap: wrap; font-size: .8rem; }
+.logo__evidence { font-size: .7rem; opacity: .7; }
+.logo__note { font-size: .76rem; opacity: .8; }
+
+.logo__crop { display: flex; flex-direction: column; gap: 6px; max-width: 420px; }
+.logo__croprow { display: flex; align-items: center; gap: 10px; font-size: .76rem; }
+.logo__croplabel { width: 150px; flex: none; }
+.logo__croprow input { flex: 1; }
+.logo__readout { width: 46px; text-align: right; font-size: .72rem; opacity: .8; }
+
+.logo__variants { display: flex; gap: 14px; flex-wrap: wrap; margin-top: 14px; align-items: flex-end; }
+.logo__variant { display: flex; flex-direction: column; align-items: center; gap: 3px; }
+.logo__variant-box { display: grid; place-items: center; }
+.logo__variant-box img { display: block; image-rendering: auto; }
+.logo__variant-label { font-size: .68rem; opacity: .7; }
+.logo__variant-note { font-size: .64rem; opacity: .55; }
+.logo__variant--bad .logo__variant-note { color: var(--err); opacity: 1; }
+
+.logo__warnings { display: flex; flex-direction: column; gap: 10px; margin-top: 14px; }
+.logo__actions { display: flex; gap: 10px; }
+
+.logo__identity { margin-top: 16px; font-size: .78rem; }
+.logo__identity > summary { cursor: pointer; padding: 4px 0; }
+.logo__idlist {
+  display: grid; grid-template-columns: auto 1fr; gap: 4px 14px;
+  margin: 8px 0 0; font-size: .74rem;
+}
+.logo__idlist dt { opacity: .65; }
+.logo__idlist dd { margin: 0; word-break: break-all; }

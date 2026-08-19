@@ -228,6 +228,12 @@ if ($LASTEXITCODE -ne 0) {
 }
 Step 'Appearance keys are stable and imported overrides are screened.'
 
+& $nodeExe (Join-Path $Root 'scripts/test-logo.mjs') | Out-Null
+if ($LASTEXITCODE -ne 0) {
+  Fail 'the application mark is trusting a file extension, applying a rejected image in part, or letting a display name reach the identity. Run: node scripts/test-logo.mjs'
+}
+Step 'The mark is decided by its bytes and never moves the identity.'
+
 & $nodeExe (Join-Path $Root 'scripts/test-locks.mjs') | Out-Null
 if ($LASTEXITCODE -ne 0) {
   Fail 'a lock or unlock-ladder safety rule no longer holds. Run: node scripts/test-locks.mjs'

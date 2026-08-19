@@ -177,7 +177,7 @@ export const FEATURES = [
   },
   {
     id: 'logo', name: 'App logo customisation', group: 'Appearance',
-    icon: 'image', site: 'planned', app: 'planned',
+    icon: 'image', site: 'na', app: 'shipped',
     blurb: 'Several shipped presets plus a local image, with crop, fit, focal point and background.',
     detail: 'Custom images are decoded locally through an isolated decoder that verifies the actual bytes rather than trusting an extension, and bounds input size, pixel count, frames and dimensions. Nothing is uploaded and no remote converter is involved. The mark changes presentation only: it never rewrites the package identity, the executable name, the data directory or the update feed.',
     verify: 'Upload a file renamed to .png that is not a PNG and confirm it is rejected without partially applying.'

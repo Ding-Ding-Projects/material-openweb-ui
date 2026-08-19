@@ -112,5 +112,72 @@ if (failures.length) {
   process.exit(1);
 }
 
+
+// ---------------------------------------------------------------- stray bytes
+//
+// Files in this project are written through several layers of shell quoting,
+// and that has twice turned an escape sequence into something else. Once it was
+// harmless; once it put a literal BACKSPACE (0x08) into a regular expression
+// where a word boundary was meant. The pattern then required an unprintable
+// character before the word it was looking for, matched nothing at all, and the
+// guard built on it reported green while checking nothing.
+//
+// What made that expensive was that reading the file back did not show it: a
+// terminal renders 0x08 by deleting the character before it, so the line looked
+// exactly right. Only a hex dump revealed it.
+//
+// So: no source file this project writes may contain a control character other
+// than tab, newline and carriage return. Vendored upstream code is excluded,
+// because a minified bundle legitimately carries such bytes inside strings and
+// is not ours to change.
+
+const OWN = ['docs', 'app', 'scripts', 'electron', '.github'];
+const CHECKED = /\.(js|mjs|ts|css|html|json|md|yml|yaml|ps1|bat)$/;
+
+function everyOwnFile(dir, found = []) {
+  let entries;
+  try {
+    entries = readdirSync(dir);
+  } catch {
+    return found;
+  }
+  for (const entry of entries) {
+    if (entry === 'node_modules' || entry === '.git') continue;
+    const p = join(dir, entry);
+    let st;
+    try { st = statSync(p); } catch { continue; }
+    if (st.isDirectory()) everyOwnFile(p, found);
+    else if (CHECKED.test(entry)) found.push(p);
+  }
+  return found;
+}
+
+const strays = [];
+for (const dir of OWN) {
+  for (const file of everyOwnFile(join(ROOT, dir))) {
+    const text = readFileSync(file, 'utf8');
+    for (let i = 0; i < text.length; i++) {
+      const code = text.charCodeAt(i);
+      if ((code < 32 && code !== 9 && code !== 10 && code !== 13) || code === 127) {
+        const line = text.slice(0, i).split(String.fromCharCode(10)).length;
+        strays.push(file.slice(ROOT.length + 1) + ' line ' + line +
+          ': byte 0x' + code.toString(16).padStart(2, '0'));
+        break;
+      }
+    }
+  }
+}
+
+if (strays.length) {
+  console.error('');
+  console.error('A control character survived into source, where it is invisible on screen:');
+  for (const s of strays) console.error('  ' + s);
+  console.error('This is how an escape sequence collapses into something that looks correct');
+  console.error('and behaves differently. Rewrite the line, building any backslash rather');
+  console.error('than typing it through a shell.');
+  process.exit(1);
+}
+console.log('No stray control character in any file this project writes.');
+
 console.log('Every shipped module parses and every relative import resolves.');
 process.exit(0);
