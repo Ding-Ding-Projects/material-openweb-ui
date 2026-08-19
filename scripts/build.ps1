@@ -197,6 +197,12 @@ if ($LASTEXITCODE -ne 0) {
   Fail 'an append() call site can receive a conditional null, which renders the literal word "null". Run: node scripts/test-dom-safety.mjs'
 }
 Ok 'no append() call site can render a stray "null"'
+
+& $nodeExe (Join-Path $Root 'scripts/test-school-mode.mjs') | Out-Null
+if ($LASTEXITCODE -ne 0) {
+  Fail 'School mode is naming or leaving visible something it is supposed to omit. Run: node scripts/test-school-mode.mjs'
+}
+Ok 'School mode omits rather than disables'
 Elapsed $t
 
 # ---------------------------------------------------------------- 4. build

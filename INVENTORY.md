@@ -48,11 +48,11 @@ nobody should trust.
 | locks | Toy locks on every element | planned | planned | — | content.js |
 | tickets | Support Tickets | planned | planned | — | content.js |
 | ladder | The unlock ladder | planned | planned | — | content.js |
-| language | Three language modes | shipped | partial | `docs/assets/js/i18n.js#export const LANGUAGES` | content.js |
-| funny | A funny level for each language | shipped | planned | `docs/assets/js/i18n.js#FUNNY_DISCLOSURE` | content.js |
-| vocab | Personal vocabulary upload | shipped | planned | `docs/assets/js/i18n.js#function applyVocab` | content.js |
-| narrator | Spoken narrator | planned | planned | — | content.js |
-| school | School mode | planned | planned | — | content.js |
+| language | Three language modes | shipped | shipped | `app/js/i18n.js#export const LANGUAGES` | content.js |
+| funny | A funny level for each language | shipped | shipped | `app/js/i18n.js#export function levelLabel` | content.js |
+| vocab | Personal vocabulary upload | shipped | shipped | `app/js/core/vocabulary.js#export function validate` | content.js |
+| narrator | Spoken narrator | planned | shipped | `app/js/core/narrator.js#export function resolve` | content.js |
+| school | School mode | planned | shipped | `app/js/i18n.js#PLAYFUL_SETTINGS` | content.js |
 | schedule | Scheduled settings | planned | planned | — | content.js |
 | appearance | Per-element appearance editor | planned | planned | — | content.js |
 | colour | Infinite colour picker with translator | planned | planned | — | content.js |

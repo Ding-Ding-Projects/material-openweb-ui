@@ -14,6 +14,8 @@ import * as converterPage from './pages/converter.js';
 import * as authPage from './pages/authenticator.js';
 import * as misc from './pages/misc.js';
 import { palette, wire as wirePalette } from './palette.js';
+import * as i18n from './i18n.js';
+import * as narrator from './core/narrator.js';
 
 const PAGES = {
   chat:          { ...chatPage.meta, render: chatPage.render },
@@ -53,7 +55,18 @@ function svg(paths, size = 11) {
 }
 
 function bilingual() {
-  return state.get('settings').language === 'Bilingual';
+  return i18n.isBilingual();
+}
+
+/** A destination's label in the active language mode. */
+function pageLabel(id) {
+  const key = 'nav.' + id;
+  const t = i18n.t(key);
+  return t === key ? (PAGES[id]?.title ?? id) : t;
+}
+
+function pageLabel2(id) {
+  return i18n.t2('nav.' + id);
 }
 
 // ---------------------------------------------------------------- tabs
@@ -115,7 +128,7 @@ function buildTitlebar() {
       }
     },
       icon(page.icon, 'icon icon--sm'),
-      h('span', { class: 'wtab__label' }, page.title),
+      h('span', { class: 'wtab__label' }, pageLabel(t.page)),
       h('span', {
         class: 'wtab__close', role: 'button', 'aria-label': 'Close ' + page.title,
         onclick: (e) => { e.stopPropagation(); close(t.id); }
@@ -156,12 +169,12 @@ function buildRail() {
       onclick: () => open(id)
     },
       icon(page.icon),
-      h('span', {}, page.title, bilingual() ? h('span', { class: 'rail__zh' }, page.zh) : null)
+      h('span', {}, pageLabel(id), bilingual() && pageLabel2(id) ? h('span', { class: 'rail__zh cjk' }, pageLabel2(id)) : null)
     ));
   }
   rail.appendChild(h('div', { class: 'rail__spacer' }));
   rail.appendChild(h('div', { class: 'muted', style: { fontSize: '.64rem', padding: '0 14px 6px', lineHeight: '1.5' } },
-    desktop.isDesktop ? 'Everything stays on this machine' : 'Browser preview — no shell'));
+    desktop.isDesktop ? i18n.t('rail.local') : i18n.t('rail.browser')));
 }
 
 // ---------------------------------------------------------------- render
@@ -248,6 +261,11 @@ const DIM_SUM = [
 ];
 
 function maybeDimSum() {
+  // School mode covers every dim-sum capability, and covering it means the
+  // surprise does not happen at all - not that it happens with a note
+  // explaining what was hidden, which would name the thing being hidden.
+  const school = state.get('settings').school;
+  if (school && school.on) return;
   if (Math.random() >= 0.10) return;
   const d = DIM_SUM[Math.floor(Math.random() * DIM_SUM.length)];
   ui.notify(
@@ -268,6 +286,15 @@ window.mowuiApp = { open, refresh: render, exportAll, toggleTheme, palette };
 
 misc.applyTheme();
 render();
+
+// The narrator reads what the event log records, so it describes what actually
+// happened rather than a separate script that can drift away from it.
+state.subscribe((key, value) => {
+  if (key !== 'statusLog' || !Array.isArray(value) || !value.length) return;
+  const latest = value[0];
+  narrator.say(latest.event + (latest.detail ? '. ' + latest.detail : ''), i18n.isCantonese() ? 'zh' : 'en');
+});
+
 state.log('Application started', desktop.isDesktop ? 'desktop shell' : 'browser preview');
 
 desktop.onEvent((event) => {

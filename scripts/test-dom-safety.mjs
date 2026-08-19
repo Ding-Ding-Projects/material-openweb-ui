@@ -55,7 +55,11 @@ for (const file of files) {
     }
     const args = src.slice(open + 1, i);
     callsChecked++;
-    if (/:\s*(null|undefined)\b/.test(args)) {
+    // Both branches of a ternary count. An earlier version only looked for
+    // `: null` and sailed straight past `cond ? null : el`, which is the same
+    // bug written the other way round — and one of those had already been
+    // committed by the time this was noticed.
+    if (/[?:]\s*(null|undefined)\b/.test(args)) {
       const line = src.slice(0, m.index).split(NL).length;
       problems.push({
         file: relative(ROOT, file),

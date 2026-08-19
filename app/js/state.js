@@ -20,8 +20,13 @@ const DEFAULTS = {
     ollamaHost: 'http://127.0.0.1:11434',
     lastModel: '',
     modelDestination: '',
-    paletteSize: 'card'
+    paletteSize: 'card',
+    emojiDialogs: false,
+    narrator: { on: false, voiceEn: '', voiceZh: '', rate: 1, pitch: 1 },
+    school: { on: false, name: 'School mode', pin: '' }
   },
+  settingsWritten: [],
+  vocabulary: null,
   tabs: [{ id: 'tb-ollama', page: 'ollama' }],
   activeTab: 'tb-ollama',
   chats: [],

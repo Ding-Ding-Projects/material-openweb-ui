@@ -78,55 +78,7 @@ export function renderStatus(root) {
 
 // ---------------------------------------------------------------- settings
 
-export function renderSettings(root) {
-  const page = h('div', { class: 'page' });
-  const s = state.get('settings');
-
-  const row = (label, why, control) => h('div', { class: 'setting' },
-    h('div', { class: 'setting__main' },
-      h('div', { class: 'setting__label' }, label),
-      h('details', { class: 'setting__why' }, h('summary', {}, 'What does this do?'), h('p', {}, why))),
-    h('div', { class: 'setting__control' }, control));
-
-  const hostInput = h('input', {
-    type: 'text', class: 'mono', value: s.ollamaHost, 'aria-label': 'Ollama host',
-    onchange: (e) => {
-      const v = e.target.value.trim() || ollama.DEFAULT_HOST;
-      state.patchSettings({ ollamaHost: v });
-      state.log('Setting changed', 'Ollama host → ' + v);
-      ui.notify('Ollama host set to ' + v + '. Open the Ollama page to re-check the daemon.', { kind: 'ok' });
-    }
-  });
-
-  const themeSel = ui.select({
-    value: s.theme, width: 200, label: 'Theme',
-    options: [{ value: 'system', label: 'Follow this device' }, { value: 'light', label: 'Light' }, { value: 'dark', label: 'Dark' }],
-    onChange: (v) => { state.patchSettings({ theme: v }); applyTheme(); state.log('Setting changed', 'Theme → ' + v); }
-  });
-
-  const langSel = ui.select({
-    value: s.language, width: 200, label: 'Language mode',
-    options: [{ value: 'English', label: 'English' }, { value: '粵語', label: '粵語' }, { value: 'Bilingual', label: 'Bilingual' }],
-    onChange: (v) => { state.patchSettings({ language: v }); state.log('Setting changed', 'Language → ' + v); window.mowuiApp.refresh(); }
-  });
-
-  page.append(
-    h('div', { class: 'page__head' }, h('div', { style: { flex: '1' } },
-      h('div', { class: 'page__title' }, 'Settings'),
-      h('div', { class: 'page__sub' }, 'Everything here applies to this installation on this machine, and nothing is sent anywhere.'))),
-    h('div', { class: 'card' },
-      row('Ollama host', 'Where the local daemon is listening. This application never scans for it: if the address is wrong, the Ollama page says so rather than searching your network.', h('div', { class: 'field', style: { width: '280px' } }, hostInput)),
-      row('Theme', 'Light, dark, or whatever this device currently prefers. Both are complete palettes rather than one being a washed-out pass over the other.', themeSel.el),
-      row('Language mode', 'Bilingual keeps English prominent and places Cantonese underneath as a compact secondary, so neither reads as a caption of the other.', langSel.el)
-    ),
-    h('div', { class: 'state state--info', style: { marginTop: '20px' } }, icon('info'),
-      h('div', { class: 'state__body' },
-        h('div', { class: 'state__title' }, 'Settings not implemented yet'),
-        h('div', { class: 'state__text' },
-          'Funny levels, the narrator, School mode, scheduled settings, the logo editor and the per-element appearance editor are all marked planned in INVENTORY.md. They are absent here rather than present and inert, because a control that does nothing is worse than one that is honestly missing.')))
-  );
-  root.append(page);
-}
+export { render as renderSettings } from './settings.js';
 
 export function applyTheme() {
   const t = state.get('settings').theme;
