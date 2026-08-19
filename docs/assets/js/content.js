@@ -617,7 +617,7 @@ export const CHANGELOG = [
 				title: 'Notes',
 				items: [
 					{
-						text: 'No installer has been published yet. Releases will be permanently unsigned, and the reason is stated rather than hidden.',
+						text: 'Published as v0.1.0: an unsigned Windows x64 installer, built from this commit and verified by downloading the published file back and hashing it. The operating system will warn you about it, that warning is accurate, and the download page says so before it offers a link.',
 						sha: null
 					},
 					{

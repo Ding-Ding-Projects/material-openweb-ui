@@ -21,12 +21,33 @@ const REPO = 'https://github.com/Ding-Ding-Projects/material-openweb-ui';
 /**
  * Published builds.
  *
- * Empty until one exists. An empty list renders as "nothing has been released",
- * because a download page listing a release that does not exist is worse than
- * one listing none: it sends people to a 404 and makes them doubt the page
- * rather than the link.
+ * Every entry here must correspond to a release that actually exists, with a
+ * checksum taken from the file that was uploaded rather than from the one that
+ * was built — those are the same file only if nothing went wrong in between,
+ * and "only if nothing went wrong" is exactly what a checksum is for. The
+ * v0.1.0 entry below was verified by downloading the published asset back and
+ * hashing it.
+ *
+ * An empty list renders as "nothing has been released", because a download page
+ * listing a release that does not exist is worse than one listing none: it
+ * sends people to a 404 and makes them doubt the page rather than the link.
  */
-export const RELEASES = [];
+export const RELEASES = [
+	{
+		version: 'v0.1.0',
+		codename: 'First light',
+		date: '2026-08-19',
+		files: [
+			{
+				label: 'Windows installer (x64)',
+				platform: 'Windows 10 or 11, 64-bit',
+				url: REPO + '/releases/download/v0.1.0/material-openweb-ui-setup-0.1.0-x64.exe',
+				size: '78.3 MB',
+				sha256: 'ed9783fcfbdf475c1ac03105ab4b1faeb18add28819d64dce8c97805d33c3175'
+			}
+		]
+	}
+];
 
 export function render(root) {
 	const wrap = h('div', { class: 'wrap section' });

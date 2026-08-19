@@ -137,8 +137,10 @@ never disturbed. Every capture records the commit it came from in
 row there now reads `shipped` or `na` on both surfaces, and `na` means the
 feature does not belong on that surface rather than that it is pending. What is
 genuinely absent is stated in the rows themselves — the adapters the converter
-disables because nothing is bundled to run them, and the installer that has not
-been built. Those say so where you would look for them.
+disables because nothing is bundled to run them, and the platforms that have no
+build: [v0.1.0](https://github.com/Ding-Ding-Projects/material-openweb-ui/releases/tag/v0.1.0)
+is Windows x64 only, unsigned, with no auto-updater. Those say so where you
+would look for them.
 
 </details>
 
