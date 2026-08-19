@@ -60,17 +60,57 @@ for (const file of files) {
 
 console.log('parsed ' + files.length + ' shipped modules');
 
+// Parsing is not enough. A module with a wrong relative import parses
+// perfectly and then 404s at load, taking the whole page down with it — which
+// is exactly what `../state.js` did when it should have been `./state.js`.
+// Nothing resolves these paths until a browser tries to, so they are resolved
+// here instead.
+let imports = 0;
+for (const file of files) {
+  const src = readFileSync(file, 'utf8');
+  const dir = join(file, '..');
+  const specifiers = new Set();
+
+  for (const m of src.matchAll(/(?:^|\n)\s*(?:import|export)[^'"\n]*from\s*['"]([^'"]+)['"]/g)) specifiers.add(m[1]);
+  for (const m of src.matchAll(/\bimport\s*\(\s*['"]([^'"]+)['"]\s*\)/g)) specifiers.add(m[1]);
+  for (const m of src.matchAll(/(?:^|\n)\s*import\s*['"]([^'"]+)['"]/g)) specifiers.add(m[1]);
+
+  for (const spec of specifiers) {
+    if (!spec.startsWith('.')) continue; // bare specifiers are not ours to resolve
+    imports++;
+    const target = join(dir, spec);
+    if (!statSafe(target)) {
+      failures.push({
+        rel: relative(ROOT, file),
+        kind: 'import',
+        reason: 'imports "' + spec + '", which resolves to ' + relative(ROOT, target) + ' and does not exist',
+        detail: 'A wrong relative path parses fine and then 404s at load, taking the page with it.'
+      });
+    }
+  }
+}
+
+function statSafe(p) {
+  try { return statSync(p).isFile(); } catch { return false; }
+}
+
+console.log('resolved ' + imports + ' relative imports');
+
 if (failures.length) {
   console.error('');
   for (const f of failures) {
-    console.error('FAIL: ' + f.rel + ' is not valid JavaScript.');
+    console.error('FAIL: ' + f.rel + (f.kind === 'import' ? ' has an import that does not resolve.' : ' is not valid JavaScript.'));
     console.error('      ' + f.reason);
     console.error(f.detail.split('\n').map((l) => '      ' + l).join('\n'));
     console.error('');
   }
-  console.error(failures.length + ' module(s) would render as a blank page.');
+  const syntax = failures.filter((f) => f.kind === 'syntax').length;
+  const unresolved = failures.filter((f) => f.kind === 'import').length;
+  console.error(
+    [syntax ? syntax + ' syntax error(s)' : null, unresolved ? unresolved + ' unresolvable import(s)' : null]
+      .filter(Boolean).join(' and ') + '. Either one renders as a blank page.');
   process.exit(1);
 }
 
-console.log('Every shipped module is valid JavaScript.');
+console.log('Every shipped module parses and every relative import resolves.');
 process.exit(0);

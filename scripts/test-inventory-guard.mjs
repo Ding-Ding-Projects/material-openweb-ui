@@ -108,6 +108,22 @@ function edit(dir, rel, fn) {
  */
 const COL = { id: 0, feature: 1, site: 2, app: 3, anchor: 4, docs: 5 };
 
+/** The file one row's anchor points at, as a path relative to the tree. */
+function anchorPathFor(dir, rowId) {
+  const text = readFileSync(join(dir, 'INVENTORY.md'), 'utf8');
+  for (const line of text.split(NL)) {
+    const t = line.trim();
+    if (!t.startsWith('|')) continue;
+    const cells = t.split('|').slice(1, -1).map((c) => c.trim());
+    if (cells.length < 6 || cells[0] !== rowId) continue;
+    const anchor = cells[4].replace(/`/g, '');
+    const hash = anchor.indexOf('#');
+    if (hash === -1) return null;
+    return anchor.slice(0, hash).split('/').join(sepOf());
+  }
+  return null;
+}
+
 function setCell(dir, rowId, column, value) {
   edit(dir, 'INVENTORY.md', (s) => s.split(NL).map((line) => {
     const t = line.trim();
@@ -137,7 +153,15 @@ const CASES = [
   },
   {
     name: 'a shipped implementation file is deleted',
-    apply: (dir) => rmSync(join(dir, 'docs', 'assets', 'js', 'palette.js'))
+    // The path is read from the inventory rather than written here. An earlier
+    // version named docs/assets/js/palette.js directly, and when the palette's
+    // anchor moved to palette-core.js the case went on deleting a file no row
+    // pointed at any more — passing silently while testing nothing.
+    apply: (dir) => {
+      const path = anchorPathFor(dir, 'palette');
+      if (!path) throw new Error('no anchor path for the palette row');
+      rmSync(join(dir, path));
+    }
   },
   {
     name: 'a shipped claim loses its anchor',

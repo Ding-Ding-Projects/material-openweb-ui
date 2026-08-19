@@ -13,6 +13,7 @@ import * as chatPage from './pages/chat.js';
 import * as converterPage from './pages/converter.js';
 import * as authPage from './pages/authenticator.js';
 import * as misc from './pages/misc.js';
+import { palette, wire as wirePalette } from './palette.js';
 
 const PAGES = {
   chat:          { ...chatPage.meta, render: chatPage.render },
@@ -184,7 +185,84 @@ function render() {
   }
 }
 
-window.mowuiApp = { open, refresh: render };
+// ---------------------------------------------------------------- exports
+
+/**
+ * Everything this application holds, in one file.
+ *
+ * Authenticator secrets are not in it, and the file says so rather than
+ * quietly omitting them — an export that drops a field without mentioning it is
+ * the reason nobody trusts exports.
+ */
+function exportAll() {
+  const bundle = {
+    schema: 'material-open-webui.app-state',
+    version: 1,
+    exportedAt: new Date().toISOString(),
+    encoding: 'UTF-8',
+    lineEndings: 'LF',
+    omitted: [
+      'Authenticator secrets — they are held in memory for the session only and are never written anywhere, including here.',
+      'Any credential for a lock, once locks exist.'
+    ],
+    settings: state.get('settings'),
+    tabs: state.get('tabs'),
+    chats: state.get('chats'),
+    convResults: (state.get('convResults') || []).map((r) => ({ ...r, url: undefined })),
+    statusLog: state.get('statusLog')
+  };
+  const blob = new Blob([JSON.stringify(bundle, null, 2)], { type: 'application/json;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const a = h('a', { href: url, download: 'material-open-webui-state.json' });
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 4000);
+  state.log('Exported', 'application state');
+  ui.notify('Exported. Authenticator secrets were left out, and the file lists what it omitted.', { kind: 'ok', persist: true });
+}
+
+function toggleTheme() {
+  const cur = state.get('settings').theme;
+  const isDark = cur === 'dark' || (cur === 'system' && matchMedia('(prefers-color-scheme: dark)').matches);
+  const next = isDark ? 'light' : 'dark';
+  state.patchSettings({ theme: next });
+  state.log('Setting changed', 'Theme → ' + next);
+  render();
+}
+
+// ---------------------------------------------------------------- dim sum
+//
+// A one-in-ten chance per launch, non-blocking, auto-dismissing, and with no
+// setting to switch it off. The photographs live in the public catalogue and are
+// never copied into this repository, so the surprise ships the part it can
+// honour offline — the dish, named in both languages — and links to the rest.
+
+const DIM_SUM = [
+  { en: 'Har Gow', zh: '蝦餃' },
+  { en: 'Scallop Har Gow', zh: '帶子蝦餃' },
+  { en: 'Bamboo Shoot Har Gow', zh: '筍尖蝦餃' },
+  { en: 'Siu Mai', zh: '燒賣' },
+  { en: 'Char Siu Bao', zh: '叉燒包' },
+  { en: 'Cheung Fun', zh: '腸粉' }
+];
+
+function maybeDimSum() {
+  if (Math.random() >= 0.10) return;
+  const d = DIM_SUM[Math.floor(Math.random() * DIM_SUM.length)];
+  ui.notify(
+    h('span', {},
+      h('span', {}, d.en + ' · '),
+      h('span', { class: 'cjk' }, d.zh),
+      h('br'),
+      h('span', { style: { fontSize: '.78rem', opacity: '.85' } },
+        'The photograph lives in the public dim-sum catalogue rather than in this repository, and this application loads no remote images.')),
+    { title: 'A dish, for no reason at all', kind: 'info', duration: 9000 }
+  );
+  state.log('Dim sum', d.en + ' · ' + d.zh);
+}
+
+window.mowuiApp = { open, refresh: render, exportAll, toggleTheme, palette };
 
 // ---------------------------------------------------------------- start
 
@@ -197,11 +275,15 @@ desktop.onEvent((event) => {
   if (event?.type === 'window:unmaximize') { maximised = false; buildTitlebar(); }
 });
 
+wirePalette({ pages: PAGES, order: ORDER, open });
+
 window.addEventListener('keydown', (e) => {
   if (e.ctrlKey && e.shiftKey && (e.key === 'F' || e.key === 'f')) {
     e.preventDefault();
-    ui.notify('The command palette is not implemented in the application yet — INVENTORY.md marks it planned here, and shipped on the documentation site.', { kind: 'info' });
+    palette.toggle();
   }
 });
+
+setTimeout(maybeDimSum, 1500);
 
 matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => misc.applyTheme());

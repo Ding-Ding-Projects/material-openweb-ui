@@ -37,14 +37,14 @@ export const FEATURES = [
   },
   {
     id: 'tabsearch', name: 'Four tab-discovery searches', group: 'Navigation',
-    icon: 'search', site: 'planned', app: 'planned',
+    icon: 'search', site: 'planned', app: 'partial',
     blurb: 'A search for the current strip, one inside each group, one for groups by name, and a master search across every open tab.',
     detail: 'Each has its own anchored regex builder and its own query, pattern, flags and mode. None of them shares hidden state with another, so a pattern typed in one can never silently apply in another.',
     verify: 'Type a pattern into the strip search and confirm the group search is unaffected.'
   },
   {
     id: 'palette', name: 'Command palette on Ctrl+Shift+F', group: 'Navigation',
-    icon: 'search', site: 'shipped', app: 'planned',
+    icon: 'search', site: 'shipped', app: 'shipped',
     blurb: 'One shortcut reaches every page, every setting and every action, and lands on the exact control rather than the general area.',
     detail: 'Rows are live controls, not labels: a setting result renders its own switch or slider inline and changing it there uses the same validation, persistence and history as the settings page itself. Selecting a destination opens the surface, scrolls the target into view, focuses it and flashes it briefly without disturbing anything else. Ctrl+K is deliberately not a competing default.',
     verify: 'Press Ctrl+Shift+F, search for a setting by name, change it from the palette row, then open Settings and confirm it holds.'
@@ -212,7 +212,7 @@ export const FEATURES = [
   },
   {
     id: 'export', name: 'Export everything, in every format that fits', group: 'Data',
-    icon: 'download', site: 'shipped', app: 'planned',
+    icon: 'download', site: 'shipped', app: 'partial',
     blurb: 'If a surface can show it, you can take it away.',
     detail: 'JSON, JSONL, YAML, TOML, XML, CSV, TSV, Markdown and HTML, chosen per datum rather than per product — tabular data gets CSV, structured records get JSON, prose gets Markdown. A format that would silently drop a field is never offered; where something cannot be carried, it is named before the export runs. Exports state their encoding, line endings and schema version.',
     verify: 'Export the same data twice in two formats and confirm neither loses a field without saying so.'
@@ -240,7 +240,7 @@ export const FEATURES = [
   },
   {
     id: 'dimsum', name: 'Dim sum surprise', group: 'Delight',
-    icon: 'image', site: 'shipped', app: 'planned',
+    icon: 'image', site: 'partial', app: 'partial',
     blurb: 'A one-in-ten chance at startup of being shown a dish, named in both languages.',
     detail: 'Non-blocking and auto-dismissing: it never gates startup, never steals focus and never appears mid-task. There is no setting to switch it off. Photographs come from the public dim-sum catalogue rather than being copied into this repository, and where the catalogue has no published image the surface says so instead of filling the gap locally. School mode suppresses it entirely.',
     verify: 'Confirm it never fires twice in one load, and that School mode removes it rather than hiding it.'

@@ -1,0 +1,85 @@
+// The application's palette: what it can reach.
+//
+// The palette itself comes from the same module the documentation site uses, so
+// the two behave identically — same keyboard traversal, same anchored regex
+// builder, same card/full-window choice. Only the entries differ.
+
+import { createPalette } from '../../docs/assets/js/palette-core.js';
+import * as state from './state.js';
+
+let getPages = () => ({});
+let getOrder = () => [];
+let openPage = () => {};
+
+/** Called once by the shell, which owns the page registry. */
+export function wire({ pages, order, open }) {
+  getPages = () => pages;
+  getOrder = () => order;
+  openPage = open;
+}
+
+function entries() {
+  const pages = getPages();
+  const out = [];
+
+  for (const id of getOrder()) {
+    const p = pages[id];
+    if (!p) continue;
+    out.push({
+      kind: 'page', id: 'page-' + id, icon: p.icon,
+      label: p.title, hint: 'destination',
+      run: () => openPage(id)
+    });
+  }
+
+  const s = state.get('settings');
+
+  out.push(
+    {
+      kind: 'action', id: 'act-theme', icon: 'sun',
+      label: 'Toggle light and dark', hint: 'action · appearance',
+      run: () => window.mowuiApp.toggleTheme()
+    },
+    {
+      kind: 'action', id: 'act-export', icon: 'download',
+      label: 'Export everything this application has stored', hint: 'action · data',
+      run: () => window.mowuiApp.exportAll()
+    },
+    {
+      kind: 'action', id: 'act-host', icon: 'server',
+      label: 'Ollama host — ' + s.ollamaHost, hint: 'setting',
+      run: () => openPage('settings')
+    },
+    {
+      kind: 'action', id: 'act-lang', icon: 'language',
+      label: 'Language mode — ' + s.language, hint: 'setting',
+      run: () => openPage('settings')
+    },
+    {
+      kind: 'action', id: 'act-log', icon: 'pulse',
+      label: 'Event log', hint: 'action · ' + (state.get('statusLog') || []).length + ' entries',
+      run: () => openPage('status')
+    }
+  );
+
+  // Every open tab is reachable by name, which is what makes a tab strip
+  // navigable once it holds more tabs than fit on screen.
+  for (const t of state.get('tabs') || []) {
+    const p = pages[t.page];
+    if (!p) continue;
+    out.push({
+      kind: 'tab', id: 'tab-' + t.id, icon: p.icon,
+      label: p.title + ' — open tab', hint: 'tab',
+      run: () => { state.set('activeTab', t.id); window.mowuiApp.refresh(); }
+    });
+  }
+
+  return out;
+}
+
+export const palette = createPalette({
+  entries,
+  getSize: () => state.get('settings').paletteSize || 'card',
+  setSize: (v) => state.patchSettings({ paletteSize: v }),
+  placeholder: 'Search every destination, setting and action…'
+});

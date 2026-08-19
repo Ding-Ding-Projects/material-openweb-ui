@@ -19,7 +19,8 @@ const DEFAULTS = {
     funnyZh: 2,
     ollamaHost: 'http://127.0.0.1:11434',
     lastModel: '',
-    modelDestination: ''
+    modelDestination: '',
+    paletteSize: 'card'
   },
   tabs: [{ id: 'tb-ollama', page: 'ollama' }],
   activeTab: 'tb-ollama',

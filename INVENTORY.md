@@ -36,8 +36,8 @@ nobody should trust.
 | md3 | Material Design 3 throughout | shipped | shipped | `app/css/app.css#titlebar` | content.js |
 | frameless | Frameless window and custom title bar | na | shipped | `electron/main.ts#titleBarStyle` | content.js |
 | tabs | Browser-style tabs | partial | partial | `app/js/app.js#function buildTitlebar` | content.js |
-| tabsearch | Four tab-discovery searches | planned | planned | — | content.js |
-| palette | Command palette on Ctrl+Shift+F | shipped | planned | `docs/assets/js/palette.js#export function show` | content.js |
+| tabsearch | Four tab-discovery searches | planned | partial | `app/js/palette.js#open tab` | content.js |
+| palette | Command palette on Ctrl+Shift+F | shipped | shipped | `docs/assets/js/palette-core.js#export function createPalette` | content.js |
 | regex | A regex builder beside every search field | shipped | partial | `docs/assets/js/regex.js#export function searchField` | content.js |
 | chat | Chat with a local model | na | partial | `app/js/core/ollama.js#export async function chat` | content.js |
 | ollama | Local Ollama suite manager | na | partial | `app/js/core/ollama.js#export async function pull` | content.js |
@@ -61,11 +61,11 @@ nobody should trust.
 | confirm | Destructive-action super confirmation | shipped | shipped | `docs/assets/js/ui.js#export function superConfirm` | content.js |
 | notify | Non-blocking notifications with a reviewable centre | shipped | shipped | `docs/assets/js/ui.js#export function notify` | content.js |
 | bulk | Bulk actions on every list | partial | planned | `docs/assets/js/pages.js#Select all` | content.js |
-| export | Export everything, in every format that fits | shipped | planned | `docs/assets/js/store.js#export function exportBundle` | content.js |
+| export | Export everything, in every format that fits | shipped | partial | `app/js/app.js#function exportAll` | content.js |
 | history | Local version history | shipped | planned | `docs/assets/js/store.js#export function record` | content.js |
 | changelog | Changelog viewer | shipped | planned | `docs/assets/js/pages.js#function changelog` | content.js |
 | status | Status Hub | shipped | partial | `app/js/pages/misc.js#export function renderStatus` | content.js |
-| dimsum | Dim sum surprise | shipped | planned | `docs/assets/js/app.js#function maybeDimSum` | content.js |
+| dimsum | Dim sum surprise | partial | partial | `app/js/app.js#function maybeDimSum` | content.js |
 | a11y | Accessibility and responsive layout | shipped | planned | `docs/assets/css/site.css#skip-link` | content.js |
 | buildscript | One-click build script | planned | planned | — | content.js |
 | nosign | Permanently unsigned releases | na | planned | — | content.js |
