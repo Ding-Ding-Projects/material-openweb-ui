@@ -114,18 +114,48 @@ jobs:
       - name: The catalogue counts its pages and names its verdict's basis
         run: node scripts/test-catalogue.mjs
 
-      - name: Compile the desktop shell
-        run: npm run electron:compile
-
-      - name: Fit verdicts are evidenced and reach the screen
-        run: node scripts/test-fit.mjs
-
       - name: No inherited workflow can publish upstream's packages from a fork
         run: node scripts/test-workflows.mjs
 
+      # Belongs to this job rather than the next one: it reports the delta since
+      # the fork point, which needs the full history checked out above. Moved
+      # here after a new job accidentally inherited it along with the steps it
+      # was actually meant to take.
       - name: Line count
         run: |
           node scripts/count-lines.mjs --markdown >> "$GITHUB_STEP_SUMMARY"
+
+  # The desktop shell needs a TypeScript compiler, which the job above
+  # deliberately does not have: every other gate here runs on a bare checkout
+  # with nothing installed, and that is a property worth keeping. So the one
+  # gate that needs a build gets its own job and installs only the compiler,
+  # rather than the whole frontend dependency tree.
+  #
+  # This was found by CI rather than by reading: the compile step was added to
+  # the dependency-free job, where `tsc` does not exist, and the run went red on
+  # a step that had nothing to do with what it was checking.
+  shell:
+    name: Desktop shell
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22.23.2'
+
+      # Only the three packages the compile actually needs, rather than the
+      # whole frontend tree. --ignore-scripts skips Electron's postinstall
+      # binary download: this job type-checks the main process, it does not run
+      # it, and the several hundred megabytes are pure cost here.
+      - name: Install just the compiler and the types it needs
+        run: npm install --no-save --ignore-scripts typescript@5.9.3 @types/node@22 electron@33.4.11
+
+      - name: Compile the desktop shell
+        run: npx tsc -p electron/tsconfig.json
+
+      - name: Fit verdicts are evidenced and reach the screen
+        run: node scripts/test-fit.mjs
 
   site:
     name: Documentation site
