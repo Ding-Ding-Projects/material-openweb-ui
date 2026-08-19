@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Material Open WebUI">
+  <rect width="64" height="64" rx="16" fill="#6750A4"/>
+  <g fill="none" stroke="#FFFFFF" stroke-width="4.2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M14 22.5A7 7 0 0 1 21 15.5h22a7 7 0 0 1 7 7v12a7 7 0 0 1-7 7H32l-8.6 6.2a1.2 1.2 0 0 1-2-1V41.5h-.4a7 7 0 0 1-7-7z"/>
+    <path d="M25 28.5h14"/>
+  </g>
+</svg>
