@@ -276,6 +276,11 @@ p { margin: 0; }
 .palette--full { width: calc(100vw - 24px); height: calc(100vh - 24px); max-height: none; top: 12px; }
 .palette__head { display: flex; align-items: center; gap: 10px; padding: 14px 18px; border-bottom: 1px solid var(--outv); }
 .palette__input { flex: 1; border: 0; background: transparent; outline: none; font-size: .95rem; }
+/* The outline above is removed because the ring belongs on the whole head row,
+   not on a borderless input inside it. Removing it WITHOUT this rule is what
+   the accessibility gate caught: tabbing back from a result row left the caret
+   somewhere with no indication of where. */
+.palette__head:focus-within { box-shadow: inset 0 0 0 2px var(--p); border-radius: 12px 12px 0 0; }
 .palette__list { overflow-y: auto; padding: 8px; flex: 1; }
 .palette__row {
   display: flex; align-items: center; gap: 12px; width: 100%;
@@ -417,3 +422,55 @@ hr { border: 0; border-top: 1px solid var(--outv); margin: 24px 0; }
   overflow-x: auto; margin: 10px 0;
 }
 .dl__note { font-size: .76rem; line-height: 1.65; opacity: .78; margin: 8px 0 0; }
+
+/* ---------------------------------------------------------------- target size
+
+   WCAG 2.2 asks for 24x24 CSS pixels on anything you have to hit. Measured in a
+   real browser rather than assumed, five kinds of control here were under it:
+   text inputs at 18px tall, date inputs at 22, checkboxes at the browser's
+   default 13, small text buttons at 23, and the commit links in the changelog
+   at 20. None of them looked wrong — they were simply too small to hit, which
+   is a different thing from looking too small and is invisible to reading the
+   code.
+
+   Set on the shared sheet so both surfaces inherit it, and so a control added
+   later starts out large enough instead of being found by the next audit. */
+
+input[type="text"],
+input[type="search"],
+input[type="password"],
+input[type="email"],
+input[type="url"],
+input[type="number"],
+input[type="time"],
+input[type="date"],
+input[type="datetime-local"],
+select,
+textarea {
+  min-height: 26px;
+  box-sizing: border-box;
+}
+
+/* A checkbox is drawn by the browser at 13px and cannot be enlarged by padding,
+   so the box itself is sized. The scale is deliberate rather than a transform:
+   a transform would move the hit area away from what is drawn. */
+input[type="checkbox"],
+input[type="radio"] {
+  width: 18px;
+  height: 18px;
+  /* The remaining six pixels come from margin, which counts toward the target
+     under the spacing exception and keeps neighbouring boxes from touching. */
+  margin: 4px;
+  flex: none;
+}
+
+/* Small text buttons and inline links that are controls rather than prose. */
+.btn--sm,
+.bulk__link,
+.chg__sha,
+.cp__fmt,
+.ap__reset {
+  min-height: 24px;
+  display: inline-flex;
+  align-items: center;
+}

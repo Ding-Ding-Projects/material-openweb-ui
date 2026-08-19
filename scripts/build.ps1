@@ -276,6 +276,12 @@ if ($LASTEXITCODE -ne 0) {
 }
 Step 'The unsigned warning comes before any download link.'
 
+& $nodeExe (Join-Path $Root 'scripts/test-a11y.mjs') | Out-Null
+if ($LASTEXITCODE -ne 0) {
+  Fail 'a control has lost its focus ring, dropped below the minimum target size, or started conveying a state by colour alone. Run: node scripts/test-a11y.mjs'
+}
+Step 'Focus is visible and every target is large enough to hit.'
+
 & $nodeExe (Join-Path $Root 'scripts/test-locks.mjs') | Out-Null
 if ($LASTEXITCODE -ne 0) {
   Fail 'a lock or unlock-ladder safety rule no longer holds. Run: node scripts/test-locks.mjs'

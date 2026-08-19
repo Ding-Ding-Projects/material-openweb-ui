@@ -102,6 +102,9 @@ jobs:
       - name: The unsigned warning comes before any download link
         run: node scripts/test-download.mjs
 
+      - name: Focus is visible and every target is large enough to hit
+        run: node scripts/test-a11y.mjs
+
       - name: Line count
         run: |
           node scripts/count-lines.mjs --markdown >> "$GITHUB_STEP_SUMMARY"

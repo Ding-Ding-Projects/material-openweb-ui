@@ -76,7 +76,7 @@ feature that will never be built on a surface says `na` rather than staying
 | changelog | Changelog viewer | shipped | shipped | `app/js/pages/changelog.js#export function render` | content.js |
 | status | Status Hub | shipped | partial | `app/js/pages/misc.js#export function renderStatus` | content.js |
 | dimsum | Dim sum surprise | partial | partial | `app/js/app.js#function maybeDimSum` | content.js |
-| a11y | Accessibility and responsive layout | shipped | partial | `docs/assets/css/site.css#skip-link` | content.js |
+| a11y | Accessibility and responsive layout | shipped | shipped | `docs/assets/css/site.css#input[type="checkbox"]` | content.js |
 | buildscript | One-click build script | shipped | shipped | `scripts/build.ps1#Get-EngineRange` | content.js |
 | nosign | Permanently unsigned releases | shipped | na | `docs/assets/js/download.js#These builds are unsigned` | content.js |
 | free | Nothing is ever for sale | shipped | shipped | `docs/assets/js/i18n.js#foot.free` | content.js |
@@ -90,9 +90,11 @@ feature that will never be built on a surface says `na` rather than staying
    is a stale claim, and stale claims are what make an inventory useless.
 3. **Every `shipped` claim resolves.** The anchor's file must exist and must
    contain the needle. Renaming the function without updating the row fails.
-4. **Every `planned` and `na` row carries no anchor.** A planned feature that
-   quietly gained an anchor is either shipped and mislabelled, or the anchor is
-   fiction; both are worth failing over.
+4. **A row built on NEITHER surface carries no anchor.** A feature that is
+   `planned` or `na` on both and quietly gained an anchor is either shipped and
+   mislabelled, or the anchor is fiction; both are worth failing over. A row
+   built on one surface and `na` on the other still needs its anchor — `na` is a
+   statement about where the feature belongs, not about whether it exists.
 5. **The site's status matches the catalogue.** `content.js` and this file must
    agree on what is shipped, so the page a reader sees cannot claim more than
    the inventory does.

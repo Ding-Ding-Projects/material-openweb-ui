@@ -1,9 +1,13 @@
 // The feature catalogue, the documentation articles, and the changelog.
 //
-// Status is stated per surface and is deliberately unflattering. The desktop
-// application has not been built yet, so nearly every row says `planned` for it.
-// A catalogue that reads as though everything already works is the one kind of
+// Status is stated per surface and is deliberately unflattering. A catalogue
+// that reads as though everything already works is the one kind of
 // documentation that is worse than none.
+//
+// This comment used to say the desktop application had not been built yet and
+// that nearly every row read `planned`. Both stopped being true, and a stale
+// note at the top of the file that records what IS true is its own small
+// version of the problem the whole file exists to avoid.
 
 export const STATUS = {
   shipped: { label: 'Shipped', tone: 'ok' },
@@ -247,7 +251,7 @@ export const FEATURES = [
   },
   {
     id: 'a11y', name: 'Accessibility and responsive layout', group: 'Quality',
-    icon: 'check', site: 'shipped', app: 'partial',
+    icon: 'check', site: 'shipped', app: 'shipped',
     blurb: 'Keyboard reachable end to end, screen-reader named, contrast-safe, and readable from 320px upward.',
     detail: 'Visible focus everywhere, correct roles and states, reduced motion respected, adequate touch targets with enough separation, and no clipping at 100/125/150/200% display scale or in bilingual mode where labels are longest. Wide content scrolls inside its own container so the page body never scrolls sideways.',
     verify: 'Tab through this page without touching the mouse and confirm every control is reachable and visibly focused.'
