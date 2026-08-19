@@ -240,6 +240,12 @@ if ($LASTEXITCODE -ne 0) {
 }
 Step 'Schedules behave as documented at midnight and both daylight-saving boundaries.'
 
+& $nodeExe (Join-Path $Root 'scripts/test-tabs.mjs') | Out-Null
+if ($LASTEXITCODE -ne 0) {
+  Fail 'a tab invariant no longer holds — a pinned tab can be swept away by a bulk close, a deleted group can take its tabs with it, or the four searches have stopped agreeing. Run: node scripts/test-tabs.mjs'
+}
+Step 'Pinned tabs survive bulk closes and all four searches read the same text.'
+
 & $nodeExe (Join-Path $Root 'scripts/test-locks.mjs') | Out-Null
 if ($LASTEXITCODE -ne 0) {
   Fail 'a lock or unlock-ladder safety rule no longer holds. Run: node scripts/test-locks.mjs'

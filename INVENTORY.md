@@ -27,7 +27,7 @@ nobody should trust.
 | Key | Surface |
 | --- | --- |
 | `site` | The documentation and landing site in `docs/`, published to GitHub Pages |
-| `app` | The Electron desktop application (not built yet) |
+| `app` | The Electron desktop application in `app/`, run by the shell in `electron/` |
 
 ## Rows
 
@@ -35,8 +35,8 @@ nobody should trust.
 | --- | --- | --- | --- | --- | --- |
 | md3 | Material Design 3 throughout | shipped | shipped | `app/css/app.css#titlebar` | content.js |
 | frameless | Frameless window and custom title bar | na | shipped | `electron/main.ts#titleBarStyle` | content.js |
-| tabs | Browser-style tabs | partial | partial | `app/js/app.js#function buildTitlebar` | content.js |
-| tabsearch | Four tab-discovery searches | planned | partial | `app/js/palette.js#open tab` | content.js |
+| tabs | Browser-style tabs | partial | shipped | `app/js/core/tabs.js#export function ordered` | content.js |
+| tabsearch | Four tab-discovery searches | na | shipped | `app/js/tabs-ui.js#export function searchDialog` | content.js |
 | palette | Command palette on Ctrl+Shift+F | shipped | shipped | `docs/assets/js/palette-core.js#export function createPalette` | content.js |
 | regex | A regex builder beside every search field | shipped | partial | `docs/assets/js/regex.js#export function searchField` | content.js |
 | chat | Chat with a local model | na | partial | `app/js/core/ollama.js#export async function chat` | content.js |

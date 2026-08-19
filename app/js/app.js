@@ -20,6 +20,8 @@ import { palette, wire as wirePalette } from './palette.js';
 import * as i18n from './i18n.js';
 import * as narrator from './core/narrator.js';
 import * as appearance from './appearance.js';
+import * as tabsCore from './core/tabs.js';
+import * as tabsUi from './tabs-ui.js';
 
 const PAGES = {
   chat:          { ...chatPage.meta, render: chatPage.render },
@@ -75,34 +77,83 @@ function pageLabel2(id) {
 }
 
 // ---------------------------------------------------------------- tabs
+//
+// The model lives in app/js/core/tabs.js and is normalised on every read, so a
+// model written by an older build — or one whose group has since been deleted —
+// is repaired rather than rendered broken.
 
-function tabs() { return state.get('tabs') || []; }
-function activeTab() { return tabs().find((t) => t.id === state.get('activeTab')) || tabs()[0]; }
+function model() {
+  // The landing page is named here rather than taken from wherever the PAGES
+  // object happens to start.
+  return tabsCore.normalise(state.get('tabModel'), Object.keys(PAGES), 'ollama');
+}
 
-function open(pageId) {
-  const existing = tabs().find((t) => t.page === pageId);
-  if (existing) {
-    state.set('activeTab', existing.id);
-  } else {
-    const t = { id: 'tb-' + pageId + '-' + Math.random().toString(36).slice(2, 6), page: pageId };
-    state.set('tabs', [...tabs(), t]);
-    state.set('activeTab', t.id);
-  }
+function applyModel(next) {
+  state.set('tabModel', next);
   render();
 }
 
-function close(id) {
-  const list = tabs();
-  if (list.length <= 1) {
-    ui.notify('That is the last tab. Closing it would leave nothing to look at, so it stays open.', { kind: 'info' });
+function tabs() { return model().tabs; }
+function activeTab() {
+  const m = model();
+  return m.tabs.find((t) => t.id === m.activeTab) || m.tabs[0];
+}
+
+function open(pageId) {
+  const m = model();
+  const existing = m.tabs.find((t) => t.page === pageId);
+  if (existing) {
+    applyModel({ ...m, activeTab: existing.id });
     return;
   }
-  const t = list.find((x) => x.id === id);
-  const next = list.filter((x) => x.id !== id);
-  state.set('tabs', next);
-  if (state.get('activeTab') === id) state.set('activeTab', next[0].id);
-  state.log('Tab closed', PAGES[t.page]?.title ?? t.page);
-  render();
+  const result = tabsCore.open(m, pageId);
+  if (result.error) {
+    ui.notify(result.error, { kind: 'bad' });
+    return;
+  }
+  applyModel(result.model);
+}
+
+function close(id) {
+  const result = tabsCore.close(model(), id);
+  if (result.refused) {
+    ui.notify(result.refused + ' Closing it would leave nothing to look at.', { kind: 'info' });
+    return;
+  }
+  const t = model().tabs.find((x) => x.id === id);
+  state.log('Tab closed', t ? (PAGES[t.page]?.title ?? t.page) : id);
+  applyModel(result.model);
+}
+
+/**
+ * The per-tab menu items the shell contributes: locks, which the strip itself
+ * knows nothing about.
+ */
+const tabExtras = {
+  decorate(t) {
+    return locksCore.isLocked('tab:' + t.page) ? [icon('lock', 'icon tab__lock')] : [];
+  },
+  items(anchor, t) {
+    const lockId = 'tab:' + t.page;
+    const existing = locksCore.get(lockId);
+    return [
+      existing
+        ? { label: locksCore.isLocked(lockId) ? 'Unlock this tab…' : 'Lock it again', icon: 'lock',
+            run: () => locksCore.isLocked(lockId) ? locksUi.unlockPrompt(lockId, render) : (locksCore.relock(lockId), render()) }
+        : { label: 'Lock this tab…', icon: 'lock', run: () => locksUi.wizard(lockId, pageLabel(t.page)) },
+      { label: 'Manage every lock', icon: 'unlock', run: () => open('locks') }
+    ];
+  }
+};
+
+function drawStrip(container) {
+  return tabsUi.renderStrip(container, {
+    model: model(),
+    apply: applyModel,
+    labelFor: pageLabel,
+    iconFor: (page) => (PAGES[page] ? PAGES[page].icon : 'file'),
+    extras: tabExtras
+  });
 }
 
 // ---------------------------------------------------------------- chrome
@@ -110,49 +161,12 @@ function close(id) {
 function buildTitlebar() {
   clear(titlebar);
 
-  const strip = h('div', { class: 'titlebar__tabs', role: 'tablist', 'aria-label': 'Open tabs' });
-  const act = activeTab();
-
-  for (const t of tabs()) {
-    const page = PAGES[t.page];
-    if (!page) continue;
-    const btn = h('button', {
-      class: 'wtab', role: 'tab',
-      'aria-selected': String(act && t.id === act.id),
-      onclick: () => { state.set('activeTab', t.id); render(); },
-      oncontextmenu: (e) => {
-        e.preventDefault();
-        const lockId = 'tab:' + t.page;
-        const existing = locksCore.get(lockId);
-        ui.menu(btn, [
-          existing
-            ? { label: locksCore.isLocked(lockId) ? 'Unlock this tab…' : 'Lock it again', icon: 'lock',
-                run: () => locksCore.isLocked(lockId) ? locksUi.unlockPrompt(lockId, render) : (locksCore.relock(lockId), render()) }
-            : { label: 'Lock this tab…', icon: 'lock',
-                run: () => locksUi.wizard(lockId, pageLabel(t.page)) },
-          { label: 'Manage every lock', icon: 'unlock', run: () => open('locks') },
-          { separator: true },
-          appearance.menuItem(btn),
-          { separator: true },
-          { label: 'Close this tab', icon: 'x', danger: true, run: () => close(t.id) },
-          { label: 'Close other tabs', icon: 'x', run: () => {
-            state.set('tabs', tabs().filter((x) => x.id === t.id));
-            state.set('activeTab', t.id);
-            render();
-          } }
-        ], { label: 'Tab menu', width: 260, filterPlaceholder: 'Filter this menu…' });
-      }
-    },
-      icon(page.icon, 'icon icon--sm'),
-      h('span', { class: 'wtab__label' }, pageLabel(t.page)),
-      locksCore.isLocked('tab:' + t.page) ? icon('lock', 'icon tab__lock') : null,
-      h('span', {
-        class: 'wtab__close', role: 'button', 'aria-label': 'Close ' + page.title,
-        onclick: (e) => { e.stopPropagation(); close(t.id); }
-      }, icon('x', 'icon icon--sm'))
-    );
-    strip.appendChild(btn);
-  }
+  // The strip lives in the title bar only when it is docked there. On any other
+  // edge the title bar keeps just the name and the window controls, and the
+  // strip is drawn as a rail against that edge instead.
+  const dock = model().dock;
+  const strip = h('div', { class: 'tabstrip' });
+  if (dock === 'top') drawStrip(strip);
 
   const controls = h('div', { class: 'wctl' },
     h('button', { 'aria-label': 'Minimise', title: 'Minimise', onclick: () => desktop.windowControls.minimize() },
@@ -170,9 +184,22 @@ function buildTitlebar() {
   titlebar.append(
     h('div', { class: 'titlebar__mark' }, icon('chat', 'icon icon--sm')),
     h('div', { class: 'titlebar__title' }, 'Material Open WebUI'),
-    strip,
+    dock === 'top' ? strip : h('div', { class: 'titlebar__spacer' }),
     desktop.isDesktop ? controls : h('div', { class: 'wctl' })
   );
+
+  // The docked rail, for every edge except the title bar.
+  document.querySelectorAll('.tabstrip--docked').forEach((el) => el.remove());
+  if (dock !== 'top') {
+    const rail_ = h('div', { class: 'tabstrip tabstrip--docked' });
+    drawStrip(rail_);
+    rail_.classList.add('tabstrip--docked');
+    const body = document.querySelector('.body');
+    if (dock === 'left') body.insertBefore(rail_, body.firstChild);
+    else if (dock === 'right') body.appendChild(rail_);
+    else document.getElementById('shell').appendChild(rail_);
+  }
+  document.getElementById('shell').dataset.dock = dock;
 }
 
 function buildRail() {
@@ -236,7 +263,7 @@ function exportAll() {
       'Any credential for a lock, once locks exist.'
     ],
     settings: state.get('settings'),
-    tabs: state.get('tabs'),
+    tabs: state.get('tabModel'),
     chats: state.get('chats'),
     convResults: (state.get('convResults') || []).map((r) => ({ ...r, url: undefined })),
     statusLog: state.get('statusLog')

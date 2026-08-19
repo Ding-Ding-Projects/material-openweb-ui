@@ -84,6 +84,9 @@ jobs:
       - name: Schedules behave as documented at midnight and both DST boundaries
         run: node scripts/test-schedule.mjs
 
+      - name: Pinned tabs survive bulk closes and groups outlive deletion
+        run: node scripts/test-tabs.mjs
+
       - name: Line count
         run: |
           node scripts/count-lines.mjs --markdown >> "$GITHUB_STEP_SUMMARY"

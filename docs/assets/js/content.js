@@ -30,14 +30,14 @@ export const FEATURES = [
   },
   {
     id: 'tabs', name: 'Browser-style tabs', group: 'Navigation',
-    icon: 'grid', site: 'partial', app: 'partial',
+    icon: 'grid', site: 'partial', app: 'shipped',
     blurb: 'Content is separated into tabs you open, pin, reorder, group and close, rather than one long scrolling page.',
     detail: 'The strip docks to any edge with left as the default, because a screen is wider than it is tall and a vertical strip shows more labels legibly. Docking is an orientation change rather than a rotation: the overflow surface measures the other axis, arrow keys follow the axis, and a label is never turned ninety degrees, because a sideways word is a word nobody reads. On a phone the strip becomes a scrolling row so it stops eating the width it exists to reveal.',
     verify: 'Open several tabs, pin one, reload the page, and confirm order and pinned state survive. Narrow the window to phone width and confirm the strip scrolls rather than wrapping.'
   },
   {
     id: 'tabsearch', name: 'Four tab-discovery searches', group: 'Navigation',
-    icon: 'search', site: 'planned', app: 'partial',
+    icon: 'search', site: 'na', app: 'shipped',
     blurb: 'A search for the current strip, one inside each group, one for groups by name, and a master search across every open tab.',
     detail: 'Each has its own anchored regex builder and its own query, pattern, flags and mode. None of them shares hidden state with another, so a pattern typed in one can never silently apply in another.',
     verify: 'Type a pattern into the strip search and confirm the group search is unaffected.'

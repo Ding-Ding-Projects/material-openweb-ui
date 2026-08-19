@@ -6,6 +6,7 @@
 
 import { createPalette } from '../../docs/assets/js/palette-core.js';
 import * as state from './state.js';
+import * as tabsCore from './core/tabs.js';
 
 let getPages = () => ({});
 let getOrder = () => [];
@@ -64,13 +65,20 @@ function entries() {
 
   // Every open tab is reachable by name, which is what makes a tab strip
   // navigable once it holds more tabs than fit on screen.
-  for (const t of state.get('tabs') || []) {
+  const model = tabsCore.normalise(state.get('tabModel'), Object.keys(pages), 'ollama');
+  for (const t of model.tabs) {
     const p = pages[t.page];
     if (!p) continue;
+    const group = model.groups.find((g) => g.id === t.group);
     out.push({
       kind: 'tab', id: 'tab-' + t.id, icon: p.icon,
-      label: p.title + ' — open tab', hint: 'tab',
-      run: () => { state.set('activeTab', t.id); window.mowuiApp.refresh(); }
+      // The group is named in the hint because a palette result that teleports
+      // into a collapsed group without saying so is a jump with no explanation.
+      label: p.title + ' — open tab', hint: t.pinned ? 'tab · pinned' : group ? 'tab · ' + group.name : 'tab',
+      run: () => {
+        state.set('tabModel', { ...model, activeTab: t.id });
+        window.mowuiApp.refresh();
+      }
     });
   }
 
