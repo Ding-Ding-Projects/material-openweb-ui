@@ -539,6 +539,22 @@ export const FEATURE_GROUPS = [
 
 export const CHANGELOG = [
 	{
+		version: 'Unreleased',
+		date: '2026-10-12',
+		codename: 'Source build',
+		sections: [
+			{
+				title: 'Added',
+				items: [
+					{
+						text: 'Unreleased: a bundled, offline ZIP32 central-directory-to-text converter, with bounded range reads, resource caps, strict unsupported-format errors and quoted untrusted filenames. It never extracts or decompresses archive contents. Converter integration and adversarial fixtures pass; Windows installed-application verification is still pending. This covers only the ZIP portion of issue #3; the AVIF, PDF, audio and video adapters remain disabled.',
+						sha: '81334851996de635bbe5a11c11d72cd4ece69537'
+					}
+				]
+			}
+		]
+	},
+	{
 		version: '0.1.0',
 		date: '2026-08-19',
 		codename: 'First light',
