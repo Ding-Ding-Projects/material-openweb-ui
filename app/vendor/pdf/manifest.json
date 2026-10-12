@@ -1,13 +1,13 @@
 {
-  "LICENSE-pako.txt": "a04665b3b2de56c66730c1f720f528175739e4104f79073614aa611da1e85539",
-  "LICENSE-iobuffer.txt": "1c22118fd112e8c394a5ec0598d2e2dfcdc19b3e1055ac3eaccdb2522b777335",
-  "LICENSE-jspdf.txt": "dc388ec35ff463288cdde3588a36fd4ed12a45deff053243b37309acc9ef583b",
-  "README.md": "4af284c231ff85f457ae8373536c44b9c06f63f2d21644123f1459a817945a33",
-  "jspdf.js": "eaba8e83f7e991417311c9587da0b8c26894ed3fe6c55986a9982f44cc3fc328",
-  "LICENSE-fast-png.txt": "47ec9747cf2c470a505fcb20f3ec2ff2e60ea4febaf2e1e7041a24fc369fac3c",
-  "MaterialOfflineTC-Regular.ttf": "6286d380a7bba6673eab6dfaaf2acdd5d44413209a14c8fef9987640d8a15a7d",
-  "LICENSE-babel-runtime.txt": "117da2af0d4ce0fe1c8e19b5cff9dcd806adf973d328d27b11d4448c4ff24f76",
-  "OFL.txt": "6a73f9541c2de74158c0e7cf6b0a58ef774f5a780bf191f2d7ec9cc53efe2bf2",
-  "jspdf-distributed-notices.txt": "55940d5e8a8a99d8771b036c05cabee180401e2fc6552293004e025995c58db1",
-  "LICENSE-fflate.txt": "805f6cb28bb8b6d3a0badd83c93bccd9671fa01a3b4b92b7042b0743325ac243"
+	"LICENSE-pako.txt": "a04665b3b2de56c66730c1f720f528175739e4104f79073614aa611da1e85539",
+	"LICENSE-iobuffer.txt": "1c22118fd112e8c394a5ec0598d2e2dfcdc19b3e1055ac3eaccdb2522b777335",
+	"LICENSE-jspdf.txt": "dc388ec35ff463288cdde3588a36fd4ed12a45deff053243b37309acc9ef583b",
+	"README.md": "4af284c231ff85f457ae8373536c44b9c06f63f2d21644123f1459a817945a33",
+	"jspdf.js": "eaba8e83f7e991417311c9587da0b8c26894ed3fe6c55986a9982f44cc3fc328",
+	"LICENSE-fast-png.txt": "47ec9747cf2c470a505fcb20f3ec2ff2e60ea4febaf2e1e7041a24fc369fac3c",
+	"MaterialOfflineTC-Regular.ttf": "6286d380a7bba6673eab6dfaaf2acdd5d44413209a14c8fef9987640d8a15a7d",
+	"LICENSE-babel-runtime.txt": "117da2af0d4ce0fe1c8e19b5cff9dcd806adf973d328d27b11d4448c4ff24f76",
+	"OFL.txt": "6a73f9541c2de74158c0e7cf6b0a58ef774f5a780bf191f2d7ec9cc53efe2bf2",
+	"jspdf-distributed-notices.txt": "55940d5e8a8a99d8771b036c05cabee180401e2fc6552293004e025995c58db1",
+	"LICENSE-fflate.txt": "805f6cb28bb8b6d3a0badd83c93bccd9671fa01a3b4b92b7042b0743325ac243"
 }

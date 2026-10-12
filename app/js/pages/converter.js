@@ -255,7 +255,7 @@ export function render(root) {
 															class: 'chip chip--tonal',
 															style: { height: '20px', fontSize: '.62rem', padding: '0 8px' }
 														},
-														'not bundled'
+														a.blockedLabel || 'not bundled'
 													)
 												: null
 										),

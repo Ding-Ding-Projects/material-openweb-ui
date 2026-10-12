@@ -265,12 +265,17 @@ export const ADAPTERS = [
 		from: ['text/plain', 'text/html', 'application/json', 'text/csv'],
 		to: 'PDF (literal text)',
 		available: false,
-		reason: 'PDF creation is under verification: installed file-origin worker execution has not yet been verified.',
+		blockedLabel: 'verification pending',
+		reason:
+			'PDF creation is under verification: installed file-origin worker execution has not yet been verified.',
 		kind: 'textpdf',
 		mime: 'application/pdf',
 		ext: 'pdf',
-		discloses: 'Offline UTF-8 source text, with Traditional Chinese and Latin support. A bundled font subset is embedded; even a short PDF has font overhead (about 92 KiB for the verification sample). Limits: 256 KiB input, 50000 characters, 100 pages, 16 MiB output and 30 seconds. Unsupported glyphs fail without output.',
-		destroys: ['Original layout and interactive formatting are absent: HTML, JSON and CSV are printed literally, never rendered. Line endings become LF, tabs become four spaces, and long lines wrap.']
+		discloses:
+			'Offline UTF-8 source text, with Traditional Chinese and Latin support within the Basic Multilingual Plane. Supplementary-plane characters, combining marks and variation selectors are rejected even if present in the font; no Unicode normalization is applied. A bundled font subset is embedded; even a short PDF has font overhead (about 92 KiB for the verification sample). Limits: 256 KiB input, 50000 characters, 100 pages, 16 MiB output and 30 seconds. Unsupported glyphs fail without output.',
+		destroys: [
+			'Original layout and interactive formatting are absent: HTML, JSON and CSV are printed literally, never rendered. Line endings become LF, tabs become four spaces, and long lines wrap.'
+		]
 	},
 	{
 		id: 'pdf-text',

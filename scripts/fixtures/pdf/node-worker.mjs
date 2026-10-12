@@ -5,8 +5,12 @@ globalThis.self = globalThis;
 globalThis.postMessage = (data, transfer) => parentPort.postMessage(data, transfer);
 globalThis.fetch = async (url) => {
 	const target = new URL(url);
-	if (target.protocol !== 'file:' || !target.pathname.endsWith('/app/vendor/pdf/MaterialOfflineTC-Regular.ttf')) throw Error('Network forbidden');
+	if (
+		target.protocol !== 'file:' ||
+		!target.pathname.endsWith('/app/vendor/pdf/MaterialOfflineTC-Regular.ttf')
+	)
+		throw Error('Network forbidden');
 	return new Response(await readFile(target));
 };
 await import(workerData.url);
-parentPort.on('message', data => self.onmessage({ data }));
+parentPort.on('message', (data) => self.onmessage({ data }));

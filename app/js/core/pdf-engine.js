@@ -5,17 +5,39 @@ export function decodePdfSource(bytes) {
 	if (!(bytes instanceof Uint8Array) || bytes.byteLength > PDF_LIMITS.bytes)
 		throw new Error('PDF source exceeds the 256 KiB input limit.');
 	let text;
-	try { text = new TextDecoder('utf-8', { fatal: true }).decode(bytes); }
-	catch { throw new Error('PDF source must be valid UTF-8 text.'); }
-	if (Array.from(text).length > PDF_LIMITS.characters) throw new Error('PDF source exceeds the 50000-character limit.');
-	if (/[\u0000-\u0008\u000b\u000c\u000e-\u001f\u007f-\u009f\u200b-\u200f\u202a-\u202e\u2060-\u206f\ufeff]/u.test(text))
-		throw new Error('PDF source contains unsupported control or bidirectional formatting characters.');
+	try {
+		text = new TextDecoder('utf-8', { fatal: true }).decode(bytes);
+	} catch {
+		throw new Error('PDF source must be valid UTF-8 text.');
+	}
+	if (Array.from(text).length > PDF_LIMITS.characters)
+		throw new Error('PDF source exceeds the 50000-character limit.');
+	if (
+		/[\u0000-\u0008\u000b\u000c\u000e-\u001f\u007f-\u009f\u200b-\u200f\u202a-\u202e\u2060-\u206f\ufeff]/u.test(
+			text
+		)
+	)
+		throw new Error(
+			'PDF source contains unsupported control or bidirectional formatting characters.'
+		);
+	const mark = text.match(/\p{Mark}/u)?.[0];
+	if (mark)
+		throw new Error(
+			'PDF text does not support combining marks or variation selectors: U+' +
+				mark.codePointAt(0).toString(16).toUpperCase().padStart(4, '0') +
+				'. Use an explicitly edited precomposed character where appropriate. Nothing was normalized or written.'
+		);
 	return text.replace(/\r\n?/g, '\n').replace(/\t/g, '    ');
 }
 
 export async function createTextPdf(bytes, fontBytes) {
 	const text = decodePdfSource(bytes);
-	const doc = new globalThis.jspdf.jsPDF({ unit: 'pt', format: 'a4', compress: true, putOnlyUsedFonts: true });
+	const doc = new globalThis.jspdf.jsPDF({
+		unit: 'pt',
+		format: 'a4',
+		compress: true,
+		putOnlyUsedFonts: true
+	});
 	let binary = '';
 	for (let offset = 0; offset < fontBytes.length; offset += 32768)
 		binary += String.fromCharCode(...fontBytes.subarray(offset, offset + 32768));
@@ -24,25 +46,45 @@ export async function createTextPdf(bytes, fontBytes) {
 	doc.setFont('MaterialOfflineTC');
 	doc.setFontSize(11);
 	const font = doc.getFont();
-	if (typeof font.metadata?.characterToGlyph !== 'function') throw new Error('The bundled PDF font could not be parsed.');
+	if (typeof font.metadata?.characterToGlyph !== 'function')
+		throw new Error('The bundled PDF font could not be parsed.');
 	const widths = new Map();
 	for (const char of text) {
 		if (char === '\n') continue;
 		const cp = char.codePointAt(0);
-		if (cp > 0xffff || !font.metadata.characterToGlyph(cp)) throw new Error('Bundled PDF font does not support U+' + cp.toString(16).toUpperCase().padStart(4, '0') + '. Nothing was written.');
+		if (cp > 0xffff)
+			throw new Error(
+				'PDF text encoding does not support supplementary-plane U+' +
+					cp.toString(16).toUpperCase() +
+					', even if the font contains it. Nothing was written.'
+			);
+		if (!font.metadata.characterToGlyph(cp))
+			throw new Error(
+				'Bundled PDF font does not support U+' +
+					cp.toString(16).toUpperCase().padStart(4, '0') +
+					'. Nothing was written.'
+			);
 		if (!widths.has(char)) widths.set(char, doc.getTextWidth(char));
 	}
 	const lines = [];
-	let line = '', width = 0;
+	let line = '',
+		width = 0;
 	const push = () => {
-		if (lines.length >= PDF_LIMITS.pages * 49) throw new Error('PDF source exceeds the 100-page layout limit.');
-		lines.push(line); line = ''; width = 0;
+		if (lines.length >= PDF_LIMITS.pages * 49)
+			throw new Error('PDF source exceeds the 100-page layout limit.');
+		lines.push(line);
+		line = '';
+		width = 0;
 	};
 	for (const char of text) {
-		if (char === '\n') { push(); continue; }
+		if (char === '\n') {
+			push();
+			continue;
+		}
 		const advance = widths.get(char);
 		if (width + advance > 499 && line) push();
-		line += char; width += advance;
+		line += char;
+		width += advance;
 	}
 	push();
 	doc.setProperties({ creator: 'Material Open WebUI offline text converter' });
@@ -52,6 +94,7 @@ export async function createTextPdf(bytes, fontBytes) {
 			doc.text(lines[index], 48, 57.89 + (index - offset) * 15);
 	}
 	const output = new Uint8Array(doc.output('arraybuffer'));
-	if (output.byteLength > PDF_LIMITS.output) throw new Error('PDF output exceeds the 16 MiB limit.');
+	if (output.byteLength > PDF_LIMITS.output)
+		throw new Error('PDF output exceeds the 16 MiB limit.');
 	return output;
 }

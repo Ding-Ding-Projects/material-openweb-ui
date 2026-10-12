@@ -14,3 +14,6 @@ yarn.lock
 
 # Verbatim design-prototype reference; never linted (see design/README.md)
 /design/
+
+# Preserve the exact third-party PDF distribution; authored adapters stay linted.
+/app/vendor/pdf/

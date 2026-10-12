@@ -21,9 +21,16 @@ A pre-conversion disclosure explains formatting losses and font overhead.
 Line endings become LF, tabs become four spaces, a leading UTF-8 BOM is removed,
 and long lines wrap at character boundaries. Blank input produces a blank page.
 Only Basic Multilingual Plane characters supported by the bundled font are
-accepted. Missing glyphs, including unsupported emoji or uncommon ideographs,
+accepted. Every supplementary-plane character (above U+FFFF) is rejected by
+the adapter even if the bundled font contains it; this is an encoder limitation,
+not evidence that the font lacks that glyph. Missing glyphs, including unsupported emoji or uncommon ideographs,
 fail with the exact Unicode code point rather than producing blank glyphs.
-This is not a universal-Unicode or complex-script typesetting engine.
+All combining marks and variation selectors are also explicitly rejected,
+including decomposed Latin accents. Independent rendering showed an incorrectly
+positioned accent even when extraction preserved its code points. Precomposed
+Latin characters such as é are supported when present in the font; the adapter
+never silently normalizes source text. This is not a universal-Unicode or
+complex-script typesetting engine.
 
 ## Limits, failure and isolation
 
@@ -71,6 +78,14 @@ tests missed visible-glyph loss, so raster tests are mandatory.
 unsupported glyphs, the real worker module through a Node bridge, concurrency,
 timeout/termination, malformed worker results and copied package-layout assets.
 It is included in `node scripts/test-convert.mjs` and `npm run gates`.
+
+`node scripts/test-converter-source.mjs` executes the real converter page event
+flow with only DOM/UI/state boundaries substituted. It opens confirmation for
+file A, selects file B, confirms A, clears selection during the suspended
+conversion and verifies the completed result and history still name A. A second
+confirmation can be dismissed without another conversion. Removing the snapshot
+makes this executable negative regression fail. This is an event-flow regression,
+not a substitute for real-browser visual and accessibility verification.
 
 `python scripts/test-pdf-render.py` additionally requires Poppler and Pillow. It
 creates a real PDF, checks exact text extraction with no parser warnings, and
