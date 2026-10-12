@@ -544,6 +544,15 @@ export const CHANGELOG = [
 		codename: 'Source build',
 		sections: [
 			{
+				title: 'Fixed',
+				items: [
+					{
+						text: 'Unreleased: converter confirmation now keeps the selected source file stable. Changing or clearing the selection during confirmation or asynchronous conversion no longer changes the approved source, output filename or history. Executed renderer-handler and negative regressions pass; Windows installed-application verification remains pending.',
+						sha: 'f18e2baae38e3a638ae450aae2b758a4af3edf81'
+					}
+				]
+			},
+			{
 				title: 'Added',
 				items: [
 					{
