@@ -547,8 +547,8 @@ export const CHANGELOG = [
 				title: 'Added',
 				items: [
 					{
-						text: 'Verification checkpoint: bounded offline literal-text PDF creation with bundled jsPDF and a reproducible Traditional Chinese/Latin font. Strict input, character, page, output and worker-time limits are tested, including independent visible-glyph and text-extraction checks. The PDF adapter remains disabled until real packaged file-origin worker and font loading are verified; Windows installation proof is still pending.',
-						sha: '73e158b1bd881ae8b7766350ca1c556c8cc0933d'
+						text: 'Verification checkpoint: bounded offline literal-text PDF creation with bundled jsPDF and a reproducible Traditional Chinese/Latin font. Strict input, character, page, output and worker-time limits are tested, including independent visible-glyph and text-extraction checks. Combining marks, variation selectors and supplementary-plane characters are explicitly rejected without normalization. Converter confirmation keeps its approved source across selection changes and asynchronous completion. The PDF adapter remains disabled until real packaged file-origin worker and font loading are verified; Windows installation proof is still pending.',
+						sha: 'b6486699048d8a4e7d130f76ef07a2bca4e3000e'
 					},
 					{
 						text: 'Unreleased: a bundled, offline ZIP32 central-directory-to-text converter, with bounded range reads, resource caps, strict unsupported-format errors and quoted untrusted filenames. It never extracts or decompresses archive contents. Converter integration and adversarial fixtures pass; Windows installed-application verification is still pending. This covers only the ZIP portion of issue #3; the AVIF, PDF, audio and video adapters remain disabled.',
