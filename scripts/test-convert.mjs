@@ -330,6 +330,7 @@ if (failures) {
 	process.exit(1);
 }
 await import('./test-zip-list.mjs');
+await import('./test-pdf.mjs');
 
 console.log('Detection, the adapter registry and every renderer-free conversion behave.');
 process.exit(0);

@@ -379,7 +379,7 @@ await check(
 		assert.match(config, /^\s*- app\/\*\*\/\*$/m);
 		const root = mkdtempSync(join(tmpdir(), 'openweb-zip-package-'));
 		mkdirSync(join(root, 'app/js/core'), { recursive: true });
-		for (const name of ['convert.js', 'zip.js'])
+		for (const name of ['convert.js', 'zip.js', 'pdf.js'])
 			copyFileSync('app/js/core/' + name, join(root, 'app/js/core', name));
 		copyFileSync('package.json', join(root, 'package.json'));
 		const script = `globalThis.fetch=()=>{throw Error('network forbidden')};

@@ -281,14 +281,16 @@ export function render(root) {
 
 	async function runOne(adapter) {
 		if (!current) return;
+		// Keep the approved source stable if the selection changes during the dialog or worker run.
+		const source = current.file;
 		const go = async () => {
 			try {
-				const blob = await convert.run(adapter, current.file, { decodeImage });
-				const name = convert.outputName(current.file.name, adapter);
+				const blob = await convert.run(adapter, source, { decodeImage });
+				const name = convert.outputName(source.name, adapter);
 				const url = URL.createObjectURL(blob);
 				const entry = { name, size: blob.size, adapter: adapter.to, at: Date.now(), url };
 				state.set('convResults', [entry, ...(state.get('convResults') || [])].slice(0, 40));
-				state.log('File converted', current.file.name + ' → ' + name);
+				state.log('File converted', source.name + ' → ' + name);
 				paintResults();
 				ui.notify(
 					'Converted to ' + name + ' (' + fmtBytes(blob.size) + '). The source file is untouched.',

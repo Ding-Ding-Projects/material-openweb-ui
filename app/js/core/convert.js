@@ -11,6 +11,7 @@
 // missing, rather than being hidden so the catalogue looks complete.
 
 import { zipListing } from './zip.js';
+import { textPdf } from './pdf.js';
 
 export const CATEGORIES = [
 	'Documents/PDF',
@@ -262,10 +263,14 @@ export const ADAPTERS = [
 		id: 'pdf-make',
 		cat: 'Documents/PDF',
 		from: ['text/plain', 'text/html', 'application/json', 'text/csv'],
-		to: 'PDF',
+		to: 'PDF (literal text)',
 		available: false,
-		reason:
-			'Needs a bundled PDF writer (pdf-lib or equivalent). Nothing is installed, so this stays disabled rather than producing a file that only looks like a PDF.'
+		reason: 'PDF creation is under verification: installed file-origin worker execution has not yet been verified.',
+		kind: 'textpdf',
+		mime: 'application/pdf',
+		ext: 'pdf',
+		discloses: 'Offline UTF-8 source text, with Traditional Chinese and Latin support. A bundled font subset is embedded; even a short PDF has font overhead (about 92 KiB for the verification sample). Limits: 256 KiB input, 50000 characters, 100 pages, 16 MiB output and 30 seconds. Unsupported glyphs fail without output.',
+		destroys: ['Original layout and interactive formatting are absent: HTML, JSON and CSV are printed literally, never rendered. Line endings become LF, tabs become four spaces, and long lines wrap.']
 	},
 	{
 		id: 'pdf-text',
@@ -453,6 +458,8 @@ export async function run(adapter, file, { decodeImage } = {}) {
 	if (!adapter) throw new Error('No adapter was chosen.');
 	if (!adapter.available)
 		throw new Error(adapter.reason || 'That adapter is not available in this build.');
+
+	if (adapter.kind === 'textpdf') return textPdf(file);
 
 	// ZIP listing uses bounded range reads; large archives are not buffered in full.
 	if (adapter.kind === 'ziplist') return new Blob([await zipListing(file)], { type: adapter.mime });
