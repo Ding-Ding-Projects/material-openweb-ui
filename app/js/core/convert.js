@@ -10,6 +10,8 @@
 // installs the app. Unavailable adapters stay visible and name exactly what is
 // missing, rather than being hidden so the catalogue looks complete.
 
+import { zipListing } from './zip.js';
+
 export const CATEGORIES = [
 	'Documents/PDF',
 	'Images',
@@ -151,7 +153,9 @@ export function sniff(u8) {
 			type: 'ZIP archive',
 			cat: 'Archives',
 			mime: 'application/zip',
-			evidence: 'ZIP local file header (PK\\x03\\x04)'
+			evidence: matches(u8, 0, [0x50, 0x4b, 0x03, 0x04])
+				? 'ZIP local file header (PK\\x03\\x04)'
+				: 'ZIP empty-archive end-of-central-directory signature (PK\\x05\\x06)'
 		};
 	}
 
@@ -302,8 +306,15 @@ export const ADAPTERS = [
 		cat: 'Archives',
 		from: ['application/zip'],
 		to: 'File listing (text)',
-		available: false,
-		reason: 'Needs a ZIP central-directory reader. Not installed.'
+		available: true,
+		kind: 'ziplist',
+		mime: 'text/plain;charset=utf-8',
+		ext: 'listing.txt',
+		discloses:
+			'Offline, read-only ZIP32 listing. Limits: 256 MiB archive, 4 MiB directory/output, 10000 entries, 4096-byte names. ZIP64, split and encrypted archives are unsupported. Payloads and CRC32 are not verified.',
+		destroys: [
+			'Archived contents, timestamps, extra fields and comments are absent from the text listing. The source ZIP is unchanged.'
+		]
 	},
 
 	{
@@ -442,6 +453,9 @@ export async function run(adapter, file, { decodeImage } = {}) {
 	if (!adapter) throw new Error('No adapter was chosen.');
 	if (!adapter.available)
 		throw new Error(adapter.reason || 'That adapter is not available in this build.');
+
+	// ZIP listing uses bounded range reads; large archives are not buffered in full.
+	if (adapter.kind === 'ziplist') return new Blob([await zipListing(file)], { type: adapter.mime });
 
 	const buf = new Uint8Array(await file.arrayBuffer());
 	const text = () => new TextDecoder('utf-8', { fatal: false }).decode(buf);

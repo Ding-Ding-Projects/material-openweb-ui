@@ -176,6 +176,13 @@ dependency; and a standards-correct authenticator checked against the RFC 6238
 published test vectors, with QR pairing drawn in-process and never by a remote
 service.
 
+The current source build also includes an unreleased, offline ZIP32-to-text
+listing adapter. It reads bounded central-directory metadata without extracting
+files; ZIP64, split and encrypted archives are rejected. See
+[ZIP listing limitations and verification](docs/zip-listing.md). The published
+v0.1.0 installer does not include this adapter; installed-app verification of
+the new source build is still pending.
+
 **Locks** — per-element password or one-time-code locks, each with its own
 independent credential, plus a support-desk recovery route and an unlock ladder
 that clears the waiting and never the credential.
